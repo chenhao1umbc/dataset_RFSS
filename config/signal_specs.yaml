@@ -1,0 +1,107 @@
+# RF Signal Specifications for 2G/3G/4G/5G Standards
+# Technical parameters for realistic signal generation
+
+GSM_2G:
+  description: "Global System for Mobile Communications"
+  frequency_bands:
+    GSM900: [890, 915, 935, 960]  # [DL_start, DL_end, UL_start, UL_end] MHz
+    GSM1800: [1710, 1785, 1805, 1880]
+    GSM1900: [1850, 1910, 1930, 1990]
+  channel_bandwidth: 0.2  # MHz
+  carrier_spacing: 0.2  # MHz between carriers
+  modulation: "GMSK"
+  symbol_rate: 270.833  # ksps
+  frame_duration: 4.615  # ms
+  slots_per_frame: 8
+  bits_per_symbol: 1
+  
+UMTS_3G:
+  description: "Universal Mobile Telecommunications System"
+  frequency_bands:
+    Band1: [1920, 1980, 2110, 2170]  # [UL_start, UL_end, DL_start, DL_end] MHz
+    Band2: [1850, 1910, 1930, 1990]
+    Band5: [824, 849, 869, 894]
+  chip_rate: 3.84  # Mcps
+  channel_bandwidth: 5  # MHz
+  modulation: "QPSK"
+  spreading_factor: [4, 8, 16, 32, 64, 128, 256, 512]
+  frame_duration: 10  # ms
+  slots_per_frame: 15
+  
+LTE_4G:
+  description: "Long Term Evolution"
+  frequency_bands:
+    Band1: [1920, 1980, 2110, 2170]  # [UL_start, UL_end, DL_start, DL_end] MHz
+    Band3: [1710, 1785, 1805, 1880]
+    Band7: [2500, 2570, 2620, 2690]
+    Band20: [832, 862, 791, 821]
+  channel_bandwidths: [1.4, 3, 5, 10, 15, 20]  # MHz
+  subcarrier_spacing: 15  # kHz
+  resource_blocks:
+    1.4MHz: 6
+    3MHz: 15
+    5MHz: 25
+    10MHz: 50
+    15MHz: 75
+    20MHz: 100
+  modulation_schemes: ["QPSK", "16QAM", "64QAM"]
+  frame_duration: 10  # ms
+  subframes_per_frame: 10
+  slots_per_subframe: 2
+  symbols_per_slot: 7  # Normal CP
+  
+NR_5G:
+  description: "New Radio"
+  frequency_bands:
+    # Sub-6 GHz bands
+    n1: [1920, 1980, 2110, 2170]  # [UL_start, UL_end, DL_start, DL_end] MHz
+    n3: [1710, 1785, 1805, 1880]
+    n78: [3300, 3800, 3300, 3800]  # TDD
+    # mmWave bands
+    n257: [26500, 29500, 26500, 29500]  # TDD
+    n260: [37000, 40000, 37000, 40000]  # TDD
+  subcarrier_spacing: [15, 30, 60, 120, 240]  # kHz
+  channel_bandwidths:
+    sub6: [5, 10, 15, 20, 25, 30, 40, 50, 60, 80, 90, 100]  # MHz
+    mmwave: [50, 100, 200, 400]  # MHz
+  modulation_schemes: ["QPSK", "16QAM", "64QAM", "256QAM"]
+  numerology: [0, 1, 2, 3, 4]  # μ values
+  frame_duration: 10  # ms
+  subframes_per_frame: 10
+  slots_per_subframe: [1, 2, 4, 8, 16]  # depends on numerology
+  symbols_per_slot: 14  # Normal CP
+
+# Channel Models Parameters
+channel_models:
+  awgn:
+    description: "Additive White Gaussian Noise"
+    snr_range: [-10, 30]  # dB
+    
+  rayleigh:
+    description: "Rayleigh Fading Channel"
+    doppler_frequency: [5, 10, 50, 100, 200]  # Hz
+    
+  rician:
+    description: "Rician Fading Channel"
+    k_factor: [1, 3, 6, 10]  # dB
+    doppler_frequency: [5, 10, 50, 100, 200]  # Hz
+    
+  multipath:
+    description: "Multipath Channel Models"
+    tap_delays: [0, 50, 120, 200, 230, 500]  # ns (ITU Pedestrian A)
+    tap_powers: [0, -9.7, -19.2, -22.8, -26.2, -26.7]  # dB
+
+# MIMO Configuration
+mimo_config:
+  antenna_configurations:
+    SISO: [1, 1]  # [Tx, Rx]
+    SIMO: [1, 2]
+    MISO: [2, 1]
+    MIMO_2x2: [2, 2]
+    MIMO_4x4: [4, 4]
+    MIMO_8x8: [8, 8]
+  
+  spatial_correlation:
+    low: 0.3
+    medium: 0.7
+    high: 0.9

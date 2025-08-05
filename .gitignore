@@ -172,3 +172,50 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# RF Dataset Specific
+# Large data files
+data/raw/*.mat
+data/raw/*.h5
+data/raw/*.hdf5
+data/processed/*.mat
+data/processed/*.h5
+data/processed/*.hdf5
+*.dat
+*.bin
+*.rf
+*.iq
+
+# Generated figures
+papers/figures/*.pdf
+papers/figures/*.png
+papers/figures/*.eps
+papers/figures/*.svg
+
+# LaTeX temporary files
+papers/manuscript/*.aux
+papers/manuscript/*.bbl
+papers/manuscript/*.blg
+papers/manuscript/*.fdb_latexmk
+papers/manuscript/*.fls
+papers/manuscript/*.synctex.gz
+papers/manuscript/*.toc
+
+# Configuration files with sensitive data
+config/secrets.yaml
+config/credentials.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary computation files
+*.tmp
+*.temp
+temp/
+tmp/

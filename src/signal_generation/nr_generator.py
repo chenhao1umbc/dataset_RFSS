@@ -47,75 +47,143 @@ class NRGenerator(BaseSignalGenerator):
         self.slot_duration = self.symbols_per_slot * self.symbol_duration
         
     def _calculate_fft_size(self):
-        """Calculate FFT size based on bandwidth and numerology"""
-        # Standard FFT sizes for different bandwidths and numerologies
+        """
+        Calculate FFT size based on bandwidth and numerology
+        Following 3GPP TS 38.211 Table 5.3.2-1
+        """
+        # 3GPP TS 38.211 Table 5.3.2-1: Supported transmission bandwidths
         fft_size_table = {
-            # numerology: {bandwidth: fft_size}
-            0: {5: 512, 10: 1024, 15: 1536, 20: 2048, 25: 2048, 30: 2048, 
-                40: 4096, 50: 4096, 60: 4096, 80: 4096, 90: 4096, 100: 4096},
-            1: {5: 512, 10: 1024, 15: 1536, 20: 2048, 25: 2048, 30: 2048,
-                40: 2048, 50: 4096, 60: 4096, 80: 4096, 90: 4096, 100: 4096},
-            2: {10: 512, 15: 1024, 20: 1024, 25: 1024, 30: 1024, 40: 2048,
-                50: 2048, 60: 2048, 80: 4096, 90: 4096, 100: 4096},
-            3: {50: 512, 100: 1024, 200: 2048, 400: 4096},
-            4: {50: 256, 100: 512, 200: 1024, 400: 2048}
+            # numerology μ: {bandwidth_MHz: fft_size}
+            0: {  # SCS = 15 kHz
+                5: 512, 10: 1024, 15: 1536, 20: 2048, 25: 2560, 30: 3072,
+                40: 4096, 50: 4096, 60: 4096, 70: 4096, 80: 4096, 90: 4096, 100: 4096
+            },
+            1: {  # SCS = 30 kHz  
+                5: 512, 10: 1024, 15: 1536, 20: 2048, 25: 2048, 30: 2048,
+                40: 2048, 50: 4096, 60: 4096, 70: 4096, 80: 4096, 90: 4096, 100: 4096
+            },
+            2: {  # SCS = 60 kHz
+                10: 512, 15: 1024, 20: 1024, 25: 1024, 30: 1024, 40: 2048,
+                50: 2048, 60: 2048, 70: 2048, 80: 4096, 90: 4096, 100: 4096
+            },
+            3: {  # SCS = 120 kHz (mmWave)
+                50: 512, 100: 1024, 200: 2048, 400: 4096
+            },
+            4: {  # SCS = 240 kHz (mmWave)
+                50: 256, 100: 512, 200: 1024, 400: 2048
+            }
         }
         
         return fft_size_table.get(self.numerology, {}).get(self.bandwidth_mhz, 4096)
     
-    def _calculate_cp_length(self):
-        """Calculate cyclic prefix length"""
-        # Simplified CP length calculation
-        # First symbol in slot has longer CP
-        return self.fft_size // 16  # Approximately 6.25% of FFT size
+    def _calculate_cp_length(self, symbol_idx=0):
+        """
+        Calculate cyclic prefix length following 3GPP TS 38.211
+        
+        Args:
+            symbol_idx: OFDM symbol index in slot (0-13 for normal CP)
+        """
+        # 3GPP TS 38.211 Section 5.3.1: Cyclic prefix for normal CP
+        # CP length depends on numerology and symbol position
+        
+        if symbol_idx == 0:
+            # First symbol in slot has extended CP
+            if self.numerology == 0:  # 15 kHz SCS
+                cp_samples = int(160 * (self.sample_rate / 30.72e6))
+            elif self.numerology == 1:  # 30 kHz SCS
+                cp_samples = int(144 * (self.sample_rate / 30.72e6))
+            elif self.numerology == 2:  # 60 kHz SCS
+                cp_samples = int(128 * (self.sample_rate / 30.72e6))
+            else:  # Higher numerologies
+                cp_samples = int(self.fft_size / 16)
+        else:
+            # Other symbols have normal CP
+            if self.numerology == 0:  # 15 kHz SCS
+                cp_samples = int(144 * (self.sample_rate / 30.72e6))
+            elif self.numerology == 1:  # 30 kHz SCS
+                cp_samples = int(128 * (self.sample_rate / 30.72e6))
+            elif self.numerology == 2:  # 60 kHz SCS
+                cp_samples = int(112 * (self.sample_rate / 30.72e6))
+            else:  # Higher numerologies
+                cp_samples = int(self.fft_size / 20)
+        
+        return max(1, cp_samples)  # Ensure at least 1 sample
     
     def _calculate_num_rbs(self):
-        """Calculate number of resource blocks"""
-        # Simplified calculation based on bandwidth
-        # Each RB is 12 subcarriers * subcarrier_spacing
-        rb_bandwidth = 12 * self.subcarrier_spacing
-        total_bandwidth = self.bandwidth_mhz * 1e6
+        """
+        Calculate number of resource blocks following 3GPP TS 38.101-1 Table 5.3.2-1
+        """
+        # 3GPP TS 38.101-1 Table 5.3.2-1: Maximum transmission bandwidth configuration N_RB
+        rb_table = {
+            # numerology μ: {bandwidth_MHz: max_RBs}
+            0: {  # SCS = 15 kHz
+                5: 25, 10: 52, 15: 79, 20: 106, 25: 133, 30: 160,
+                40: 216, 50: 270, 60: 270, 70: 270, 80: 270, 90: 270, 100: 270
+            },
+            1: {  # SCS = 30 kHz
+                5: 11, 10: 24, 15: 38, 20: 51, 25: 65, 30: 78,
+                40: 106, 50: 133, 60: 162, 70: 189, 80: 217, 90: 245, 100: 273
+            },
+            2: {  # SCS = 60 kHz
+                10: 11, 15: 18, 20: 24, 25: 31, 30: 38, 40: 51,
+                50: 65, 60: 79, 70: 93, 80: 107, 90: 121, 100: 135
+            },
+            3: {  # SCS = 120 kHz (mmWave)
+                50: 32, 100: 66, 200: 132, 400: 264
+            },
+            4: {  # SCS = 240 kHz (mmWave)
+                50: 16, 100: 33, 200: 66, 400: 132
+            }
+        }
         
-        # Account for guard bands (simplified)
-        usable_bandwidth = total_bandwidth * 0.9  # 90% utilization
-        num_rbs = int(usable_bandwidth / rb_bandwidth)
-        
-        return min(num_rbs, 275)  # Max 275 RBs for NR
+        return rb_table.get(self.numerology, {}).get(self.bandwidth_mhz, 133)
     
     def generate_qam_symbols(self, num_symbols):
-        """Generate QAM symbols based on modulation scheme"""
+        """
+        Generate QAM symbols based on modulation scheme
+        Following 3GPP TS 38.211 Section 5.1 for constellation mapping
+        """
         if self.modulation == 'QPSK':
-            bits_per_symbol = 2
-            constellation = np.array([1+1j, -1+1j, 1-1j, -1-1j]) / np.sqrt(2)
+            # 3GPP TS 38.211 Table 5.1.2-1: QPSK modulation
+            constellation = np.array([
+                1+1j, 1-1j, -1+1j, -1-1j
+            ]) / np.sqrt(2)
+            
         elif self.modulation == '16QAM':
-            bits_per_symbol = 4
-            real_part = np.array([-3, -1, 1, 3])
-            imag_part = np.array([-3, -1, 1, 3])
-            constellation = []
-            for r in real_part:
-                for i in imag_part:
-                    constellation.append(r + 1j*i)
-            constellation = np.array(constellation) / np.sqrt(10)
+            # 3GPP TS 38.211 Table 5.1.3-1: 16QAM modulation
+            constellation = np.array([
+                1+1j, 1+3j, 3+1j, 3+3j,
+                1-1j, 1-3j, 3-1j, 3-3j,
+                -1+1j, -1+3j, -3+1j, -3+3j,
+                -1-1j, -1-3j, -3-1j, -3-3j
+            ]) / np.sqrt(10)
+            
         elif self.modulation == '64QAM':
-            bits_per_symbol = 6
-            real_part = np.array([-7, -5, -3, -1, 1, 3, 5, 7])
-            imag_part = np.array([-7, -5, -3, -1, 1, 3, 5, 7])
+            # 3GPP TS 38.211 Table 5.1.4-1: 64QAM modulation
             constellation = []
-            for r in real_part:
-                for i in imag_part:
-                    constellation.append(r + 1j*i)
+            for i in [-7, -5, -3, -1, 1, 3, 5, 7]:
+                for q in [-7, -5, -3, -1, 1, 3, 5, 7]:
+                    constellation.append(i + 1j*q)
             constellation = np.array(constellation) / np.sqrt(42)
+            
         elif self.modulation == '256QAM':
-            bits_per_symbol = 8
-            real_part = np.array([-15, -13, -11, -9, -7, -5, -3, -1, 
-                                 1, 3, 5, 7, 9, 11, 13, 15])
-            imag_part = np.array([-15, -13, -11, -9, -7, -5, -3, -1,
-                                 1, 3, 5, 7, 9, 11, 13, 15])
+            # 3GPP TS 38.211 Table 5.1.5-1: 256QAM modulation
             constellation = []
-            for r in real_part:
-                for i in imag_part:
-                    constellation.append(r + 1j*i)
+            for i in [-15, -13, -11, -9, -7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15]:
+                for q in [-15, -13, -11, -9, -7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15]:
+                    constellation.append(i + 1j*q)
             constellation = np.array(constellation) / np.sqrt(170)
+            
+        elif self.modulation == '1024QAM':
+            # 3GPP TS 38.211 Table 5.1.6-1: 1024QAM modulation
+            constellation = []
+            symbols = [-31, -29, -27, -25, -23, -21, -19, -17, -15, -13, -11, -9, -7, -5, -3, -1,
+                      1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]
+            for i in symbols:
+                for q in symbols:
+                    constellation.append(i + 1j*q)
+            constellation = np.array(constellation) / np.sqrt(682)
+            
         else:
             raise ValueError(f"Unsupported modulation: {self.modulation}")
         

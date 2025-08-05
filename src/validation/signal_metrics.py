@@ -46,41 +46,82 @@ class SignalAnalyzer:
             'rms_power': rms_power
         }
     
-    def calculate_bandwidth(self, signal_data, threshold_db=-3):
-        """Calculate signal bandwidth"""
-        # Compute power spectral density
-        freqs, psd = signal.periodogram(signal_data, fs=self.sample_rate)
+    def calculate_bandwidth(self, signal_data, threshold_db=-3, method='psd'):
+        """
+        Calculate signal bandwidth using multiple methods
         
-        # Convert to dB
-        psd_db = 10 * np.log10(psd + 1e-12)  # Add small value to avoid log(0)
-        
-        # Find peak
-        peak_idx = np.argmax(psd_db)
-        peak_power = psd_db[peak_idx]
-        
-        # Find bandwidth at threshold below peak
-        threshold_power = peak_power + threshold_db
-        
-        # Find frequencies where power is above threshold
-        above_threshold = psd_db >= threshold_power
-        
-        if np.any(above_threshold):
-            freq_indices = np.where(above_threshold)[0]
-            bw_start_freq = freqs[freq_indices[0]]
-            bw_end_freq = freqs[freq_indices[-1]]
-            bandwidth = bw_end_freq - bw_start_freq
-        else:
-            bandwidth = 0
-            bw_start_freq = 0
-            bw_end_freq = 0
+        Args:
+            signal_data: Complex baseband signal
+            threshold_db: Power threshold below peak (default -3dB)
+            method: 'psd' (power spectral density) or 'rms' (RMS bandwidth)
+        """
+        if method == 'psd':
+            # Use Welch's method for better spectral estimation
+            freqs, psd = signal.welch(signal_data, fs=self.sample_rate, 
+                                    nperseg=min(1024, len(signal_data)//4))
+            
+            # Convert to dB, handle complex signals properly
+            if np.iscomplexobj(signal_data):
+                psd_linear = np.abs(psd)
+            else:
+                psd_linear = psd
+                
+            psd_db = 10 * np.log10(psd_linear + 1e-12)
+            
+            # Find peak (center around DC for baseband)
+            center_idx = len(freqs) // 2
+            peak_idx = np.argmax(psd_db)
+            peak_power = psd_db[peak_idx]
+            
+            # Find bandwidth at threshold below peak
+            threshold_power = peak_power + threshold_db
+            
+            # Find frequencies where power is above threshold
+            above_threshold = psd_db >= threshold_power
+            
+            if np.any(above_threshold):
+                freq_indices = np.where(above_threshold)[0]
+                bw_start_freq = freqs[freq_indices[0]]
+                bw_end_freq = freqs[freq_indices[-1]]
+                bandwidth = bw_end_freq - bw_start_freq
+                center_freq = freqs[peak_idx]
+            else:
+                bandwidth = 0
+                bw_start_freq = 0
+                bw_end_freq = 0
+                center_freq = 0
+                
+        elif method == 'rms':
+            # RMS bandwidth calculation
+            freqs, psd = signal.welch(signal_data, fs=self.sample_rate,
+                                    nperseg=min(1024, len(signal_data)//4))
+            
+            if np.iscomplexobj(signal_data):
+                psd_linear = np.abs(psd)
+            else:
+                psd_linear = psd
+                
+            # Calculate RMS bandwidth
+            total_power = np.trapz(psd_linear, freqs)
+            if total_power > 0:
+                center_freq = np.trapz(freqs * psd_linear, freqs) / total_power
+                second_moment = np.trapz((freqs - center_freq)**2 * psd_linear, freqs) / total_power
+                bandwidth = 2 * np.sqrt(second_moment)  # RMS bandwidth
+                bw_start_freq = center_freq - bandwidth/2
+                bw_end_freq = center_freq + bandwidth/2
+            else:
+                bandwidth = bw_start_freq = bw_end_freq = center_freq = 0
+                
+            psd_db = 10 * np.log10(psd_linear + 1e-12)
         
         return {
-            'bandwidth': bandwidth,
+            'bandwidth': abs(bandwidth),  # Ensure positive bandwidth
             'start_freq': bw_start_freq,
             'end_freq': bw_end_freq,
-            'center_freq': (bw_start_freq + bw_end_freq) / 2,
+            'center_freq': center_freq,
             'freqs': freqs,
-            'psd_db': psd_db
+            'psd_db': psd_db,
+            'method': method
         }
     
     def calculate_evm(self, tx_symbols, rx_symbols):

@@ -36,47 +36,77 @@ class LTEGenerator(BaseSignalGenerator):
         self.fft_size = self._get_fft_size()
         self.cp_length = self._get_cp_length()
         
-        # Symbol timing
-        self.ofdm_symbol_time = (self.fft_size + self.cp_length) / self.sample_rate
+        # Symbol timing - will be calculated per symbol due to varying CP
         self.symbols_per_slot = 7  # Normal CP
+        self.slots_per_subframe = 2
+        self.subframes_per_frame = 10
         
     def _get_fft_size(self):
-        """Get FFT size based on bandwidth"""
+        """Get FFT size based on bandwidth (3GPP TS 36.211 Table 5.6-1)"""
         fft_sizes = {
-            1.4: 128, 3: 256, 5: 512, 10: 1024, 15: 1536, 20: 2048
+            1.4: 128,   # 1.4 MHz -> 128-point FFT
+            3: 256,     # 3 MHz -> 256-point FFT
+            5: 512,     # 5 MHz -> 512-point FFT
+            10: 1024,   # 10 MHz -> 1024-point FFT
+            15: 1536,   # 15 MHz -> 1536-point FFT
+            20: 2048    # 20 MHz -> 2048-point FFT
         }
         return fft_sizes.get(self.bandwidth_mhz, 2048)
     
-    def _get_cp_length(self):
-        """Get cyclic prefix length"""
-        # Simplified - first symbol has longer CP
-        return self.fft_size // 8  # Approximately 7% of FFT size
+    def _get_cp_length(self, symbol_idx=0):
+        """
+        Get cyclic prefix length according to 3GPP TS 36.211
+        
+        Args:
+            symbol_idx: OFDM symbol index in slot (0-6 for normal CP)
+        """
+        if symbol_idx == 0:
+            # First symbol in slot has extended CP
+            # Normal CP: 160 samples at 30.72 MHz for 20 MHz BW
+            cp_samples = int(160 * (self.sample_rate / 30.72e6))
+        else:
+            # Other symbols have normal CP
+            # Normal CP: 144 samples at 30.72 MHz for 20 MHz BW
+            cp_samples = int(144 * (self.sample_rate / 30.72e6))
+        
+        return cp_samples
     
     def generate_qam_symbols(self, num_symbols):
-        """Generate QAM symbols based on modulation scheme"""
+        """
+        Generate QAM symbols based on modulation scheme
+        Following 3GPP TS 36.211 Section 7.1 for constellation mapping
+        """
         if self.modulation == 'QPSK':
-            bits_per_symbol = 2
-            constellation = np.array([1+1j, -1+1j, 1-1j, -1-1j]) / np.sqrt(2)
+            # 3GPP TS 36.211 Table 7.1.2-1: QPSK modulation
+            constellation = np.array([
+                1+1j, 1-1j, -1+1j, -1-1j
+            ]) / np.sqrt(2)
+            
         elif self.modulation == '16QAM':
-            bits_per_symbol = 4
-            # Simplified 16-QAM constellation
-            real_part = np.array([-3, -1, 1, 3])
-            imag_part = np.array([-3, -1, 1, 3])
-            constellation = []
-            for r in real_part:
-                for i in imag_part:
-                    constellation.append(r + 1j*i)
-            constellation = np.array(constellation) / np.sqrt(10)
+            # 3GPP TS 36.211 Table 7.1.3-1: 16QAM modulation
+            constellation = np.array([
+                1+1j, 1+3j, 3+1j, 3+3j,
+                1-1j, 1-3j, 3-1j, 3-3j,
+                -1+1j, -1+3j, -3+1j, -3+3j,
+                -1-1j, -1-3j, -3-1j, -3-3j
+            ]) / np.sqrt(10)
+            
         elif self.modulation == '64QAM':
-            bits_per_symbol = 6
-            # Simplified 64-QAM constellation
-            real_part = np.array([-7, -5, -3, -1, 1, 3, 5, 7])
-            imag_part = np.array([-7, -5, -3, -1, 1, 3, 5, 7])
+            # 3GPP TS 36.211 Table 7.1.4-1: 64QAM modulation
             constellation = []
-            for r in real_part:
-                for i in imag_part:
-                    constellation.append(r + 1j*i)
+            for i in [-7, -5, -3, -1, 1, 3, 5, 7]:
+                for q in [-7, -5, -3, -1, 1, 3, 5, 7]:
+                    constellation.append(i + 1j*q)
             constellation = np.array(constellation) / np.sqrt(42)
+            
+        elif self.modulation == '256QAM':
+            # 3GPP TS 36.211 Table 7.1.5-1: 256QAM modulation
+            constellation = []
+            for i in [-15, -13, -11, -9, -7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15]:
+                for q in [-15, -13, -11, -9, -7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15]:
+                    constellation.append(i + 1j*q)
+            constellation = np.array(constellation) / np.sqrt(170)
+            
         else:
             raise ValueError(f"Unsupported modulation: {self.modulation}")
         
@@ -84,50 +114,95 @@ class LTEGenerator(BaseSignalGenerator):
         symbol_indices = np.random.randint(0, len(constellation), num_symbols)
         return constellation[symbol_indices]
     
-    def generate_ofdm_symbol(self, data_symbols):
-        """Generate one OFDM symbol"""
+    def generate_ofdm_symbol(self, data_symbols, symbol_idx=0):
+        """
+        Generate one OFDM symbol following 3GPP TS 36.211
+        
+        Args:
+            data_symbols: Data symbols for active subcarriers
+            symbol_idx: Symbol index in slot (0-6) for proper CP length
+        """
         # Create frequency domain signal
         freq_signal = np.zeros(self.fft_size, dtype=complex)
         
-        # Map data symbols to subcarriers (skip DC and guard bands)
-        used_subcarriers = len(data_symbols)
-        start_idx = (self.fft_size - used_subcarriers) // 2
-        end_idx = start_idx + used_subcarriers
-        freq_signal[start_idx:end_idx] = data_symbols
+        # Map data symbols to subcarriers following 3GPP resource grid
+        # Active subcarriers are centered around DC with guard bands
+        num_active = self.num_resource_blocks * 12  # 12 subcarriers per RB
         
-        # IFFT to time domain
+        # Calculate subcarrier indices (symmetric around DC, skip DC itself)
+        if num_active % 2 == 0:
+            # Even number of subcarriers
+            neg_indices = np.arange(-num_active//2, 0)
+            pos_indices = np.arange(1, num_active//2 + 1)
+        else:
+            # Odd number of subcarriers (includes DC)
+            neg_indices = np.arange(-(num_active//2), 0)
+            pos_indices = np.arange(1, num_active//2 + 1)
+        
+        all_indices = np.concatenate([neg_indices, pos_indices])
+        
+        # Map to FFT indices
+        fft_indices = all_indices % self.fft_size
+        
+        # Ensure we don't exceed data_symbols length
+        num_mapped = min(len(fft_indices), len(data_symbols))
+        freq_signal[fft_indices[:num_mapped]] = data_symbols[:num_mapped]
+        
+        # IFFT to time domain (3GPP uses IFFT with proper scaling)
         time_signal = np.fft.ifft(freq_signal) * np.sqrt(self.fft_size)
         
-        # Add cyclic prefix
-        cp_signal = np.concatenate([time_signal[-self.cp_length:], time_signal])
+        # Add cyclic prefix with correct length for this symbol
+        cp_length = self._get_cp_length(symbol_idx)
+        cp_signal = np.concatenate([time_signal[-cp_length:], time_signal])
         
         return cp_signal
     
     def generate_baseband(self, **kwargs):
-        """Generate LTE OFDM baseband signal"""
-        # Calculate number of OFDM symbols needed
-        symbol_duration = self.ofdm_symbol_time
-        num_ofdm_symbols = int(self.duration / symbol_duration)
-        
-        # Generate signal
+        """
+        Generate LTE OFDM baseband signal following 3GPP frame structure
+        """
         signal = []
+        symbol_count = 0
         
-        for _ in range(num_ofdm_symbols):
-            # Generate data symbols for this OFDM symbol
-            data_symbols = self.generate_qam_symbols(self.num_subcarriers)
+        # Calculate symbols needed to fill duration
+        # LTE frame structure: 10ms frame = 10 subframes = 20 slots = 140 symbols (normal CP)
+        total_samples_needed = self.num_samples
+        current_samples = 0
+        
+        while current_samples < total_samples_needed:
+            # Generate one slot (7 OFDM symbols with normal CP)
+            for symbol_idx in range(self.symbols_per_slot):
+                # Generate data symbols for this OFDM symbol
+                data_symbols = self.generate_qam_symbols(self.num_subcarriers)
+                
+                # Generate OFDM symbol with appropriate CP
+                ofdm_symbol = self.generate_ofdm_symbol(data_symbols, symbol_idx)
+                signal.extend(ofdm_symbol)
+                
+                current_samples += len(ofdm_symbol)
+                symbol_count += 1
+                
+                # Break if we have enough samples
+                if current_samples >= total_samples_needed:
+                    break
             
-            # Generate OFDM symbol
-            ofdm_symbol = self.generate_ofdm_symbol(data_symbols)
-            signal.extend(ofdm_symbol)
+            if current_samples >= total_samples_needed:
+                break
         
         signal = np.array(signal)
         
-        # Truncate or pad to desired length
+        # Truncate to exact desired length
         if len(signal) > self.num_samples:
             signal = signal[:self.num_samples]
         elif len(signal) < self.num_samples:
-            signal = np.pad(signal, (0, self.num_samples - len(signal)))
+            # Pad with zeros if needed
+            signal = np.pad(signal, (0, self.num_samples - len(signal)), mode='constant')
         
+        # Normalize power
+        signal_power = np.mean(np.abs(signal)**2)
+        if signal_power > 0:
+            signal = signal / np.sqrt(signal_power)
+            
         return signal
     
     def get_carrier_frequencies(self):

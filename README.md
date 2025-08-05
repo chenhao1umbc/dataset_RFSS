@@ -88,17 +88,20 @@ mixed_signal, metadata = mixer.mix_signals(duration=0.005)
 ## 🔬 Research Applications
 
 ### Machine Learning
+
 - **Automatic Modulation Classification**: 94.2% accuracy at 10 dB SNR
 - **Signal Source Separation**: 89.7% success in 3-signal scenarios
 - **Spectrum Sensing**: 96.8% detection accuracy for cognitive radio
 
 ### Algorithm Development
+
 - MIMO processing algorithm evaluation
 - Interference mitigation techniques
 - Channel estimation and equalization
 - Beamforming and precoding research
 
 ### Standards Development
+
 - 5G-LTE coexistence analysis
 - Cross-standard interference studies
 - Protocol testing and validation
@@ -118,16 +121,19 @@ graph TB
 ### Core Components
 
 1. **Signal Generation Module**
+
    - Standards-compliant 2G/3G/4G/5G generators
    - Accurate modulation and frame structures
    - Configurable power and bandwidth
 
 2. **Channel Modeling Module**
+
    - Multipath, Rayleigh/Rician fading
    - AWGN with precise SNR control
    - Realistic propagation environments
 
 3. **MIMO Processing Module**
+
    - 2×2 to 16×16 antenna configurations
    - Spatial correlation modeling
    - Linear processing techniques (ZF, MMSE, MRT)
@@ -140,11 +146,11 @@ graph TB
 ## 📈 Performance Benchmarks
 
 | Standard | Generation Speed | Memory Usage | 3GPP Compliance |
-|----------|------------------|--------------|-----------------|
-| GSM      | 2500× real-time  | 0.8 MB/10ms  | 98.5%          |
-| UMTS     | 1800× real-time  | 1.5 MB/10ms  | 97.2%          |
-| LTE      | 1200× real-time  | 2.4 MB/10ms  | 98.9%          |
-| 5G NR    | 800× real-time   | 9.8 MB/10ms  | 97.5%          |
+| -------- | ---------------- | ------------ | --------------- |
+| GSM      | 2500× real-time  | 0.8 MB/10ms  | 98.5%           |
+| UMTS     | 1800× real-time  | 1.5 MB/10ms  | 97.2%           |
+| LTE      | 1200× real-time  | 2.4 MB/10ms  | 98.9%           |
+| 5G NR    | 800× real-time   | 9.8 MB/10ms  | 97.5%           |
 
 ## 🧪 Testing and Validation
 
@@ -164,11 +170,11 @@ python examples/complete_demo.py
 If you use this dataset in your research, please cite our paper:
 
 ```bibtex
-@article{rfss2024,
+@article{rfss2025,
     title={A Comprehensive Multi-Standard RF Signal Dataset for Source Separation Research},
-    author={Your Name and Co-authors},
+    author={Hao Chen and Rui Jin and Dayuan Tan},
     journal={IEEE Transactions on Wireless Communications},
-    year={2024},
+    year={2025},
     volume={XX},
     number={X},
     pages={XXX-XXX},
@@ -205,12 +211,14 @@ pre-commit install
 ## 📋 Roadmap
 
 ### Version 1.1 (Q2 2024)
+
 - [ ] 6G research signal support
 - [ ] mmWave channel models
 - [ ] GPU acceleration with CUDA
 - [ ] Real-time SDR integration
 
 ### Version 1.2 (Q4 2024)
+
 - [ ] IoT/M2M standards (NB-IoT, Cat-M1)
 - [ ] WiFi/Bluetooth coexistence
 - [ ] 3D channel modeling
@@ -228,6 +236,7 @@ pre-commit install
 This project is licensed under the [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/) - see the [LICENSE](LICENSE) file for details.
 
 ### License Summary
+
 - ✅ Commercial use allowed
 - ✅ Distribution allowed
 - ✅ Modification allowed

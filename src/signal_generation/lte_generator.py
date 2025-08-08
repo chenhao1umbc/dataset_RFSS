@@ -4,6 +4,7 @@ LTE (4G) signal generator
 import numpy as np
 from src.signal_generation.base_generator import BaseSignalGenerator
 from src.utils.config_loader import get_standard_specs
+from src.utils.modulation import ModulationSchemes
 
 
 class LTEGenerator(BaseSignalGenerator):
@@ -76,39 +77,20 @@ class LTEGenerator(BaseSignalGenerator):
         Generate QAM symbols based on modulation scheme
         Following 3GPP TS 36.211 Section 7.1 for constellation mapping
         """
-        if self.modulation == 'QPSK':
-            # 3GPP TS 36.211 Table 7.1.2-1: QPSK modulation
-            constellation = np.array([
-                1+1j, 1-1j, -1+1j, -1-1j
-            ]) / np.sqrt(2)
-            
-        elif self.modulation == '16QAM':
-            # 3GPP TS 36.211 Table 7.1.3-1: 16QAM modulation
-            constellation = np.array([
-                1+1j, 1+3j, 3+1j, 3+3j,
-                1-1j, 1-3j, 3-1j, 3-3j,
-                -1+1j, -1+3j, -3+1j, -3+3j,
-                -1-1j, -1-3j, -3-1j, -3-3j
-            ]) / np.sqrt(10)
-            
-        elif self.modulation == '64QAM':
-            # 3GPP TS 36.211 Table 7.1.4-1: 64QAM modulation
-            constellation = []
-            for i in [-7, -5, -3, -1, 1, 3, 5, 7]:
-                for q in [-7, -5, -3, -1, 1, 3, 5, 7]:
-                    constellation.append(i + 1j*q)
-            constellation = np.array(constellation) / np.sqrt(42)
-            
-        elif self.modulation == '256QAM':
-            # 3GPP TS 36.211 Table 7.1.5-1: 256QAM modulation
-            constellation = []
-            for i in [-15, -13, -11, -9, -7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15]:
-                for q in [-15, -13, -11, -9, -7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15]:
-                    constellation.append(i + 1j*q)
-            constellation = np.array(constellation) / np.sqrt(170)
-            
-        else:
+        # Map modulation string to order
+        modulation_order_map = {
+            'QPSK': 4,
+            '16QAM': 16,
+            '64QAM': 64,
+            '256QAM': 256
+        }
+        
+        if self.modulation not in modulation_order_map:
             raise ValueError(f"Unsupported modulation: {self.modulation}")
+        
+        # Use shared modulation utility
+        modulation_order = modulation_order_map[self.modulation]
+        constellation = ModulationSchemes.generate_qam_constellation(modulation_order)
         
         # Generate random symbols
         symbol_indices = np.random.randint(0, len(constellation), num_symbols)

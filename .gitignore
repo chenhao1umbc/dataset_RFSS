@@ -219,3 +219,6 @@ Thumbs.db
 *.temp
 temp/
 tmp/
+
+# Claude Code guidance file (contains development context)
+CLAUDE.md

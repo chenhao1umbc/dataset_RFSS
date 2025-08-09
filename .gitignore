@@ -186,6 +186,7 @@ data/processed/*.hdf5
 *.rf
 *.iq
 
+*.pdf
 # Generated figures
 papers/figures/*.pdf
 papers/figures/*.png

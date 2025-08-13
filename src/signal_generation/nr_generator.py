@@ -4,6 +4,8 @@
 import numpy as np
 from src.signal_generation.base_generator import BaseSignalGenerator
 from src.utils.config_loader import get_standard_specs
+from src.utils.modulation import ModulationSchemes
+from src.utils.signal_utils import normalize_power
 
 
 class NRGenerator(BaseSignalGenerator):
@@ -139,53 +141,22 @@ class NRGenerator(BaseSignalGenerator):
         return rb_table.get(self.numerology, {}).get(self.bandwidth_mhz, 133)
     
     def generate_qam_symbols(self, num_symbols):
-        """
-        Generate QAM symbols based on modulation scheme
-        Following 3GPP TS 38.211 Section 5.1 for constellation mapping
-        """
-        if self.modulation == 'QPSK':
-            # 3GPP TS 38.211 Table 5.1.2-1: QPSK modulation
-            constellation = np.array([
-                1+1j, 1-1j, -1+1j, -1-1j
-            ]) / np.sqrt(2)
-            
-        elif self.modulation == '16QAM':
-            # 3GPP TS 38.211 Table 5.1.3-1: 16QAM modulation
-            constellation = np.array([
-                1+1j, 1+3j, 3+1j, 3+3j,
-                1-1j, 1-3j, 3-1j, 3-3j,
-                -1+1j, -1+3j, -3+1j, -3+3j,
-                -1-1j, -1-3j, -3-1j, -3-3j
-            ]) / np.sqrt(10)
-            
-        elif self.modulation == '64QAM':
-            # 3GPP TS 38.211 Table 5.1.4-1: 64QAM modulation
-            constellation = []
-            for i in [-7, -5, -3, -1, 1, 3, 5, 7]:
-                for q in [-7, -5, -3, -1, 1, 3, 5, 7]:
-                    constellation.append(i + 1j*q)
-            constellation = np.array(constellation) / np.sqrt(42)
-            
-        elif self.modulation == '256QAM':
-            # 3GPP TS 38.211 Table 5.1.5-1: 256QAM modulation
-            constellation = []
-            for i in [-15, -13, -11, -9, -7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15]:
-                for q in [-15, -13, -11, -9, -7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15]:
-                    constellation.append(i + 1j*q)
-            constellation = np.array(constellation) / np.sqrt(170)
-            
-        elif self.modulation == '1024QAM':
-            # 3GPP TS 38.211 Table 5.1.6-1: 1024QAM modulation
-            constellation = []
-            symbols = [-31, -29, -27, -25, -23, -21, -19, -17, -15, -13, -11, -9, -7, -5, -3, -1,
-                      1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]
-            for i in symbols:
-                for q in symbols:
-                    constellation.append(i + 1j*q)
-            constellation = np.array(constellation) / np.sqrt(682)
-            
-        else:
+        """Generate QAM symbols using shared modulation utilities"""
+        # Map modulation names to constellation orders
+        modulation_orders = {
+            'QPSK': 4,
+            '16QAM': 16, 
+            '64QAM': 64,
+            '256QAM': 256,
+            '1024QAM': 1024
+        }
+        
+        if self.modulation not in modulation_orders:
             raise ValueError(f"Unsupported modulation: {self.modulation}")
+        
+        # Use shared constellation generation
+        order = modulation_orders[self.modulation]
+        constellation = ModulationSchemes.generate_qam_constellation(order)
         
         # Generate random symbols
         symbol_indices = np.random.randint(0, len(constellation), num_symbols)
@@ -271,6 +242,9 @@ class NRGenerator(BaseSignalGenerator):
             signal = signal[:self.num_samples]
         elif len(signal) < self.num_samples:
             signal = np.pad(signal, (0, self.num_samples - len(signal)))
+        
+        # Apply power normalization using shared utilities
+        signal = normalize_power(signal, target_power=1.0)
         
         return signal
     

@@ -4,6 +4,8 @@ UMTS (3G) signal generator with CDMA spreading
 import numpy as np
 from src.signal_generation.base_generator import BaseSignalGenerator
 from src.utils.config_loader import get_standard_specs
+from src.utils.modulation import ModulationSchemes
+from src.utils.signal_utils import normalize_power
 
 
 class UMTSGenerator(BaseSignalGenerator):
@@ -67,17 +69,20 @@ class UMTSGenerator(BaseSignalGenerator):
         return scrambling
     
     def generate_data_symbols(self, num_symbols):
-        """Generate QPSK data symbols"""
+        """Generate QPSK data symbols using shared modulation utilities"""
         # Generate random bits
         bits = np.random.randint(0, 2, 2 * num_symbols)
         
-        # QPSK mapping
-        I_bits = bits[::2] * 2 - 1  # Convert 0,1 to -1,1
-        Q_bits = bits[1::2] * 2 - 1
+        # Use shared QPSK constellation
+        qpsk_constellation = ModulationSchemes.generate_qam_constellation(4)
         
-        symbols = (I_bits + 1j * Q_bits) / np.sqrt(2)
+        # Map bit pairs to QPSK symbols
+        symbols = []
+        for i in range(0, len(bits), 2):
+            bit_pair = bits[i] * 2 + bits[i+1]  # Convert to 0,1,2,3
+            symbols.append(qpsk_constellation[bit_pair])
         
-        return symbols
+        return np.array(symbols)
     
     def apply_spreading(self, data_symbols, spreading_codes, user_index=0):
         """Apply spreading to data symbols"""
@@ -155,7 +160,7 @@ class UMTSGenerator(BaseSignalGenerator):
                 min_len = min(len(combined_signal), len(shaped_signal))
                 combined_signal = combined_signal[:min_len] + shaped_signal[:min_len]
         
-        # Normalize by number of users
+        # Normalize by number of users and apply power normalization
         if self.num_users > 1:
             combined_signal = combined_signal / np.sqrt(self.num_users)
         
@@ -164,6 +169,9 @@ class UMTSGenerator(BaseSignalGenerator):
             combined_signal = combined_signal[:self.num_samples]
         elif len(combined_signal) < self.num_samples:
             combined_signal = np.pad(combined_signal, (0, self.num_samples - len(combined_signal)))
+        
+        # Apply power normalization using shared utilities
+        combined_signal = normalize_power(combined_signal, target_power=1.0)
         
         return combined_signal
     

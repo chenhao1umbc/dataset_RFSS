@@ -2,7 +2,6 @@
 Signal quality metrics and validation tools
 """
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy import signal
 from typing import Dict, Tuple, Optional
 
@@ -196,115 +195,98 @@ class StandardsValidator:
     """Validate signals against cellular standards"""
     
     def __init__(self):
-        """Initialize standards validator"""
-        pass
+        """Initialize standards validator with signal specifications"""
+        self.standard_specs = {
+            'gsm': {
+                'bandwidth': 200e3,  # 200 kHz
+                'papr_range': [0, 2],  # dB (GMSK has low PAPR)
+                'bw_tolerance': 0.2
+            },
+            'umts': {
+                'bandwidth': 5e6,  # 5 MHz
+                'papr_range': [3, 8],  # dB (CDMA has moderate PAPR)
+                'bw_tolerance': 0.3
+            },
+            'lte': {
+                'bandwidth': None,  # Variable, passed as parameter
+                'papr_range': [6, 15],  # dB (OFDM has higher PAPR)
+                'bw_tolerance': 0.3
+            },
+            'nr': {
+                'bandwidth': None,  # Variable, passed as parameter
+                'papr_range': [8, 18],  # dB (OFDM with high-order QAM)
+                'bw_tolerance': 0.3
+            }
+        }
     
-    def validate_gsm_signal(self, signal_data, sample_rate):
-        """Validate GSM signal characteristics"""
-        analyzer = SignalAnalyzer(sample_rate)
+    def validate_signal(self, signal_data, sample_rate, signal_type, bandwidth_mhz=None):
+        """
+        Universal signal validation method for all cellular standards
         
-        # Expected GSM parameters
-        expected_bw = 200e3  # 200 kHz
-        expected_papr_max = 2  # dB (GMSK has low PAPR)
+        Args:
+            signal_data: Complex baseband signal
+            sample_rate: Sampling rate in Hz
+            signal_type: Signal type ('gsm', 'umts', 'lte', 'nr')
+            bandwidth_mhz: Expected bandwidth in MHz (required for LTE/NR)
+        """
+        if signal_type.lower() not in self.standard_specs:
+            raise ValueError(f"Unsupported signal type: {signal_type}")
+        
+        analyzer = SignalAnalyzer(sample_rate)
+        spec = self.standard_specs[signal_type.lower()]
+        
+        # Get expected bandwidth
+        if spec['bandwidth'] is None:
+            if bandwidth_mhz is None:
+                raise ValueError(f"{signal_type} requires bandwidth_mhz parameter")
+            expected_bw = bandwidth_mhz * 1e6
+        else:
+            expected_bw = spec['bandwidth']
         
         # Calculate metrics
         power_metrics = analyzer.calculate_power_metrics(signal_data)
         bw_metrics = analyzer.calculate_bandwidth(signal_data)
         
-        # Validation results
+        # Validate bandwidth
+        bw_error = abs(bw_metrics['bandwidth'] - expected_bw) / expected_bw
+        bandwidth_valid = bw_error < spec['bw_tolerance']
+        
+        # Validate PAPR
+        measured_papr = power_metrics['papr_db']
+        papr_min, papr_max = spec['papr_range']
+        papr_valid = papr_min <= measured_papr <= papr_max
+        
+        # Compile results
         results = {
-            'bandwidth_valid': abs(bw_metrics['bandwidth'] - expected_bw) / expected_bw < 0.2,
-            'papr_valid': power_metrics['papr_db'] <= expected_papr_max,
+            'bandwidth_valid': bandwidth_valid,
+            'papr_valid': papr_valid,
             'measured_bandwidth': bw_metrics['bandwidth'],
             'expected_bandwidth': expected_bw,
-            'measured_papr': power_metrics['papr_db'],
-            'expected_papr_max': expected_papr_max
+            'measured_papr': measured_papr,
+            'expected_papr_range': spec['papr_range'],
+            'signal_type': signal_type.upper()
         }
         
-        results['overall_valid'] = results['bandwidth_valid'] and results['papr_valid']
+        results['overall_valid'] = bandwidth_valid and papr_valid
         
         return results
+    
+    # Convenience methods for backward compatibility
+    def validate_gsm_signal(self, signal_data, sample_rate):
+        """Validate GSM signal characteristics"""
+        return self.validate_signal(signal_data, sample_rate, 'gsm')
     
     def validate_lte_signal(self, signal_data, sample_rate, expected_bw_mhz=20):
         """Validate LTE signal characteristics"""
-        analyzer = SignalAnalyzer(sample_rate)
-        
-        # Expected LTE parameters
-        expected_bw = expected_bw_mhz * 1e6
-        expected_papr_min = 6  # dB (OFDM has higher PAPR)
-        expected_papr_max = 15  # dB
-        
-        # Calculate metrics
-        power_metrics = analyzer.calculate_power_metrics(signal_data)
-        bw_metrics = analyzer.calculate_bandwidth(signal_data)
-        
-        # Validation results
-        results = {
-            'bandwidth_valid': abs(bw_metrics['bandwidth'] - expected_bw) / expected_bw < 0.3,
-            'papr_valid': expected_papr_min <= power_metrics['papr_db'] <= expected_papr_max,
-            'measured_bandwidth': bw_metrics['bandwidth'],
-            'expected_bandwidth': expected_bw,
-            'measured_papr': power_metrics['papr_db'],
-            'expected_papr_range': [expected_papr_min, expected_papr_max]
-        }
-        
-        results['overall_valid'] = results['bandwidth_valid'] and results['papr_valid']
-        
-        return results
+        return self.validate_signal(signal_data, sample_rate, 'lte', expected_bw_mhz)
     
     def validate_umts_signal(self, signal_data, sample_rate):
         """Validate UMTS signal characteristics"""
-        analyzer = SignalAnalyzer(sample_rate)
-        
-        # Expected UMTS parameters
-        expected_bw = 5e6  # 5 MHz
-        expected_papr_min = 3  # dB (CDMA has moderate PAPR)
-        expected_papr_max = 8  # dB
-        
-        # Calculate metrics
-        power_metrics = analyzer.calculate_power_metrics(signal_data)
-        bw_metrics = analyzer.calculate_bandwidth(signal_data)
-        
-        # Validation results
-        results = {
-            'bandwidth_valid': abs(bw_metrics['bandwidth'] - expected_bw) / expected_bw < 0.3,
-            'papr_valid': expected_papr_min <= power_metrics['papr_db'] <= expected_papr_max,
-            'measured_bandwidth': bw_metrics['bandwidth'],
-            'expected_bandwidth': expected_bw,
-            'measured_papr': power_metrics['papr_db'],
-            'expected_papr_range': [expected_papr_min, expected_papr_max]
-        }
-        
-        results['overall_valid'] = results['bandwidth_valid'] and results['papr_valid']
-        
-        return results
+        return self.validate_signal(signal_data, sample_rate, 'umts')
     
     def validate_nr_signal(self, signal_data, sample_rate, expected_bw_mhz=100):
         """Validate 5G NR signal characteristics"""
-        analyzer = SignalAnalyzer(sample_rate)
-        
-        # Expected NR parameters
-        expected_bw = expected_bw_mhz * 1e6
-        expected_papr_min = 8  # dB (OFDM with high-order QAM)
-        expected_papr_max = 18  # dB
-        
-        # Calculate metrics
-        power_metrics = analyzer.calculate_power_metrics(signal_data)
-        bw_metrics = analyzer.calculate_bandwidth(signal_data)
-        
-        # Validation results
-        results = {
-            'bandwidth_valid': abs(bw_metrics['bandwidth'] - expected_bw) / expected_bw < 0.3,
-            'papr_valid': expected_papr_min <= power_metrics['papr_db'] <= expected_papr_max,
-            'measured_bandwidth': bw_metrics['bandwidth'],
-            'expected_bandwidth': expected_bw,
-            'measured_papr': power_metrics['papr_db'],
-            'expected_papr_range': [expected_papr_min, expected_papr_max]
-        }
-        
-        results['overall_valid'] = results['bandwidth_valid'] and results['papr_valid']
-        
-        return results
+        return self.validate_signal(signal_data, sample_rate, 'nr', expected_bw_mhz)
 
 
 class ValidationReport:

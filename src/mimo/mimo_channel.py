@@ -39,29 +39,32 @@ class MIMOChannel:
         
         return R
     
+    def _apply_spatial_correlation(self, H_iid):
+        """Apply spatial correlation to channel matrix (shared method)"""
+        if self.correlation == 'low':
+            return H_iid
+        
+        # Generate correlation matrices (cached for efficiency)
+        if not hasattr(self, '_R_tx_sqrt') or not hasattr(self, '_R_rx_sqrt'):
+            R_tx = self.generate_correlation_matrix(self.num_tx, self.correlation_coeff)
+            R_rx = self.generate_correlation_matrix(self.num_rx, self.correlation_coeff)
+            
+            # Cache Cholesky decompositions for reuse
+            self._R_tx_sqrt = np.linalg.cholesky(R_tx)
+            self._R_rx_sqrt = np.linalg.cholesky(R_rx)
+        
+        # Apply correlation: H = R_rx^(1/2) * H_iid * R_tx^(1/2)
+        return self._R_rx_sqrt @ H_iid @ self._R_tx_sqrt.T
+    
     def generate_channel_matrix(self, num_samples=1):
         """Generate MIMO channel matrix"""
         if num_samples == 1:
             # Single channel realization
-            # Independent Rayleigh fading
             H_iid = (np.random.randn(self.num_rx, self.num_tx) + 
                     1j * np.random.randn(self.num_rx, self.num_tx)) / np.sqrt(2)
             
-            # Apply spatial correlation if needed
-            if self.correlation != 'low':
-                # Transmit correlation
-                R_tx = self.generate_correlation_matrix(self.num_tx, self.correlation_coeff)
-                # Receive correlation  
-                R_rx = self.generate_correlation_matrix(self.num_rx, self.correlation_coeff)
-                
-                # Apply correlation: H = R_rx^(1/2) * H_iid * R_tx^(1/2)
-                R_tx_sqrt = np.linalg.cholesky(R_tx)
-                R_rx_sqrt = np.linalg.cholesky(R_rx)
-                
-                H = R_rx_sqrt @ H_iid @ R_tx_sqrt.T
-            else:
-                H = H_iid
-            
+            # Apply spatial correlation using shared method
+            H = self._apply_spatial_correlation(H_iid)
             self.H = H
             return H
         
@@ -72,17 +75,8 @@ class MIMOChannel:
                 H_iid = (np.random.randn(self.num_rx, self.num_tx) + 
                         1j * np.random.randn(self.num_rx, self.num_tx)) / np.sqrt(2)
                 
-                if self.correlation != 'low':
-                    R_tx = self.generate_correlation_matrix(self.num_tx, self.correlation_coeff)
-                    R_rx = self.generate_correlation_matrix(self.num_rx, self.correlation_coeff)
-                    
-                    R_tx_sqrt = np.linalg.cholesky(R_tx)
-                    R_rx_sqrt = np.linalg.cholesky(R_rx)
-                    
-                    H = R_rx_sqrt @ H_iid @ R_tx_sqrt.T
-                else:
-                    H = H_iid
-                
+                # Apply spatial correlation using shared method
+                H = self._apply_spatial_correlation(H_iid)
                 H_sequence.append(H)
             
             return np.array(H_sequence)

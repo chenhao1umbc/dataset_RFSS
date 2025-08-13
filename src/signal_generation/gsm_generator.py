@@ -4,6 +4,7 @@ GSM (2G) signal generator
 import numpy as np
 from src.signal_generation.base_generator import BaseSignalGenerator
 from src.utils.config_loader import get_standard_specs
+from src.utils.signal_utils import normalize_power
 
 
 class GSMGenerator(BaseSignalGenerator):
@@ -84,6 +85,9 @@ class GSMGenerator(BaseSignalGenerator):
         elif len(signal) < self.num_samples:
             # Pad with zeros if needed
             signal = np.pad(signal, (0, self.num_samples - len(signal)))
+        
+        # Apply power normalization using shared utilities
+        signal = normalize_power(signal, target_power=1.0)
         
         return signal
     

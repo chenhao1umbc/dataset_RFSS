@@ -216,7 +216,7 @@ def create_statistical_analysis_figure(stats, save_path):
     plt.suptitle('RFSS Dataset: Comprehensive Statistical Characterization', 
                  fontsize=18, fontweight='bold', y=0.98)
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(save_path, dpi=150, bbox_inches='tight', facecolor='white')
     plt.close()
     print(f"Statistical analysis saved to: {save_path}")
 
@@ -357,7 +357,7 @@ def create_dataset_overview_figure(save_path):
     plt.suptitle('RFSS Dataset: Comprehensive Overview and Validation', 
                  fontsize=18, fontweight='bold', y=0.98)
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(save_path, dpi=150, bbox_inches='tight', facecolor='white')
     plt.close()
     print(f"Dataset overview saved to: {save_path}")
 

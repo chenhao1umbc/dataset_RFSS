@@ -10,10 +10,7 @@
 \title{RFSS: A Comprehensive Multi-Standard RF Signal Source Separation Dataset with Advanced Channel Modeling}
 
 \author{
-Research Team \\
-Department of Electrical and Computer Engineering \\
-University \\
-\texttt{email@university.edu}
+Hao Chen, Rui Jin, and  Dayuan Tan
 }
 
 \date{\today}
@@ -34,12 +31,12 @@ The proliferation of wireless communication technologies has created increasingl
 
 The complexity of modern RF environments is further amplified by the diverse modulation schemes, bandwidth allocations, and power control mechanisms employed across different cellular generations. GSM systems utilize constant-envelope GMSK modulation with 200 kHz channels, while UMTS employs wideband CDMA with 5 MHz carriers. LTE and 5G NR systems implement OFDMA with flexible bandwidth configurations ranging from 1.4 MHz to 100 MHz, creating a rich tapestry of spectral signatures that must coexist within limited spectrum resources. 
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.95\textwidth]{../figures/stft_spectrograms.pdf}
+\includegraphics[width=0.95\columnwidth]{../figures/stft_spectrograms.pdf}
 \caption{STFT spectrograms of multi-standard RF signals showing time-frequency characteristics. Individual spectrograms demonstrate the unique spectral signatures of GSM, UMTS, LTE, and 5G NR signals, revealing their distinct modulation schemes and bandwidth utilization patterns essential for source separation research.}
 \label{fig:signal_spectrograms}
-\end{figure*}
+\end{figure}
 
 This heterogeneous landscape presents fundamental challenges for wireless system design, spectrum management, and interference mitigation \cite{haykin2005cognitive,goldsmith2009breaking}. The emergence of machine learning applications in wireless communications has intensified the demand for comprehensive, realistic RF datasets that accurately represent multi-standard coexistence scenarios \cite{oshea2017introduction,west2017deep}.
 

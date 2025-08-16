@@ -191,7 +191,7 @@ def create_enhanced_framework_figure(save_path):
     ax_qual.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(save_path, dpi=150, bbox_inches='tight', facecolor='white')
     plt.close()
     print(f"Enhanced framework figure saved to: {save_path}")
 
@@ -275,7 +275,7 @@ def create_signal_comparison_figure(save_path):
     plt.suptitle('Multi-Standard RF Signal Characteristics: I/Q Analysis', 
                  fontsize=16, fontweight='bold')
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(save_path, dpi=150, bbox_inches='tight', facecolor='white')
     plt.close()
     print(f"Signal comparison figure saved to: {save_path}")
 

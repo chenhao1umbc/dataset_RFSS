@@ -69,11 +69,11 @@ def generate_signal_samples(duration_ms=10, sample_rate=30.72e6):
 def create_stft_analysis(signals, sample_rate, save_path):
     """Create comprehensive STFT analysis showing time-frequency characteristics."""
     
-    fig = plt.figure(figsize=(16, 12))
+    fig = plt.figure(figsize=(12, 9))
     
-    # STFT parameters for good time-frequency resolution
-    nperseg = 1024  # Good frequency resolution
-    noverlap = 512  # 50% overlap for smooth time resolution
+    # STFT parameters optimized for reasonable file size
+    nperseg = 512   # Reduced for smaller file size
+    noverlap = 256  # 50% overlap for smooth time resolution
     
     signal_names = list(signals.keys())
     n_signals = len(signal_names)
@@ -93,9 +93,9 @@ def create_stft_analysis(signals, sample_rate, save_path):
         # Convert to dB scale
         magnitude_db = 20 * np.log10(np.abs(Zxx_shifted) + 1e-12)
         
-        # Create spectrogram
+        # Create spectrogram with rasterization for smaller file size
         im = ax.pcolormesh(t * 1000, f_mhz, magnitude_db, 
-                          shading='gouraud', cmap='viridis')
+                          shading='gouraud', cmap='viridis', rasterized=True)
         
         ax.set_title(f'{name} Signal Spectrogram', fontweight='bold')
         ax.set_xlabel('Time (ms)')
@@ -110,7 +110,7 @@ def create_stft_analysis(signals, sample_rate, save_path):
         ax.set_ylim([-15, 15])  # ±15 MHz view
     
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(save_path, dpi=150, bbox_inches='tight', facecolor='white')
     plt.close()
     print(f"STFT analysis saved to: {save_path}")
 
@@ -153,7 +153,7 @@ def create_mixed_signal_analysis(signals, sample_rate, save_path):
         magnitude_db = 20 * np.log10(np.abs(Zxx_shifted) + 1e-12)
         
         im = ax.pcolormesh(t * 1000, f_mhz, magnitude_db,
-                          shading='gouraud', cmap='viridis')
+                          shading='gouraud', cmap='viridis', rasterized=True)
         
         ax.set_title(f'{name}', fontweight='bold')
         ax.set_xlabel('Time (ms)')
@@ -174,7 +174,7 @@ def create_mixed_signal_analysis(signals, sample_rate, save_path):
     magnitude_db = 20 * np.log10(np.abs(Zxx_shifted) + 1e-12)
     
     im = ax.pcolormesh(t * 1000, f_mhz, magnitude_db,
-                      shading='gouraud', cmap='plasma')
+                      shading='gouraud', cmap='plasma', rasterized=True)
     
     ax.set_title('Multi-Standard Mixed Signal', fontweight='bold', color='red')
     ax.set_xlabel('Time (ms)')
@@ -188,7 +188,7 @@ def create_mixed_signal_analysis(signals, sample_rate, save_path):
     plt.suptitle('Multi-Standard RF Signal Source Separation Challenge', 
                  fontsize=18, fontweight='bold')
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(save_path, dpi=150, bbox_inches='tight', facecolor='white')
     plt.close()
     print(f"Mixed signal analysis saved to: {save_path}")
 
@@ -225,7 +225,7 @@ def create_constellation_diagrams(signals, save_path):
         ax.set_ylim(-max_val, max_val)
     
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(save_path, dpi=150, bbox_inches='tight', facecolor='white')
     plt.close()
     print(f"Constellation diagrams saved to: {save_path}")
 

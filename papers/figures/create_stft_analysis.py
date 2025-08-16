@@ -20,18 +20,18 @@ from signal_generation.lte_generator import LTEGenerator
 from signal_generation.nr_generator import NRGenerator
 from mixing.signal_mixer import SignalMixer
 
-# Configure matplotlib for publication quality
+# Configure matplotlib for publication quality with larger fonts
 plt.rcParams.update({
-    'font.size': 12,
+    'font.size': 16,
     'font.family': 'serif',
     'font.serif': ['Times New Roman'],
-    'axes.labelsize': 14,
-    'axes.titlesize': 16,
-    'xtick.labelsize': 12,
-    'ytick.labelsize': 12,
-    'legend.fontsize': 11,
-    'figure.titlesize': 18,
-    'lines.linewidth': 1.5,
+    'axes.labelsize': 18,
+    'axes.titlesize': 20,
+    'xtick.labelsize': 16,
+    'ytick.labelsize': 16,
+    'legend.fontsize': 15,
+    'figure.titlesize': 22,
+    'lines.linewidth': 2.0,
     'grid.alpha': 0.3
 })
 

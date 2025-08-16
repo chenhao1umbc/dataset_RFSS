@@ -12,18 +12,18 @@ from matplotlib.patches import FancyBboxPatch, ConnectionPatch
 import sys
 import os
 
-# Configure matplotlib for publication quality
+# Configure matplotlib for publication quality with larger fonts
 plt.rcParams.update({
-    'font.size': 10,
+    'font.size': 14,
     'font.family': 'serif',
     'font.serif': ['Times New Roman'],
-    'axes.labelsize': 11,
-    'axes.titlesize': 12,
-    'xtick.labelsize': 9,
-    'ytick.labelsize': 9,
-    'legend.fontsize': 9,
-    'figure.titlesize': 14,
-    'lines.linewidth': 1.5,
+    'axes.labelsize': 16,
+    'axes.titlesize': 18,
+    'xtick.labelsize': 14,
+    'ytick.labelsize': 14,
+    'legend.fontsize': 13,
+    'figure.titlesize': 20,
+    'lines.linewidth': 2.0,
     'grid.alpha': 0.3
 })
 

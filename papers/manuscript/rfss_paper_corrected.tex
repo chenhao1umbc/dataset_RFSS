@@ -23,7 +23,7 @@ University \\
 \maketitle
 
 \begin{abstract}
-The rapid evolution of wireless communication systems has created complex electromagnetic environments where multiple cellular standards (2G/3G/4G/5G) coexist, necessitating advanced signal source separation techniques. We present RFSS (RF Signal Source Separation), a comprehensive open-source dataset containing 52,847 realistic multi-standard RF signal samples with complete 3GPP standards compliance. Our framework generates authentic baseband signals for GSM, UMTS, LTE, and 5G NR with advanced channel modeling including multipath fading, MIMO processing up to 16×16 antennas, and realistic interference scenarios. Experimental validation demonstrates superior performance of CNN-LSTM architectures achieving 26.7 dB SINR improvement in source separation tasks, significantly outperforming traditional ICA (15.2 dB) and NMF (18.3 dB) approaches. The RFSS dataset enables reproducible research in RF source separation, cognitive radio, and machine learning applications while maintaining complete open-source accessibility.
+The rapid evolution of wireless communication systems has created complex electromagnetic environments where multiple cellular standards (2G/3G/4G/5G) coexist, necessitating advanced signal source separation techniques. We present RFSS (RF Signal Source Separation), a comprehensive open-source dataset containing 52,847 realistic multi-standard RF signal samples with complete 3GPP standards compliance. Our framework generates authentic baseband signals for GSM, UMTS, LTE, and 5G NR with advanced channel modeling including multipath fading, MIMO processing up to 8×8 antennas, and realistic interference scenarios. Experimental validation demonstrates superior performance of CNN-LSTM architectures achieving 26.7 dB SINR improvement in source separation tasks, significantly outperforming traditional ICA (15.2 dB) and NMF (18.3 dB) approaches. The RFSS dataset enables reproducible research in RF source separation, cognitive radio, and machine learning applications while maintaining complete open-source accessibility.
 \end{abstract}
 
 \textbf{Keywords:} RF source separation, multi-standard signals, 3GPP compliance, MIMO, machine learning, open source dataset
@@ -55,7 +55,7 @@ To address these research challenges and dataset limitations, we developed the R
 
 The RFSS framework implements a modular architecture designed for scalable multi-standard signal generation with rigorous adherence to official 3GPP specifications \cite{3gpp2018ts45004,3gpp2018ts25211,3gpp2018ts36211,3gpp2020ts38211}. The framework's design philosophy emphasizes extensibility, reproducibility, and computational efficiency while maintaining strict compliance with cellular standards.
 
-The modular architecture consists of four interconnected subsystems: (1) Standards-compliant signal generators that implement the complete physical layer processing chains for each cellular generation, (2) Advanced channel modeling engines that incorporate realistic propagation effects including multipath fading, Doppler shifts, and spatial correlation, (3) MIMO processing modules supporting antenna configurations from 2×2 to 16×16 with configurable spatial correlation patterns, and (4) Comprehensive validation frameworks that ensure signal quality and standards compliance through automated testing protocols.
+The modular architecture consists of four interconnected subsystems: (1) Standards-compliant signal generators that implement the complete physical layer processing chains for each cellular generation, (2) Advanced channel modeling engines that incorporate realistic propagation effects including multipath fading, Doppler shifts, and spatial correlation, (3) MIMO processing modules supporting antenna configurations from 2×2 to 8×8 with configurable spatial correlation patterns, and (4) Comprehensive validation frameworks that ensure signal quality and standards compliance through automated testing protocols.
 
 Each signal generator module operates independently while sharing common utility functions for modulation, pulse shaping, and power normalization. This design enables parallel generation of multiple standards while maintaining consistent signal quality metrics across all generated waveforms. The framework supports both offline batch processing for large-scale dataset generation and real-time operation for interactive research applications. 
 
@@ -79,7 +79,7 @@ s_{GSM}(t) &= \sum_{k} a_k g(t-kT_s) \nonumber \\
 &\quad \times \exp(j2\pi f_c t + j\phi(t))
 \end{align}
 
-where $a_k$ represents differential encoded data bits, $g(t)$ is the Gaussian pulse shaping filter with BT=0.3, $T_s$ is the symbol duration (3.69 $\mu$s), and $\phi(t)$ represents cumulative phase modulation ensuring continuous phase transitions.
+where $a_k$ represents differential encoded data bits, $g(t)$ is the Gaussian pulse shaping filter with BT=0.3, $T_s$ is the symbol duration (3.69 $\mu$s corresponding to 270.833 ksps symbol rate), and $\phi(t)$ represents cumulative phase modulation ensuring continuous phase transitions.
 
 The GSM implementation supports multiple burst types including Normal Bursts (NB), Frequency Correction Bursts (FCB), Synchronization Bursts (SB), and Access Bursts (AB), each with distinct training sequences and guard periods. Channel coding employs convolutional codes with constraint length 5 and rate 1/2, followed by block interleaving to combat burst errors. Validation results demonstrate GSM signals achieve precise 200 kHz bandwidth allocation with PAPR consistently below 2 dB, maintaining the constant envelope property essential for efficient Class-C power amplifier operation and extended battery life in mobile devices.
 
@@ -92,7 +92,7 @@ s_{UMTS}(t) &= \sum_{i=1}^{N_{users}} \sqrt{P_i} \sum_{k} d_i[k] c_i[k] s_i[k] \
 &\quad \times p(t-kT_c)
 \end{align}
 
-where $P_i$ is user power, $d_i[k]$ represents data symbols, $c_i[k]$ is the channelization code, $s_i[k]$ is the scrambling sequence, and $p(t)$ is the chip pulse shaping filter with chip duration $T_c = 260.4$ ns.
+where $P_i$ is user power, $d_i[k]$ represents data symbols, $c_i[k]$ is the channelization code, $s_i[k]$ is the scrambling sequence, and $p(t)$ is the chip pulse shaping filter with chip duration $T_c = 260.4$ ns (corresponding to 3.84 Mcps chip rate).
 
 \subsection{LTE Signal Generation (4G)}
 
@@ -142,7 +142,7 @@ Figure \ref{fig:spectrograms} demonstrates realistic multi-standard coexistence 
 
 \subsection{MIMO Channel Processing}
 
-MIMO channel implementation supports configurations from 2×2 to 16×16 antenna arrays:
+MIMO channel implementation supports configurations from 2×2 to 8×8 antenna arrays:
 
 \begin{equation}
 \mathbf{Y} = \mathbf{H} \mathbf{X} + \mathbf{N}
@@ -232,7 +232,7 @@ The RFSS dataset addresses critical limitations in existing RF datasets through 
 
 Existing RF datasets suffer from several fundamental limitations that constrain their applicability to advanced research. The RadioML dataset, while widely adopted, focuses primarily on modulation classification with limited coverage of cellular standards and lacks realistic multi-standard coexistence scenarios. Commercial solutions such as MATLAB's 5G Toolbox provide comprehensive single-standard generation but lack open-source accessibility and cross-standard integration capabilities. GNU Radio implementations offer partial multi-standard support but with limited 3GPP compliance verification and inconsistent signal quality validation.
 
-\begin{table}[h]
+\begin{table*}[t]
 \centering
 \caption{Comprehensive Dataset Comparison}
 \label{tab:comparison}
@@ -244,7 +244,7 @@ Standards Coverage & 2G/3G/4G/5G & Modulations & Partial 4G & 5G only \\
 \hline
 3GPP Compliance & Full & Partial & Limited & Full \\
 \hline
-MIMO Support & Up to 16×16 & None & Basic & Full \\
+MIMO Support & Up to 8×8 & None & Basic & Full \\
 \hline
 Real-time Generation & 0.5-50× & N/A & 1× & Variable \\
 \hline
@@ -257,7 +257,7 @@ Sample Duration & 1-10 ms & 128 samples & Variable & Configurable \\
 Validation Framework & Comprehensive & Limited & Basic & Extensive \\
 \hline
 \end{tabular}
-\end{table}
+\end{table*}
 
 Table \ref{tab:comparison} demonstrates the unique advantages of RFSS over existing solutions. The comprehensive standards coverage enables research applications that require understanding of multi-standard interference patterns, spectrum sharing protocols, and cognitive radio implementations. The rigorous 3GPP compliance ensures that generated signals accurately represent real-world deployment characteristics, while the extensive MIMO support facilitates advanced spatial processing research.
 

@@ -19,18 +19,18 @@ from signal_generation.umts_generator import UMTSGenerator
 from signal_generation.lte_generator import LTEGenerator
 from signal_generation.nr_generator import NRGenerator
 
-# Configure matplotlib for publication quality
+# Configure matplotlib for publication quality with larger fonts
 plt.rcParams.update({
-    'font.size': 11,
+    'font.size': 15,
     'font.family': 'serif',
     'font.serif': ['Times New Roman'],
-    'axes.labelsize': 12,
-    'axes.titlesize': 14,
-    'xtick.labelsize': 10,
-    'ytick.labelsize': 10,
-    'legend.fontsize': 10,
-    'figure.titlesize': 16,
-    'lines.linewidth': 1.5,
+    'axes.labelsize': 17,
+    'axes.titlesize': 19,
+    'xtick.labelsize': 15,
+    'ytick.labelsize': 15,
+    'legend.fontsize': 14,
+    'figure.titlesize': 21,
+    'lines.linewidth': 2.0,
     'grid.alpha': 0.3
 })
 

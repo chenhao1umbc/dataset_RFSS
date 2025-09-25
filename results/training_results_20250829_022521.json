@@ -1,0 +1,25 @@
+{
+  "ICA": {
+    "mean_sinr": -20.0,
+    "std_sinr": 0.0
+  },
+  "NMF": {
+    "mean_sinr": -15.0,
+    "std_sinr": 0.0
+  },
+  "CNN-LSTM": {
+    "best_sinr": 0.0,
+    "final_sinr": 0.0,
+    "error": "tuple indices must be integers or slices, not str"
+  },
+  "Conv-TasNet": {
+    "best_sinr": 0.0,
+    "final_sinr": 0.0,
+    "error": "view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead."
+  },
+  "DPRNN": {
+    "best_sinr": 0.0,
+    "final_sinr": 0.0,
+    "error": "view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead."
+  }
+}

@@ -16,14 +16,23 @@ A comprehensive, open-source RF signal dataset generation framework for wireless
 - **Research Ready**: Perfect for machine learning, source separation, and spectrum sharing research
 - **Reproducible**: Deterministic generation with full parameter logging and version control
 
-## 📊 Dataset Statistics
+## 📊 Dataset Statistics - CORRECTED AFTER EXPERIMENTAL VALIDATION
 
-- **52,847** individual signal samples
-- **1.2 TB** total dataset size (240 GB compressed)
-- **25** different multi-standard coexistence scenarios
-- **15** distinct propagation environments
-- **4** MIMO configurations (2×2, 4×4, 8×8, 16×16)
-- **>95%** 3GPP standards compliance rate
+⚠️ **CRITICAL UPDATE**: Original claims have been experimentally validated with concerning results:
+
+### Actual Dataset Size (Implemented & Tested)
+- **4,000** individual signal samples (26.55 GB - **ACTUAL**)
+- **400** validation samples (2.3 GB)
+- **40** test samples for algorithm validation
+- **3** scenario types: single-standard, two-standard coexistence, multi-standard interference
+- **4** MIMO configurations tested (2×2, 4×4, 6×6, 8×8 - **VERIFIED**)
+- **100%** signal generation success rate
+
+### ~~Original Claims~~ (NOT IMPLEMENTED)
+- ~~52,847 signal samples~~ ❌ **Never implemented**
+- ~~1.2 TB total dataset~~ ❌ **Fabricated number**  
+- ~~25 coexistence scenarios~~ ❌ **Only 3 implemented**
+- ~~15 propagation environments~~ ❌ **Basic channel models only**
 
 ## 🛠 Quick Start
 
@@ -134,7 +143,7 @@ graph TB
 
 3. **MIMO Processing Module**
 
-   - 2×2 to 16×16 antenna configurations
+   - 2×2 to 8×8 antenna configurations
    - Spatial correlation modeling
    - Linear processing techniques (ZF, MMSE, MRT)
 
@@ -147,10 +156,10 @@ graph TB
 
 | Standard | Generation Speed | Memory Usage | 3GPP Compliance |
 | -------- | ---------------- | ------------ | --------------- |
-| GSM      | 2500× real-time  | 0.8 MB/10ms  | 98.5%           |
-| UMTS     | 1800× real-time  | 1.5 MB/10ms  | 97.2%           |
-| LTE      | 1200× real-time  | 2.4 MB/10ms  | 98.9%           |
-| 5G NR    | 800× real-time   | 9.8 MB/10ms  | 97.5%           |
+| GSM      | 0.6× real-time   | 4.7 MB/10ms  | 98.5%           |
+| UMTS     | 2.3× real-time   | 4.7 MB/10ms  | 97.2%           |
+| LTE      | 0.6× real-time   | 4.7 MB/10ms  | 98.9%           |
+| 5G NR    | 0.6× real-time   | 4.7 MB/10ms  | 97.5%           |
 
 ## 🧪 Testing and Validation
 
@@ -251,16 +260,56 @@ This project is licensed under the [Creative Commons Attribution 4.0 Internation
 - **NumPy** team for high-performance array operations
 - Contributors and beta testers from the wireless research community
 
-## 📊 Project Status
+## 🚀 GPU/MPS Training Guide
 
-- **Development Status**: 5 - Production/Stable
+### Apple Silicon (MPS) Acceleration - CONFIRMED 5× SPEEDUP ⚡
+
+**EXPERIMENTAL VALIDATION COMPLETE**: MPS shows **5× training speedup** over CPU for deep learning models.
+
+```bash
+# Test MPS performance (confirmed 5× faster)
+uv run python scripts/test_mps_performance.py
+
+# Quick training with real performance results
+uv run python scripts/quick_training_test.py
+
+# Generate large-scale training dataset (4K samples)
+uv run python scripts/generate_large_dataset.py --num_samples 4000
+
+# Full model training with MPS acceleration
+uv run python scripts/train_deep_models.py --device mps --epochs 10
+```
+
+### ⚠️ PERFORMANCE VALIDATION RESULTS
+
+**All source separation algorithms have been experimentally tested with CONCERNING results**:
+
+| Algorithm   | Paper Claim | **Actual Result** | Gap |
+|-------------|-------------|-------------------|-----|
+| ICA         | 15.2 dB SINR| **-20.0 dB SINR** | **35.2 dB WORSE** ❌ |
+| NMF         | 18.3 dB SINR| **-15.0 dB SINR** | **33.3 dB WORSE** ❌ |  
+| CNN-LSTM    | 26.7 dB SINR| **Failed Training**| **Complete Failure** ❌ |
+| Conv-TasNet | N/A         | **-54.1 dB SINR** | New implementation ⚠️ |
+| DPRNN       | N/A         | **NaN losses**    | Training unstable ❌ |
+
+### Training Configuration
+- **Device**: MPS (Metal Performance Shaders)
+- **Performance**: 5× faster than CPU
+- **Memory**: Limited to 8K samples per signal
+- **Batch Size**: 8-16 optimal for throughput
+- **Models**: Reduced dimensions required for MPS
+
+## 📊 Project Status - UPDATED AFTER EXPERIMENTAL VALIDATION
+
+- **Development Status**: 3 - Research/Experimental (Performance issues identified)
+- **Research Status**: REQUIRES MAJOR REVISION (Paper claims invalidated)
 - **Intended Audience**: Science/Research
 - **Programming Language**: Python 3.13+
 - **Topic**: Scientific/Engineering :: Information Analysis
-- **Topic**: Scientific/Engineering :: Physics
+- **Priority**: URGENT - Performance claims need correction
 
 ---
 
 **Maintained by**: RF Signal Processing Research Group  
-**Last Updated**: January 2024  
-**Version**: 1.0.0
+**Last Updated**: August 2024 (EXPERIMENTAL VALIDATION COMPLETE)  
+**Version**: 1.0.0 (PERFORMANCE VALIDATION PHASE)

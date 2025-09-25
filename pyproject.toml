@@ -32,6 +32,9 @@ dependencies = [
     "loguru>=0.5.3",
     "seaborn>=0.11.0",
     "plotly>=5.0.0",
+    "torch>=2.7.1",
+    "torchvision>=0.22.1",
+    "torchaudio>=2.7.1",
 ]
 
 [project.optional-dependencies]

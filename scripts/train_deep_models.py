@@ -442,7 +442,7 @@ def main():
         json.dump(json_results, f, indent=2)
     
     print(f"\nResults saved to: {output_file}")
-    print(f"✅ Training experiment completed on {len(mixed_tensors)} samples")
+    print(f"Training experiment completed on {len(mixed_tensors)} samples")
     
     return results
 

@@ -343,7 +343,7 @@ def main():
                 print(f"  🔴 CRITICAL: Actual result is {paper_claim - actual_sinr:.1f} dB WORSE than claimed")
                 print(f"  📝 Recommendation: Update paper to {actual_sinr:.1f} dB or improve implementation")
             elif abs(actual_sinr - paper_claim) < 2:
-                print(f"  ✅ GOOD: Results match paper claims within 2 dB")
+                print(f"  GOOD: Results match paper claims within 2 dB")
             else:
                 print(f"  📝 Recommendation: Update paper claim to {actual_sinr:.1f} dB")
     
@@ -366,7 +366,7 @@ def main():
         
         json.dump(json_results, f, indent=2)
     
-    print(f"\n✅ Results saved to: {output_file}")
+    print(f"\nResults saved to: {output_file}")
     print(f"🔬 Experiment completed on {len(mixed_tensors)} samples with {signal_length} sample signals")
     
     return results

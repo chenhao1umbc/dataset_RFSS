@@ -2,7 +2,7 @@
 
 **Date**: August 29, 2024  
 **Validation Type**: Complete Experimental Verification  
-**Status**: ❌ CRITICAL DISCREPANCIES IDENTIFIED  
+**Status**: CRITICAL DISCREPANCIES IDENTIFIED  
 
 ## Executive Summary
 
@@ -25,28 +25,28 @@ This report documents the complete experimental validation of all performance cl
 
 ## Results: Paper Claims vs. Actual Performance
 
-### ❌ Baseline Algorithms - MASSIVE DISCREPANCIES
+### Baseline Algorithms - MASSIVE DISCREPANCIES
 
 | Algorithm | Paper Claim | Actual Result | Discrepancy | Status |
 |-----------|-------------|---------------|-------------|---------|
-| **ICA**   | **15.2 dB** | **-20.0 dB** | **-35.2 dB** | ❌ **CRITICAL** |
-| **NMF**   | **18.3 dB** | **-15.0 dB** | **-33.3 dB** | ❌ **CRITICAL** |
+| **ICA**   | **15.2 dB** | **-20.0 dB** | **-35.2 dB** | **CRITICAL** |
+| **NMF**   | **18.3 dB** | **-15.0 dB** | **-33.3 dB** | **CRITICAL** |
 
 **Analysis**: Both classical algorithms performed drastically worse than claimed. The paper claims suggest these algorithms work well for RF source separation, but experimental results show they fail completely in realistic scenarios.
 
-### ❌ Deep Learning Models - TRAINING FAILURES
+### Deep Learning Models - TRAINING FAILURES
 
 | Algorithm     | Paper Claim | Actual Result | Status |
 |---------------|-------------|---------------|---------|
-| **CNN-LSTM**  | **26.7 dB** | **Failed Training** | ❌ **COMPLETE FAILURE** |
-| **Conv-TasNet** | *N/A*     | **-54.1 dB** | ⚠️ **POOR PERFORMANCE** |
-| **DPRNN**     | *N/A*       | **NaN losses** | ❌ **TRAINING UNSTABLE** |
+| **CNN-LSTM**  | **26.7 dB** | **Failed Training** | **COMPLETE FAILURE** |
+| **Conv-TasNet** | *N/A*     | **-54.1 dB** | **POOR PERFORMANCE** |
+| **DPRNN**     | *N/A*       | **NaN losses** | **TRAINING UNSTABLE** |
 
 **Analysis**: The flagship CNN-LSTM model completely failed to train, producing infinite loss values. New implementations (Conv-TasNet, DPRNN) show functional training but extremely poor separation performance.
 
 ## Hardware Acceleration Results
 
-### ✅ MPS (Apple Silicon) Performance - CONFIRMED
+### MPS (Apple Silicon) Performance - CONFIRMED
 
 - **Speedup**: **5.0× faster** than CPU for PyTorch training
 - **Batch Size Optimization**: 8-16 samples optimal for throughput  
@@ -55,17 +55,17 @@ This report documents the complete experimental validation of all performance cl
 
 ## Critical Issues Identified
 
-### 1. Fabricated Performance Claims ❌
+### 1. Fabricated Performance Claims
 - **ICA/NMF**: Claims are 30+ dB better than achievable
 - **CNN-LSTM**: Model fails to train with current implementation
 - **Evidence**: No experimental validation was performed in original work
 
-### 2. Dataset Size Misrepresentation ❌
+### 2. Dataset Size Misrepresentation
 - **Paper Claims**: 52,847 samples, 1.2 TB dataset
 - **Actual Implementation**: 4,000 samples, 26.55 GB dataset
 - **Evidence**: Large dataset generation scripts were never implemented
 
-### 3. Implementation Gaps ❌
+### 3. Implementation Gaps
 - **Missing Models**: CNN-LSTM implementation has fundamental training issues
 - **Poor Architecture**: Deep learning models significantly underperform
 - **Unstable Training**: DPRNN shows NaN losses, indicating design problems
@@ -98,14 +98,14 @@ This report documents the complete experimental validation of all performance cl
 
 ## Technical Implementation Status
 
-### ✅ Successfully Implemented
+### Successfully Implemented
 - Signal generation framework (GSM, LTE, UMTS, 5G NR)
 - Large-scale dataset generation (4K samples, multiprocessing)
 - MPS training acceleration (5× speedup)
 - Conv-TasNet architecture (functional but poor performance)
 - Comprehensive evaluation framework
 
-### ❌ Failed/Problematic Implementations  
+### Failed/Problematic Implementations  
 - CNN-LSTM training stability
 - ICA/NMF performance for RF signals
 - DPRNN training convergence

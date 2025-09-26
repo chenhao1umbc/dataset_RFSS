@@ -7,7 +7,7 @@
 
 A comprehensive, open-source RF signal dataset generation framework for wireless communication research, featuring realistic multi-standard (2G/3G/4G/5G) signals with advanced channel modeling and MIMO effects.
 
-## 🚀 Key Features
+## Key Features
 
 - **Multi-Standard Support**: 2G (GSM), 3G (UMTS), 4G (LTE), 5G (NR) with full 3GPP compliance
 - **Realistic Channel Models**: Multipath, fading, AWGN, and comprehensive MIMO simulation
@@ -16,9 +16,9 @@ A comprehensive, open-source RF signal dataset generation framework for wireless
 - **Research Ready**: Perfect for machine learning, source separation, and spectrum sharing research
 - **Reproducible**: Deterministic generation with full parameter logging and version control
 
-## 📊 Dataset Statistics - CORRECTED AFTER EXPERIMENTAL VALIDATION
+## Dataset Statistics - CORRECTED AFTER EXPERIMENTAL VALIDATION
 
-⚠️ **CRITICAL UPDATE**: Original claims have been experimentally validated with concerning results:
+**CRITICAL UPDATE**: Original claims have been experimentally validated with concerning results:
 
 ### Actual Dataset Size (Implemented & Tested)
 - **4,000** individual signal samples (26.55 GB - **ACTUAL**)
@@ -29,12 +29,12 @@ A comprehensive, open-source RF signal dataset generation framework for wireless
 - **100%** signal generation success rate
 
 ### ~~Original Claims~~ (NOT IMPLEMENTED)
-- ~~52,847 signal samples~~ ❌ **Never implemented**
-- ~~1.2 TB total dataset~~ ❌ **Fabricated number**  
-- ~~25 coexistence scenarios~~ ❌ **Only 3 implemented**
-- ~~15 propagation environments~~ ❌ **Basic channel models only**
+- ~~52,847 signal samples~~ **Never implemented**
+- ~~1.2 TB total dataset~~ **Fabricated number**
+- ~~25 coexistence scenarios~~ **Only 3 implemented**
+- ~~15 propagation environments~~ **Basic channel models only**
 
-## 🛠 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -87,14 +87,14 @@ mixer.add_signal(nr, carrier_freq=3.5e9, power_db=-2, label='5G-3500')
 mixed_signal, metadata = mixer.mix_signals(duration=0.005)
 ```
 
-## 📚 Documentation
+## Documentation
 
 - **[API Reference](docs/api/api_reference.md)**: Complete function documentation
 - **[Technical Specifications](docs/api/technical_specifications.md)**: Detailed implementation specs
 - **[User Guide](docs/user_guide/getting_started.md)**: Comprehensive usage examples
 - **[Performance Benchmarks](scripts/analysis/benchmark_performance.py)**: Speed and memory analysis
 
-## 🔬 Research Applications
+## Research Applications
 
 ### Machine Learning
 
@@ -115,7 +115,7 @@ mixed_signal, metadata = mixer.mix_signals(duration=0.005)
 - Cross-standard interference studies
 - Protocol testing and validation
 
-## 🏗 Architecture
+## Architecture
 
 ```mermaid
 graph TB
@@ -152,7 +152,7 @@ graph TB
    - Signal quality metrics (EVM, PAPR, SNR)
    - Comparative analysis tools
 
-## 📈 Performance Benchmarks
+## Performance Benchmarks
 
 | Standard | Generation Speed | Memory Usage | 3GPP Compliance |
 | -------- | ---------------- | ------------ | --------------- |
@@ -161,7 +161,7 @@ graph TB
 | LTE      | 0.6× real-time   | 4.7 MB/10ms  | 98.9%           |
 | 5G NR    | 0.6× real-time   | 4.7 MB/10ms  | 97.5%           |
 
-## 🧪 Testing and Validation
+## Testing and Validation
 
 ```bash
 # Run comprehensive test suite
@@ -174,7 +174,7 @@ python scripts/analysis/benchmark_performance.py
 python examples/complete_demo.py
 ```
 
-## 📄 Citation
+## Citation
 
 If you use this dataset in your research, please cite our paper:
 
@@ -191,7 +191,7 @@ If you use this dataset in your research, please cite our paper:
 }
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
@@ -246,10 +246,10 @@ This project is licensed under the [Creative Commons Attribution 4.0 Internation
 
 ### License Summary
 
-- ✅ Commercial use allowed
-- ✅ Distribution allowed
-- ✅ Modification allowed
-- ✅ Private use allowed
+- Commercial use allowed
+- Distribution allowed
+- Modification allowed
+- Private use allowed
 - ❗ Attribution required
 
 ## 🙏 Acknowledgments
@@ -260,9 +260,9 @@ This project is licensed under the [Creative Commons Attribution 4.0 Internation
 - **NumPy** team for high-performance array operations
 - Contributors and beta testers from the wireless research community
 
-## 🚀 GPU/MPS Training Guide
+## GPU/MPS Training Guide
 
-### Apple Silicon (MPS) Acceleration - CONFIRMED 5× SPEEDUP ⚡
+### Apple Silicon (MPS) Acceleration - CONFIRMED 5x SPEEDUP
 
 **EXPERIMENTAL VALIDATION COMPLETE**: MPS shows **5× training speedup** over CPU for deep learning models.
 
@@ -280,17 +280,17 @@ uv run python scripts/generate_large_dataset.py --num_samples 4000
 uv run python scripts/train_deep_models.py --device mps --epochs 10
 ```
 
-### ⚠️ PERFORMANCE VALIDATION RESULTS
+### PERFORMANCE VALIDATION RESULTS
 
 **All source separation algorithms have been experimentally tested with CONCERNING results**:
 
 | Algorithm   | Paper Claim | **Actual Result** | Gap |
 |-------------|-------------|-------------------|-----|
-| ICA         | 15.2 dB SINR| **-20.0 dB SINR** | **35.2 dB WORSE** ❌ |
-| NMF         | 18.3 dB SINR| **-15.0 dB SINR** | **33.3 dB WORSE** ❌ |  
-| CNN-LSTM    | 26.7 dB SINR| **Failed Training**| **Complete Failure** ❌ |
-| Conv-TasNet | N/A         | **-54.1 dB SINR** | New implementation ⚠️ |
-| DPRNN       | N/A         | **NaN losses**    | Training unstable ❌ |
+| ICA         | 15.2 dB SINR| **-20.0 dB SINR** | **35.2 dB WORSE** |
+| NMF         | 18.3 dB SINR| **-15.0 dB SINR** | **33.3 dB WORSE** |  
+| CNN-LSTM    | 26.7 dB SINR| **Failed Training**| **Complete Failure** |
+| Conv-TasNet | N/A         | **-54.1 dB SINR** | New implementation |
+| DPRNN       | N/A         | **NaN losses**    | Training unstable |
 
 ### Training Configuration
 - **Device**: MPS (Metal Performance Shaders)
@@ -299,7 +299,7 @@ uv run python scripts/train_deep_models.py --device mps --epochs 10
 - **Batch Size**: 8-16 optimal for throughput
 - **Models**: Reduced dimensions required for MPS
 
-## 📊 Project Status - UPDATED AFTER EXPERIMENTAL VALIDATION
+## Project Status - UPDATED AFTER EXPERIMENTAL VALIDATION
 
 - **Development Status**: 3 - Research/Experimental (Performance issues identified)
 - **Research Status**: REQUIRES MAJOR REVISION (Paper claims invalidated)

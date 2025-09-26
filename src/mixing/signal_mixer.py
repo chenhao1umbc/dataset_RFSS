@@ -3,6 +3,7 @@ Signal mixing engine for combining multiple RF signals
 """
 import numpy as np
 from typing import List, Dict, Tuple
+from src.utils.signal_utils import normalize_power_db
 
 
 class SignalMixer:
@@ -58,11 +59,7 @@ class SignalMixer:
     
     def normalize_power(self, signal, power_db):
         """Normalize signal to specified power level"""
-        current_power = np.mean(np.abs(signal)**2)
-        target_power = 10**(power_db/10)
-        scale_factor = np.sqrt(target_power / current_power)
-        
-        return signal * scale_factor
+        return normalize_power_db(signal, power_db)
     
     def mix_signals(self, duration=None, normalize_output=True):
         """
@@ -161,58 +158,44 @@ class InterferenceGenerator:
         """Generate continuous wave (CW) tone"""
         t = np.arange(int(sample_rate * duration)) / sample_rate
         signal = np.exp(1j * 2 * np.pi * freq * t)
-        
-        # Apply power scaling
-        target_power = 10**(power_db/10)
-        current_power = np.mean(np.abs(signal)**2)
-        scale_factor = np.sqrt(target_power / current_power)
-        
-        return signal * scale_factor
+
+        # Apply power scaling using shared utility
+        return normalize_power_db(signal, power_db)
     
     @staticmethod
     def generate_chirp(sample_rate, duration, f_start, f_end, power_db=0):
         """Generate linear chirp signal"""
         t = np.arange(int(sample_rate * duration)) / sample_rate
-        
+
         # Linear chirp from f_start to f_end
         chirp_rate = (f_end - f_start) / duration
         phase = 2 * np.pi * (f_start * t + 0.5 * chirp_rate * t**2)
         signal = np.exp(1j * phase)
-        
-        # Apply power scaling
-        target_power = 10**(power_db/10)
-        current_power = np.mean(np.abs(signal)**2)
-        scale_factor = np.sqrt(target_power / current_power)
-        
-        return signal * scale_factor
+
+        # Apply power scaling using shared utility
+        return normalize_power_db(signal, power_db)
     
     @staticmethod
     def generate_narrowband_noise(sample_rate, duration, center_freq, bandwidth, power_db=0):
         """Generate narrowband noise"""
         num_samples = int(sample_rate * duration)
-        
+
         # Generate white noise
         noise = np.random.randn(num_samples) + 1j * np.random.randn(num_samples)
-        
+
         # Filter to desired bandwidth (simple rectangular filter in frequency domain)
         freq_noise = np.fft.fft(noise)
         freqs = np.fft.fftfreq(num_samples, 1/sample_rate)
-        
+
         # Create filter mask
         mask = np.abs(freqs - center_freq) <= bandwidth/2
         freq_noise[~mask] = 0
-        
+
         # Transform back to time domain
         filtered_noise = np.fft.ifft(freq_noise)
-        
-        # Apply power scaling
-        target_power = 10**(power_db/10)
-        current_power = np.mean(np.abs(filtered_noise)**2)
-        if current_power > 0:
-            scale_factor = np.sqrt(target_power / current_power)
-            filtered_noise *= scale_factor
-        
-        return filtered_noise
+
+        # Apply power scaling using shared utility
+        return normalize_power_db(filtered_noise, power_db)
 
 
 if __name__ == "__main__":

@@ -435,7 +435,7 @@ def main():
         args.num_samples, args.output, config
     )
     
-    print(f"\n✅ Generated {successful_samples} samples successfully!")
+    print(f"\nGenerated {successful_samples} samples successfully!")
     
     return successful_samples
 

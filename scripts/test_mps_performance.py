@@ -45,24 +45,24 @@ def check_mps_availability():
     print("=== MPS Availability Check ===")
     
     if not torch.backends.mps.is_available():
-        print("❌ MPS not available on this system")
+        print("MPS not available on this system")
         return False
     
     if not torch.backends.mps.is_built():
-        print("❌ MPS not built in this PyTorch version")
+        print("MPS not built in this PyTorch version")
         return False
     
-    print("✅ MPS is available and built")
+    print("MPS is available and built")
     
     # Test basic MPS functionality
     try:
         device = torch.device('mps')
         test_tensor = torch.randn(100, 100, device=device)
         result = torch.matmul(test_tensor, test_tensor.t())
-        print("✅ MPS basic operations working")
+        print("MPS basic operations working")
         return True
     except Exception as e:
-        print(f"❌ MPS test failed: {e}")
+        print(f"MPS test failed: {e}")
         return False
 
 
@@ -209,20 +209,20 @@ def compare_devices():
             speedup = cpu_time / mps_time
             
             if speedup > 2.0:
-                print(f"🚀 MPS shows significant speedup ({speedup:.1f}×)")
+                print(f"MPS shows significant speedup ({speedup:.1f}x)")
                 print("   Recommendation: Use MPS for large-scale training")
                 return 'mps'
             elif speedup > 1.2:
-                print(f"✅ MPS shows moderate speedup ({speedup:.1f}×)")
+                print(f"MPS shows moderate speedup ({speedup:.1f}x)")
                 print("   Recommendation: Use MPS for training")
                 return 'mps'
             else:
-                print(f"⚠️ MPS speedup is minimal ({speedup:.1f}×)")
+                print(f"WARNING: MPS speedup is minimal ({speedup:.1f}x)")
                 print("   Recommendation: CPU may be sufficient for small models")
                 return 'cpu'
     
     else:
-        print("\n❌ Could not compare devices - using CPU as fallback")
+        print("\nCould not compare devices - using CPU as fallback")
         return 'cpu'
 
 
@@ -293,7 +293,7 @@ def main():
     # Batch scaling test
     test_large_batch_scaling()
     
-    print(f"\n✅ Performance testing completed")
+    print(f"\nPerformance testing completed")
     print(f"💡 Recommended device for training: {recommended_device.upper()}")
     
     return recommended_device

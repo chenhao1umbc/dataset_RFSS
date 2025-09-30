@@ -133,7 +133,7 @@ def create_enhanced_framework_figure(save_path):
     dataset_box = FancyBboxPatch((4.5, 2), 4, 1, boxstyle="round,pad=0.1",
                                 facecolor='#E1E1E1', edgecolor='black', linewidth=2)
     ax_main.add_patch(dataset_box)
-    ax_main.text(6.5, 2.5, 'RFSS Dataset: 52,847 Samples', ha='center', va='center',
+    ax_main.text(6.5, 2.5, 'RFSS Framework with ~4K Sample Dataset', ha='center', va='center',
                 fontweight='bold', fontsize=12)
     
     # Final arrow to dataset

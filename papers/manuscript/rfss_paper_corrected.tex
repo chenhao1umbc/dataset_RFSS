@@ -20,7 +20,7 @@ Hao Chen, Rui Jin, and  Dayuan Tan
 \maketitle
 
 \begin{abstract}
-The rapid evolution of wireless communication systems has created complex electromagnetic environments where multiple cellular standards (2G/3G/4G/5G) coexist, necessitating advanced signal source separation techniques. We present RFSS (RF Signal Source Separation), a comprehensive open-source dataset containing 52,847 realistic multi-standard RF signal samples with complete 3GPP standards compliance. Our framework generates authentic baseband signals for GSM, UMTS, LTE, and 5G NR with advanced channel modeling including multipath fading, MIMO processing up to 8×8 antennas, and realistic interference scenarios. Experimental validation demonstrates superior performance of CNN-LSTM architectures achieving 26.7 dB SINR improvement in source separation tasks, significantly outperforming traditional ICA (15.2 dB) and NMF (18.3 dB) approaches. The RFSS dataset enables reproducible research in RF source separation, cognitive radio, and machine learning applications while maintaining complete open-source accessibility.
+The rapid evolution of wireless communication systems has created complex electromagnetic environments where multiple cellular standards (2G/3G/4G/5G) coexist, necessitating advanced signal source separation techniques. We present RFSS (RF Signal Source Separation), a comprehensive open-source framework and demonstration dataset for realistic multi-standard RF signal generation with complete 3GPP standards compliance. Our framework generates authentic baseband signals for GSM, UMTS, LTE, and 5G NR with advanced channel modeling including multipath fading, MIMO processing up to 8×8 antennas, and realistic interference scenarios. Experimental benchmarking reveals traditional blind source separation methods (ICA: -20.0 dB, NMF: -15.0 dB SINR) are insufficient for multi-standard RF separation, demonstrating the challenging nature of this problem and motivating the need for specialized algorithms. The RFSS framework enables reproducible research in RF source separation, cognitive radio, and machine learning applications while maintaining complete open-source accessibility.
 \end{abstract}
 
 \textbf{Keywords:} RF source separation, multi-standard signals, 3GPP compliance, MIMO, machine learning, open source dataset
@@ -121,10 +121,10 @@ The RFSS framework incorporates sophisticated channel modeling that captures the
 
 \begin{align}
 y(t) &= \sum_{i=1}^{N_{standards}} \sqrt{P_i} \sum_{l=0}^{L_i-1} h_{i,l}(t) \nonumber \\
-&\quad \times s_i(t-\tau_i-\tau_{i,l}) e^{j2\pi f_i t} + n(t)
+&\quad \times s_i(t-\tau_i-\tau_{i,l}) + n(t)
 \end{align}
 
-where $P_i$ represents power scaling factors accounting for path loss and transmit power differences, $h_{i,l}(t)$ denotes the time-varying channel impulse response for the $l$-th multipath component, $\tau_i$ represents differential timing offsets between standards, $f_i$ captures carrier frequency offsets and Doppler effects, and $n(t)$ represents spatially and temporally correlated noise processes.
+where $P_i$ represents power scaling factors accounting for path loss and transmit power differences, $h_{i,l}(t)$ denotes the time-varying channel impulse response for the $l$-th multipath component, $\tau_i$ represents differential timing offsets between standards, and $n(t)$ represents spatially and temporally correlated noise processes. All signals are processed in complex baseband representation, eliminating the need for carrier frequency upconversion and enabling efficient processing for machine learning applications.
 
 The channel model incorporates multiple propagation effects including: (1) Large-scale fading due to path loss and shadowing with log-normal distributions, (2) Small-scale fading implementing Rayleigh and Rician models with configurable K-factors, (3) Frequency-selective multipath channels using standardized delay profiles (ITU Pedestrian A/B, Vehicular A/B), and (4) Spatial correlation modeling for MIMO scenarios with realistic antenna spacing and angular spread parameters.
 
@@ -163,25 +163,16 @@ Figure \ref{fig:dataset_analysis} presents detailed statistical characterization
 
 \subsection{Dataset Composition and Structure}
 
-The RFSS dataset comprises 52,847 signal samples systematically generated across diverse scenarios:
+The RFSS framework includes a demonstration dataset of approximately 4,000 training samples systematically generated across diverse scenarios, with the complete open-source codebase enabling users to generate arbitrarily large datasets for their specific research needs:
 
-\textbf{Single Standard Signals (20,000 samples):}
+\textbf{Signal Scenarios:}
 \begin{itemize}
-\item GSM signals: 5,000 samples with varying burst types and power levels
-\item UMTS signals: 5,000 samples with multi-user configurations and spreading factors
-\item LTE signals: 5,000 samples across bandwidth configurations (1.4-20 MHz)
-\item 5G NR signals: 5,000 samples with flexible numerology ($\mu = 0,1,2$)
+\item Single-standard signals: Individual GSM, UMTS, LTE, and 5G NR waveforms with varying parameters
+\item Two-standard coexistence: GSM+LTE combinations modeling realistic frequency coexistence
+\item Multi-standard interference: Complex scenarios with 3-4 simultaneous standards including narrowband interference and realistic propagation effects
 \end{itemize}
 
-\textbf{Multi-Standard Coexistence (25,000 samples):}
-\begin{itemize}
-\item GSM+LTE coexistence: 8,000 samples with realistic frequency separation
-\item UMTS+LTE scenarios: 7,000 samples modeling 3G/4G transition periods
-\item LTE+5G NR combinations: 10,000 samples representing current deployment scenarios
-\end{itemize}
-
-\textbf{Complex Interference Scenarios (7,847 samples):}
-Dense multi-standard environments with 3-4 simultaneous standards, including narrowband interference, adjacent channel interference, and realistic propagation effects.
+The framework's modular architecture enables researchers to generate custom datasets with specific characteristics, channel conditions, and interference scenarios tailored to their application requirements. All generation parameters are fully configurable through YAML configuration files, ensuring reproducibility and extensibility.
 
 \subsection{Performance Validation}
 
@@ -189,10 +180,10 @@ Comprehensive validation against actual code implementation reveals:
 
 \textbf{Real-time Generation Performance:}
 \begin{itemize}
-\item GSM: 0.6× real-time generation capability (17.0±0.3 ms per 10ms signal)
-\item UMTS: 2.3× real-time generation (4.4±0.1 ms per 10ms signal)
-\item LTE: 0.6× real-time generation (16.1±0.4 ms per 10ms signal)
-\item 5G NR: 0.6× real-time generation (16.2±0.2 ms per 10ms signal)
+\item GSM: 0.6× real-time generation capability (16.3±0.5 ms per 10ms signal)
+\item UMTS: 2.6× real-time generation (3.8±0.1 ms per 10ms signal)
+\item LTE: 0.6× real-time generation (16.2±0.6 ms per 10ms signal)
+\item 5G NR: 0.6× real-time generation (15.7±0.2 ms per 10ms signal)
 \end{itemize}
 
 \textbf{Signal Quality Metrics:}
@@ -211,15 +202,13 @@ Comprehensive evaluation using the RFSS dataset demonstrates significant perform
 \label{fig:dataset_analysis}
 \end{figure*}
 
-Figure \ref{fig:dataset_analysis} presents comprehensive statistical characterization of the RFSS dataset from multiple perspectives, while our performance analysis across four algorithm categories shows:
+Figure \ref{fig:dataset_analysis} presents comprehensive statistical characterization of the RFSS dataset from multiple perspectives. Benchmark evaluation using standard source separation algorithms reveals the challenging nature of multi-standard RF separation:
 
-\textbf{Independent Component Analysis (ICA):} FastICA implementation achieves SINR improvements of 15.2 dB (2 sources), 12.4 dB (3 sources), 9.8 dB (4 sources), and 7.1 dB (5 sources). Processing time averages 0.12 seconds per 1000 samples.
+\textbf{Independent Component Analysis (ICA):} FastICA implementation on 2-source mixed signals (GSM+LTE) achieves -20.0 ± 0.0 dB SINR, indicating negative separation performance where the separated signals have lower quality than the mixed input. Processing time averages 37 ms per sample.
 
-\textbf{Non-Negative Matrix Factorization (NMF):} Beta-divergence NMF achieves 18.3 dB (2 sources), 14.7 dB (3 sources), 11.2 dB (4 sources), and 8.9 dB (5 sources) SINR improvement with 0.35 seconds processing time.
+\textbf{Non-Negative Matrix Factorization (NMF):} Beta-divergence NMF on the same test set achieves -15.0 ± 0.0 dB SINR with 40 ms processing time per sample. The negative SINR values for both traditional BSS methods demonstrate that standard blind source separation techniques developed for audio signals do not transfer effectively to multi-standard RF environments.
 
-\textbf{Deep Blind Source Separation:} Neural network approach demonstrates 24.1 dB (2 sources), 19.8 dB (3 sources), 16.4 dB (4 sources), and 13.7 dB (5 sources) with 2.8 seconds processing time.
-
-\textbf{CNN-LSTM Architecture:} Superior performance achieving 26.7 dB (2 sources), 22.3 dB (3 sources), 18.9 dB (4 sources), and 15.2 dB (5 sources) at 4.2 seconds computational cost.
+\textbf{Deep Learning Approaches:} Preliminary experiments with CNN-LSTM and Conv-TasNet architectures show training instability and require further investigation. The failure of traditional methods combined with deep learning challenges highlights the need for specialized neural architectures designed specifically for RF signal characteristics, including complex-valued processing, multi-scale temporal features, and spectrum-aware attention mechanisms.
 
 \section{Comparative Analysis and Research Applications}
 
@@ -298,11 +287,11 @@ The RFSS dataset enables a broad spectrum of research applications spanning mach
 
 \section{Conclusions and Future Work}
 
-This work presents RFSS, the first comprehensive open-source dataset specifically designed for RF source separation research in multi-standard cellular environments. The dataset addresses critical gaps in existing RF research infrastructure by providing realistic, validated, and extensively characterized signal samples that enable advanced machine learning research in wireless communications.
+This work presents RFSS, a comprehensive open-source framework for generating realistic multi-standard RF signals with advanced channel modeling, specifically designed to enable RF source separation research in cellular environments. The framework addresses critical gaps in existing RF research infrastructure by providing validated signal generation tools and benchmark results that characterize the challenging nature of multi-standard separation.
 
-Key contributions include: (1) Complete multi-standard coverage spanning 2G through 5G with rigorously validated 3GPP compliance exceeding 96% across all standards, (2) Advanced mathematical mixture models incorporating realistic channel effects including multipath fading, MIMO processing, and spatial correlation, (3) Extensive experimental validation demonstrating superior deep learning performance with CNN-LSTM architectures achieving up to 26.7 dB SINR improvement, (4) Comprehensive open-source framework with detailed documentation enabling reproducible research and community collaboration.
+Key contributions include: (1) Complete multi-standard signal generation spanning 2G through 5G with 3GPP compliance validation, (2) Advanced mathematical mixture models incorporating realistic channel effects including multipath fading, MIMO processing, and spatial correlation in complex baseband representation, (3) Comprehensive benchmark evaluation revealing traditional BSS methods (ICA/NMF) achieve negative SINR, demonstrating the inadequacy of audio-domain techniques for RF signals, (4) Complete open-source framework with detailed documentation, configurable parameters, and demonstration dataset enabling reproducible research and community-driven algorithm development.
 
-Experimental results conclusively demonstrate the superiority of deep learning approaches over traditional blind source separation techniques, with CNN-LSTM architectures providing consistent performance advantages across all evaluated scenarios. The performance gains are particularly pronounced in complex multi-standard interference scenarios where traditional methods struggle to maintain separation quality.
+Experimental benchmarking establishes baseline performance and highlights fundamental challenges in multi-standard RF separation. The negative SINR results for traditional methods motivate the need for specialized algorithms that account for RF signal characteristics including complex modulation schemes, time-varying channels, and spectral structure. The RFSS framework provides essential infrastructure for developing and evaluating such specialized approaches.
 
 Future work will extend the dataset to include 6G candidate waveforms, implement federated learning frameworks for distributed training, and develop specialized neural architectures optimized for real-time source separation applications. The RFSS dataset establishes a new foundation for RF source separation research, providing essential tools for advancing next-generation wireless communication technologies while maintaining complete open-source accessibility for the global research community.
 

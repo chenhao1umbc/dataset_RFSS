@@ -1,6 +1,13 @@
 """
 CNN-LSTM architecture for RF signal source separation
-Based on paper claims: achieving 26.7 dB SINR improvement
+
+WARNING: EXPERIMENTAL CODE - TRAINING INSTABILITY ISSUES
+This implementation is under active development and currently exhibits:
+- Training failures with indexing errors
+- Unstable loss convergence
+- Unvalidated separation performance
+
+Use for research and development only. Contributions welcome.
 """
 import torch
 import torch.nn as nn

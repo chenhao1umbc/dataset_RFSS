@@ -237,7 +237,7 @@ def create_dataset_overview_figure(save_path):
     
     # Root node
     ax1.scatter([0], [3], s=200, c='red', marker='s')
-    ax1.text(0, 3.2, 'RFSS\nDataset\n52,847 samples', ha='center', va='bottom', fontweight='bold')
+    ax1.text(0, 3.2, 'RFSS\nDataset\n~4,000 samples', ha='center', va='bottom', fontweight='bold')
     
     # Standard level
     standards = ['2G GSM', '3G UMTS', '4G LTE', '5G NR']

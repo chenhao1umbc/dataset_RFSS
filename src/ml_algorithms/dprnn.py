@@ -2,6 +2,14 @@
 Dual-Path RNN (DPRNN) for RF signal source separation
 Based on "Dual-Path RNN: Efficient Long Sequence Modeling for Time-Domain Single-Channel Speech Separation"
 Paper: https://arxiv.org/abs/1910.06379
+
+WARNING: EXPERIMENTAL CODE - TRAINING INSTABILITY ISSUES
+This implementation is under active development and currently exhibits:
+- NaN losses during training
+- Numerical instability issues
+- Unvalidated separation performance
+
+Use for research and development only. Contributions welcome.
 """
 import torch
 import torch.nn as nn

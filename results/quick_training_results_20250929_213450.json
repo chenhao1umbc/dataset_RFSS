@@ -1,0 +1,34 @@
+{
+  "ICA": {
+    "mean_sinr": -20.0,
+    "std_sinr": 0.0
+  },
+  "NMF": {
+    "mean_sinr": -15.0,
+    "std_sinr": 0.0
+  },
+  "CNN-LSTM": {
+    "best_sinr": -Infinity,
+    "train_losses": [
+      1.0092069935053587,
+      0.7391367740929127,
+      0.5461748968809843
+    ]
+  },
+  "Conv-TasNet": {
+    "best_sinr": -35.45721870660782,
+    "train_losses": [
+      43.16511857509613,
+      38.29285204410553,
+      36.0877286195755
+    ]
+  },
+  "DPRNN": {
+    "best_sinr": -Infinity,
+    "train_losses": [
+      NaN,
+      NaN,
+      NaN
+    ]
+  }
+}

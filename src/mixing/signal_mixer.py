@@ -20,13 +20,13 @@ class SignalMixer:
         self.signals = []
         self.metadata = []
     
-    def add_signal(self, signal, carrier_freq, power_db=0, label=None, **metadata):
+    def add_signal(self, signal, carrier_freq=None, power_db=0, label=None, **metadata):
         """
         Add a signal to the mixer
-        
+
         Args:
             signal: Complex baseband signal
-            carrier_freq: Carrier frequency in Hz
+            carrier_freq: Carrier frequency in Hz (metadata only, not used in mixing)
             power_db: Signal power in dB (relative to reference)
             label: Signal label/type (e.g., 'LTE', 'GSM')
             **metadata: Additional metadata about the signal
@@ -38,7 +38,7 @@ class SignalMixer:
             'label': label,
             'metadata': metadata
         }
-        
+
         self.signals.append(signal_info)
         self.metadata.append(signal_info)
     
@@ -85,12 +85,11 @@ class SignalMixer:
         # Initialize output
         mixed_signal = np.zeros(max_length, dtype=complex)
         
-        # Mix each signal
+        # Mix each signal (baseband only - no carrier frequency upconversion)
         for i, sig_info in enumerate(self.signals):
             signal = sig_info['signal']
-            carrier_freq = sig_info['carrier_freq']
             power_db = sig_info['power_db']
-            
+
             # Extend or truncate signal to match output length
             if len(signal) < max_length:
                 # Repeat signal if too short
@@ -98,13 +97,10 @@ class SignalMixer:
                 extended_signal = np.tile(signal, repeats)[:max_length]
             else:
                 extended_signal = signal[:max_length]
-            
-            # Apply carrier frequency
-            rf_signal = self.frequency_shift(extended_signal, carrier_freq)
-            
-            # Apply power scaling
-            powered_signal = self.normalize_power(rf_signal, power_db)
-            
+
+            # Apply power scaling (stay in baseband)
+            powered_signal = self.normalize_power(extended_signal, power_db)
+
             # Add to mixed signal
             mixed_signal += powered_signal
         

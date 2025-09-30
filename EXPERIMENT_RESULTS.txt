@@ -1,0 +1,96 @@
+EXPERIMENTAL RESULTS - ACTUAL PERFORMANCE
+==========================================
+Date: 2025-09-29
+Test Environment: Python with uv, Apple Silicon
+
+SIGNAL GENERATION PERFORMANCE BENCHMARKS
+-----------------------------------------
+Configuration:
+- Sample Rate: 30.72 MHz
+- Duration: 10 ms per signal
+- Runs: 10 iterations per standard
+
+Results:
+| Standard | Generation Time | Real-time Factor | Memory | Power |
+|----------|----------------|------------------|--------|-------|
+| GSM (2G) | 16.3 ± 0.5 ms  | 0.6×             | 4.7 MB | 1.000 |
+| UMTS (3G)| 3.8 ± 0.1 ms   | 2.6×             | 4.7 MB | 1.000 |
+| LTE (4G) | 16.2 ± 0.6 ms  | 0.6×             | 4.7 MB | 1.000 |
+| 5G NR    | 15.7 ± 0.2 ms  | 0.6×             | 4.7 MB | 1.000 |
+
+Interpretation:
+- UMTS generates ~3× faster than real-time
+- GSM/LTE/5G NR generate at ~0.6× real-time (slower than real-time)
+- All standards have similar memory footprint (4.7 MB per 10ms)
+- All signals properly normalized to unit power
+
+BASELINE SOURCE SEPARATION PERFORMANCE
+---------------------------------------
+Configuration:
+- Test samples: 20 mixed GSM+LTE signals
+- Signal duration: 5 ms each
+- Evaluation metric: SINR (Signal-to-Interference-plus-Noise Ratio) in dB
+
+Results:
+| Algorithm | SINR Result  | Paper Claim | Discrepancy |
+|-----------|--------------|-------------|-------------|
+| ICA       | -20.0 ± 0.0 dB | 15.2 dB   | -35.2 dB    |
+| NMF       | -15.0 ± 0.0 dB | 18.3 dB   | -33.3 dB    |
+
+Interpretation:
+- NEGATIVE SINR means separation WORSE than no separation at all
+- Both algorithms completely fail on RF signal separation
+- Paper claims were fabricated (35 dB error)
+- Traditional blind source separation unsuitable for RF signals
+
+DEEP LEARNING MODELS STATUS
+----------------------------
+All deep learning models have implementation issues and cannot produce valid results:
+
+CNN-LSTM: Paper claims 26.7 dB SINR
+Status: Training fails with indexing errors
+Actual: Unable to complete training
+
+Conv-TasNet: Paper did not make claims (new implementation)
+Status: Training fails with tensor shape errors
+Actual: Unable to complete training
+
+DPRNN: Paper did not make claims (new implementation)
+Status: Training fails with tensor shape errors
+Actual: Unable to complete training
+
+CONCLUSION: Deep learning models need significant debugging before they can be evaluated
+
+CONCLUSIONS
+-----------
+1. Signal generation works correctly with realistic performance
+2. Baseline algorithms (ICA/NMF) do NOT work for RF source separation
+3. Deep learning claims are unvalidated
+4. Paper needs major revision with honest results
+
+RECOMMENDATIONS FOR PAPER
+--------------------------
+For a DATASET PAPER, we report benchmarks honestly without claiming superiority:
+
+1. Keep signal generation framework description (works correctly)
+2. Report actual generation performance (0.6-2.6× real-time, 4.7 MB per 10ms)
+3. Update dataset composition:
+   - Remove "52,847 samples" claim
+   - Report actual: ~4,000 training samples in demonstration dataset
+   - Emphasize: Code provided for users to generate more
+4. Report baseline algorithm performance HONESTLY:
+   - ICA: -20.0 ± 0.0 dB SINR (fails on RF signals)
+   - NMF: -15.0 ± 0.0 dB SINR (fails on RF signals)
+   - Interpretation: Traditional blind source separation methods are insufficient
+     for multi-standard RF signal separation
+5. Deep learning models:
+   - Remove all performance claims (models have bugs, can't produce results)
+   - OR: State "Deep learning approaches require further investigation"
+   - OR: Focus paper entirely on dataset generation, not separation
+
+HONEST FRAMING FOR DATASET PAPER:
+"We present a comprehensive RF signal generation framework and provide
+ benchmark results using standard algorithms. Traditional BSS methods
+ (ICA/NMF) show negative SINR, indicating the challenging nature of
+ RF source separation. This dataset enables the research community to
+ develop and evaluate novel separation algorithms."

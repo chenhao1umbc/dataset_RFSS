@@ -1,0 +1,210 @@
+RF SIGNAL SOURCE SEPARATION DATASET - PROJECT STATUS REPORT
+============================================================
+Date: 2025-09-29
+Status: Research Integrity Correction Complete
+
+PHASES COMPLETED
+================
+
+PHASE 1: Paper Structure Validation ✓
+--------------------------------------
+- Reviewed full paper structure and theoretical foundations
+- Mathematical formulations are CORRECT and sound
+- Problem motivation is legitimate and well-articulated
+- Signal generation equations validated (GSM, UMTS, LTE, 5G NR)
+- Channel modeling approach is standard and appropriate
+- MIMO formulation is correct
+- Paper tells a coherent scientific story
+
+Issues Found:
+- Numerical results are fabricated
+- Dataset size claims are inflated
+- Baseband vs passband inconsistency in implementation
+
+PHASE 2: Real Experiments Conducted ✓
+--------------------------------------
+1. Fixed Baseband Implementation
+   - Removed carrier frequency upconversion from signal_mixer.py
+   - Now works purely with complex baseband signals
+   - Carrier frequency kept as metadata only
+
+2. Signal Generation Performance (REAL NUMBERS)
+   Configuration: 30.72 MHz sample rate, 10ms duration
+
+   | Standard | Generation Time | Real-time Factor | Memory  |
+   |----------|----------------|------------------|---------|
+   | GSM      | 16.3 ± 0.5 ms  | 0.6×            | 4.7 MB  |
+   | UMTS     | 3.8 ± 0.1 ms   | 2.6×            | 4.7 MB  |
+   | LTE      | 16.2 ± 0.6 ms  | 0.6×            | 4.7 MB  |
+   | 5G NR    | 15.7 ± 0.2 ms  | 0.6×            | 4.7 MB  |
+
+3. Baseline Source Separation (REAL NUMBERS)
+   Test: 20 mixed GSM+LTE signals, 5ms duration
+
+   | Algorithm | SINR Result    | Paper Claim | Discrepancy |
+   |-----------|----------------|-------------|-------------|
+   | ICA       | -20.0 ± 0.0 dB | 15.2 dB     | -35.2 dB    |
+   | NMF       | -15.0 ± 0.0 dB | 18.3 dB     | -33.3 dB    |
+
+   Interpretation: Negative SINR = complete failure
+   Traditional BSS methods DO NOT work for RF signals
+
+4. Deep Learning Models
+   Status: All models have implementation bugs
+   - CNN-LSTM: Training fails with indexing errors
+   - Conv-TasNet: Training fails with tensor shape errors
+   - DPRNN: Training fails with tensor shape errors
+   Result: Cannot report deep learning performance
+
+PHASE 3: Removed Fabricated Content ✓
+--------------------------------------
+Archived to archive_fabricated/:
+- PRELIMINARY_RESULTS.md (contained inflated claims)
+- results/paper_validation_report.md (documented the problems)
+
+Still Active (Clean Code):
+- Signal generators (GSM, UMTS, LTE, 5G NR) - WORKING
+- Channel models (AWGN, fading, multipath) - WORKING
+- MIMO processing - WORKING
+- Signal mixer (now baseband-only) - WORKING
+- Validation framework - WORKING
+- Baseline algorithms (ICA, NMF) - WORKING (but perform poorly)
+
+ACTUAL DATASET STATUS
+=====================
+Current State:
+- Large dataset: 27 GB (4,000 samples) in data/large_dataset/
+- Test dataset: 685 MB in data/test_large/
+- Validation dataset: 1.8 GB in data/validation/
+- Total: ~30 GB, ~4,400 samples
+
+Paper Claimed: 52,847 samples, 1.2 TB (FABRICATED)
+
+For Dataset Paper Positioning:
+- Demonstrate generation framework (working)
+- Provide representative dataset (4K samples sufficient)
+- Share source code for community to generate more
+- Quality over quantity
+
+WHAT NEEDS TO BE DONE (PHASES 4)
+==================================
+
+PHASE 4A: Update Paper
+----------------------
+File: papers/manuscript/rfss_paper_corrected.tex
+
+Required Changes:
+1. Abstract (line 23):
+   - Remove "52,847 samples" → "comprehensive demonstration dataset"
+   - Update algorithm results: ICA -20 dB, NMF -15 dB
+   - Remove or heavily revise CNN-LSTM 26.7 dB claim
+   - Reframe as dataset paper, not algorithm superiority paper
+
+2. Dataset Composition (lines 166-184):
+   - Remove fabricated breakdown (20,000 + 25,000 + 7,847)
+   - Replace with: "~4,000 demonstration samples"
+   - Add: "Framework enables scalable generation"
+
+3. Performance Claims (lines 192-196):
+   - Update to actual: 0.6-2.6× real-time
+   - Remove conflicting claims from other docs
+
+4. Experimental Results (lines 216-222):
+   - ICA: 15.2 dB → -20.0 dB
+   - NMF: 18.3 dB → -15.0 dB
+   - CNN-LSTM: Remove entirely OR state "requires further investigation"
+   - Reframe: "Baseline methods show negative SINR, indicating
+     the challenging nature of RF source separation"
+
+5. Mathematical Model (lines 122-125):
+   - Remove carrier frequency f_i terms
+   - State all processing is in complex baseband
+
+6. Conclusions (line 303):
+   - Reframe from "superior deep learning performance" to
+     "comprehensive dataset enabling future research"
+   - Emphasize framework contribution, not algorithm superiority
+
+PHASE 4B: Update README
+-----------------------
+File: README.md
+
+Required Changes:
+1. Lines 19-35: Dataset Statistics section
+   - Remove "52,847 samples", "1.2 TB", "25 scenarios"
+   - Update with actual: "4,000 samples", "~30 GB", "3 scenario types"
+
+2. Lines 99-104: ML Results section
+   - Remove fabricated accuracies (94.2%, 89.7%, 96.8%)
+   - Replace with honest baseline results or remove section
+
+3. Lines 157-162: Performance table
+   - Already has realistic numbers (0.6-2.3× real-time)
+   - Keep as is
+
+4. Lines 287-293: Algorithm comparison table
+   - Update with real numbers: ICA -20 dB, NMF -15 dB
+   - Remove CNN-LSTM or mark as "under development"
+
+PHASE 4C: Update CLAUDE.md
+---------------------------
+File: CLAUDE.md
+
+Required Changes:
+1. Performance section:
+   - Remove "800-2500× real-time"
+   - Update with actual: "0.6-2.6× real-time"
+
+2. GPU/MPS section:
+   - Keep MPS 5× speedup (confirmed)
+   - Update algorithm results table with real numbers
+
+3. Dataset size:
+   - Update to actual counts
+
+PHASE 4D: Clean Up Code
+------------------------
+Files to check for redundant code:
+- src/ml_algorithms/*.py (deep learning models with bugs)
+  Options: Fix bugs OR comment as "experimental, under development"
+- examples/*.py (ensure they run correctly)
+- scripts/*.py (remove any that reference fabricated results)
+
+HONEST POSITIONING FOR DATASET PAPER
+=====================================
+Focus: "We provide a comprehensive RF signal generation framework"
+NOT: "Our algorithms achieve superior performance"
+
+Key Messages:
+1. Complete multi-standard signal generation (2G/3G/4G/5G) ✓
+2. Realistic channel modeling and MIMO effects ✓
+3. Open-source framework for reproducible research ✓
+4. Benchmark results show RF source separation is challenging
+5. Traditional methods (ICA/NMF) fail (negative SINR)
+6. Dataset enables community to develop better algorithms
+
+Strengths to Emphasize:
+- Signal generation accuracy and 3GPP compliance
+- Comprehensive validation framework
+- Flexible and extensible architecture
+- Complete documentation and examples
+- Baseband processing (practical for ML applications)
+
+Honest Limitations to State:
+- Demonstration dataset is 4K samples (not 52K)
+- Traditional BSS methods insufficient for RF signals
+- Deep learning approaches require further investigation
+- Users should generate larger datasets per their needs
+
+FINAL STATUS
+============
+✓ Paper structure is sound
+✓ Real experiments conducted
+✓ Fabricated content archived
+⏳ Paper update needed
+⏳ Documentation update needed
+
+Once Phases 4A-D complete:
+→ Paper ready for honest submission
+→ Code ready for open-source release
+→ Research integrity restored

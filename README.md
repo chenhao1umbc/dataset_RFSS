@@ -1,319 +1,218 @@
 # RF Signal Source Separation Dataset (RFSS)
 
-[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
-[![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](docs/)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](tests/)
+Multi-standard RF signal generation framework for machine learning research.
 
-A comprehensive, open-source RF signal dataset generation framework for wireless communication research, featuring realistic multi-standard (2G/3G/4G/5G) signals with advanced channel modeling and MIMO effects.
+## What is this?
 
-## Key Features
+Framework for generating realistic multi-standard RF signals (2G/3G/4G/5G) with channel effects and MIMO. Designed for:
+- RF signal source separation research
+- Deep learning on wireless communications
+- Spectrum sharing studies
+- Multi-standard coexistence analysis
 
-- **Multi-Standard Support**: 2G (GSM), 3G (UMTS), 4G (LTE), 5G (NR) with full 3GPP compliance
-- **Realistic Channel Models**: Multipath, fading, AWGN, and comprehensive MIMO simulation
-- **Practical Performance**: 0.6-2.6× real-time signal generation with optimized memory usage
-- **Comprehensive Validation**: Automated standards compliance checking and quality metrics
-- **Research Ready**: Perfect for machine learning, source separation, and spectrum sharing research
-- **Reproducible**: Deterministic generation with full parameter logging and version control
+## Installation
 
-## Dataset Statistics
-
-### Demonstration Dataset
-- **~4,000** training samples in HDF5 format (27 GB)
-- **~400** validation samples (1.8 GB)
-- **~40** test samples for algorithm benchmarking
-- **3** primary scenario types: single-standard, two-standard coexistence, multi-standard interference
-- **4** MIMO configurations: 2×2, 4×4, 6×6, 8×8
-- **Total size**: ~30 GB
-
-### Framework Capabilities
-- Generate arbitrarily large datasets with configurable parameters
-- All signal generation code provided open-source
-- YAML-based configuration for reproducibility
-- Parallel generation support for efficient large-scale production
+```bash
+git clone https://github.com/yourusername/dataset_RFSS.git
+cd dataset_RFSS
+pip install -e .
+```
 
 ## Quick Start
 
-### Installation
+### 1. Generate Dataset
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/dataset_RFSS.git
-cd dataset_RFSS
+# Generate small dataset (1000 train, 100 val, 50 test samples)
+python scripts/generate_dataset.py --train 1000 --val 100 --test 50
 
-# Install dependencies
-pip install -e .
-
-# Verify installation
-python -m pytest tests/ -v
+# Generate larger dataset
+python scripts/generate_dataset.py --train 10000 --val 1000 --test 500
 ```
 
-### Generate Your First Signal
-
-```python
-from src.signal_generation.lte_generator import LTEGenerator
-
-# Create 20 MHz LTE signal with 64-QAM
-generator = LTEGenerator(
-    sample_rate=30.72e6,
-    duration=0.01,  # 10 ms
-    bandwidth=20,   # MHz
-    modulation='64QAM'
-)
-
-signal = generator.generate_baseband()
-print(f"Generated {len(signal)} samples with power {np.mean(np.abs(signal)**2):.6f}")
+Dataset saved to `data/` with PyTorch .pt format:
+```
+data/
+  train/
+    sample_000000.pt
+    sample_000001.pt
+    ...
+  val/
+    sample_000000.pt
+    ...
+  test/
+    sample_000000.pt
+    ...
+  dataset_info.json
 ```
 
-### Multi-Standard Coexistence Example
-
-```python
-from src.mixing.signal_mixer import SignalMixer
-from src.signal_generation import GSMGenerator, LTEGenerator, NRGenerator
-
-# Generate individual signals
-gsm = GSMGenerator(sample_rate=30.72e6, duration=0.005).generate_baseband()
-lte = LTEGenerator(sample_rate=30.72e6, duration=0.005, bandwidth=20).generate_baseband()
-nr = NRGenerator(sample_rate=30.72e6, duration=0.005, bandwidth=50).generate_baseband()
-
-# Create realistic coexistence scenario
-mixer = SignalMixer(sample_rate=30.72e6)
-mixer.add_signal(gsm, carrier_freq=900e6, power_db=0, label='GSM-900')
-mixer.add_signal(lte, carrier_freq=1.8e9, power_db=-3, label='LTE-1800')
-mixer.add_signal(nr, carrier_freq=3.5e9, power_db=-2, label='5G-3500')
-
-mixed_signal, metadata = mixer.mix_signals(duration=0.005)
-```
-
-## Documentation
-
-- **[API Reference](docs/api/api_reference.md)**: Complete function documentation
-- **[Technical Specifications](docs/api/technical_specifications.md)**: Detailed implementation specs
-- **[User Guide](docs/user_guide/getting_started.md)**: Comprehensive usage examples
-- **[Performance Benchmarks](scripts/analysis/benchmark_performance.py)**: Speed and memory analysis
-
-## Research Applications
-
-### Baseline Benchmarking
-
-Experimental evaluation on demonstration dataset:
-- **ICA (FastICA)**: -20.0 dB SINR on 2-source separation
-- **NMF (Beta-divergence)**: -15.0 dB SINR on 2-source separation
-- **Interpretation**: Traditional BSS methods insufficient for multi-standard RF signals
-
-This challenging baseline motivates development of specialized RF separation algorithms.
-
-### Algorithm Development
-
-- MIMO processing algorithm evaluation
-- Interference mitigation techniques
-- Channel estimation and equalization
-- Beamforming and precoding research
-- Complex-valued neural network architectures
-- Spectrum-aware attention mechanisms
-
-### Standards Development
-
-- 5G-LTE coexistence analysis
-- Cross-standard interference studies
-- Protocol testing and validation
-
-## Architecture
-
-```mermaid
-graph TB
-    A[Signal Generators] --> E[Signal Mixer]
-    B[Channel Models] --> E
-    C[MIMO Processor] --> E
-    D[Interference] --> E
-    E --> F[Validation]
-    F --> G[Dataset Output]
-```
-
-### Core Components
-
-1. **Signal Generation Module**
-
-   - Standards-compliant 2G/3G/4G/5G generators
-   - Accurate modulation and frame structures
-   - Configurable power and bandwidth
-
-2. **Channel Modeling Module**
-
-   - Multipath, Rayleigh/Rician fading
-   - AWGN with precise SNR control
-   - Realistic propagation environments
-
-3. **MIMO Processing Module**
-
-   - 2×2 to 8×8 antenna configurations
-   - Spatial correlation modeling
-   - Linear processing techniques (ZF, MMSE, MRT)
-
-4. **Validation Framework**
-   - Automated 3GPP compliance checking
-   - Signal quality metrics (EVM, PAPR, SNR)
-   - Comparative analysis tools
-
-## Performance Benchmarks
-
-| Standard | Generation Speed | Memory Usage | Power |
-| -------- | ---------------- | ------------ | ----- |
-| GSM      | 0.6× real-time   | 4.7 MB/10ms  | 1.000 |
-| UMTS     | 2.6× real-time   | 4.7 MB/10ms  | 1.000 |
-| LTE      | 0.6× real-time   | 4.7 MB/10ms  | 1.000 |
-| 5G NR    | 0.6× real-time   | 4.7 MB/10ms  | 1.000 |
-
-## Testing and Validation
+### 2. Validate Data Quality
 
 ```bash
-# Run comprehensive test suite
-python -m pytest tests/ -v --cov=src
+# Validate signal generators are working correctly
+python scripts/validate_data_quality.py
 
-# Run performance benchmarks
-python scripts/analysis/benchmark_performance.py
+# Inspect individual signals
+python scripts/inspect_data.py --standard lte
 
-# Validate signal quality
-python examples/complete_demo.py
+# Compare all standards
+python scripts/inspect_data.py --compare
 ```
+
+Check quality reports in `data/quality_reports/`
+
+### 3. Load Data in PyTorch
+
+```python
+from src.data import RFSSDataset, create_dataloaders
+
+# Load dataset
+dataset = RFSSDataset('data/train')
+
+# Get a sample
+sample = dataset[0]
+mixed_signal = sample['mixed_signal']  # Complex tensor
+labels = sample['labels']  # e.g., ['LTE', 'GSM']
+metadata = sample['metadata']  # Generation parameters
+
+# Create dataloaders
+dataloaders = create_dataloaders('data', batch_size=16)
+train_loader = dataloaders['train']
+```
+
+## Data Format
+
+Each `.pt` file contains:
+```python
+{
+    'mixed_signal': torch.ComplexTensor,  # Mixed RF signal
+    'source_signals': {
+        'LTE': torch.ComplexTensor,       # Individual sources
+        'GSM': torch.ComplexTensor,
+        ...
+    },
+    'labels': ['LTE', 'GSM', ...],        # Standards present
+    'metadata': {
+        'scenario': 'two_standard_coexistence',
+        'standards': [...],
+        'carrier_freq': ...,
+        ...
+    }
+}
+```
+
+## Supported Standards
+
+- **2G (GSM)**: GMSK modulation, 200 kHz bandwidth
+- **3G (UMTS)**: CDMA with spreading codes, 5 MHz bandwidth
+- **4G (LTE)**: OFDM, configurable bandwidth (10/15/20 MHz), QAM modulation
+- **5G (NR)**: OFDM with flexible numerology, up to 100 MHz bandwidth
+
+## Features
+
+### Signal Generation
+- 3GPP-compliant signal generators
+- Configurable parameters (bandwidth, modulation, power, etc.)
+- Deterministic generation with seed control
+- Realistic power normalization
+
+### Channel Models
+- Rayleigh/Rician fading
+- Multipath propagation
+- AWGN (Additive White Gaussian Noise)
+- MIMO channel simulation (2×2, 4×4, 6×6, 8×8)
+
+### Scenarios
+- **Single Standard**: One RF technology
+- **Two Standard Coexistence**: Two technologies sharing spectrum
+- **Multi-Standard Interference**: 3-4 technologies + interference
+
+### Quality Assurance
+- Automated 3GPP compliance checking
+- Signal quality metrics (EVM, PAPR, SNR)
+- Spectral purity validation
+- Statistical property verification
+
+## Performance
+
+Signal generation speed (on typical workstation):
+- GSM: ~16 ms per 10ms signal
+- UMTS: ~4 ms per 10ms signal
+- LTE: ~16 ms per 10ms signal
+- 5G NR: ~16 ms per 10ms signal
+
+Memory: ~4.7 MB per 10ms signal (all standards)
+
+## Project Structure
+
+```
+dataset_RFSS/
+├── src/
+│   ├── signal_generation/    # Standard-specific generators
+│   ├── channel_models/        # Channel effects
+│   ├── mimo/                  # MIMO processing
+│   ├── mixing/                # Signal mixing
+│   ├── validation/            # Quality metrics
+│   └── data/                  # PyTorch dataset
+├── scripts/
+│   ├── generate_dataset.py    # Main dataset generation
+│   ├── validate_data_quality.py  # Quality validation
+│   └── inspect_data.py        # Data visualization
+├── examples/                  # Usage examples
+├── tests/                     # Unit tests
+└── config/                    # YAML configurations
+```
+
+## Development
+
+### Run Tests
+
+```bash
+pytest tests/ -v
+```
+
+### Code Quality
+
+```bash
+# Format
+black src/ scripts/ tests/
+
+# Type check
+mypy src/
+
+# Lint
+flake8 src/
+```
+
+## Data Quality Checklist
+
+Before using generated data for ML:
+
+1. **Run validation**: `python scripts/validate_data_quality.py`
+2. **Check quality scores**: Should be >80 for all standards
+3. **Inspect samples**: `python scripts/inspect_data.py`
+4. **Verify power normalization**: Mean power should be ~1.0
+5. **Check spectral purity**: No unexpected spurious emissions
+
+If quality scores are low, check signal generators and parameters.
+
+## License
+
+CC BY 4.0
 
 ## Citation
 
-If you use this dataset in your research, please cite our paper:
+If you use this framework in your research, please cite:
 
 ```bibtex
-@article{rfss2025,
-    title={A Comprehensive Multi-Standard RF Signal Dataset for Source Separation Research},
-    author={Hao Chen and Rui Jin and Dayuan Tan},
-    journal={IEEE Transactions on Wireless Communications},
+@software{rfss2025,
+    title={RF Signal Source Separation Dataset Generation Framework},
+    author={Your Name},
     year={2025},
-    volume={XX},
-    number={X},
-    pages={XXX-XXX},
-    doi={10.1109/TWC.2024.XXXXXXX}
+    url={https://github.com/yourusername/dataset_RFSS}
 }
 ```
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-### Development Setup
-
-```bash
-# Clone with development dependencies
-git clone https://github.com/yourusername/dataset_RFSS.git
-cd dataset_RFSS
-
-# Install development environment
-pip install -e ".[dev,docs,jupyter]"
-
-# Run pre-commit hooks
-pre-commit install
-```
-
-### Areas for Contribution
-
-- New wireless standards (6G, IoT, satellite)
-- Advanced channel models (mmWave, 3D propagation)
-- Hardware impairment models
-- GPU acceleration
-- Additional validation metrics
-
-## 📋 Roadmap
-
-### Version 1.1 (Q2 2024)
-
-- [ ] 6G research signal support
-- [ ] mmWave channel models
-- [ ] GPU acceleration with CUDA
-- [ ] Real-time SDR integration
-
-### Version 1.2 (Q4 2024)
-
-- [ ] IoT/M2M standards (NB-IoT, Cat-M1)
-- [ ] WiFi/Bluetooth coexistence
-- [ ] 3D channel modeling
-- [ ] Hardware-in-the-loop testing
-
-## 🆘 Support and Community
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/dataset_RFSS/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/dataset_RFSS/discussions)
-- **Documentation**: [Online Docs](https://dataset-rfss.readthedocs.io)
-- **Email**: support@dataset-rfss.org
-
-## 📜 License
-
-This project is licensed under the [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/) - see the [LICENSE](LICENSE) file for details.
-
-### License Summary
-
-- Commercial use allowed
-- Distribution allowed
-- Modification allowed
-- Private use allowed
-- ❗ Attribution required
-
-## 🙏 Acknowledgments
-
-- **3GPP** for comprehensive technical specifications
-- **GNU Radio** community for foundational signal processing tools
-- **SciPy** developers for scientific computing libraries
-- **NumPy** team for high-performance array operations
-- Contributors and beta testers from the wireless research community
-
-## GPU/MPS Training Guide
-
-### Apple Silicon (MPS) Acceleration - CONFIRMED 5x SPEEDUP
-
-**EXPERIMENTAL VALIDATION COMPLETE**: MPS shows **5× training speedup** over CPU for deep learning models.
-
-```bash
-# Test MPS performance (confirmed 5× faster)
-uv run python scripts/test_mps_performance.py
-
-# Quick training with real performance results
-uv run python scripts/quick_training_test.py
-
-# Generate large-scale training dataset (4K samples)
-uv run python scripts/generate_large_dataset.py --num_samples 4000
-
-# Full model training with MPS acceleration
-uv run python scripts/train_deep_models.py --device mps --epochs 10
-```
-
-### Baseline Algorithm Performance
-
-**Experimental validation on demonstration dataset**:
-
-| Algorithm   | SINR Result | Processing Time | Status |
-|-------------|-------------|-----------------|--------|
-| ICA (FastICA) | -20.0 ± 0.0 dB | 37 ms/sample | Baseline |
-| NMF (Beta-div) | -15.0 ± 0.0 dB | 40 ms/sample | Baseline |
-| CNN-LSTM    | Under investigation | N/A | Experimental |
-| Conv-TasNet | Under investigation | N/A | Experimental |
-
-Negative SINR indicates traditional BSS methods are insufficient for RF signals.
-
-### Training Configuration
-- **Device**: MPS (Metal Performance Shaders)
-- **Performance**: 5× faster than CPU
-- **Memory**: Limited to 8K samples per signal
-- **Batch Size**: 8-16 optimal for throughput
-- **Models**: Reduced dimensions required for MPS
-
-## Project Status
-
-- **Development Status**: 4 - Beta (Signal generation validated, benchmarks complete)
-- **Research Status**: Framework ready, baseline benchmarks established
-- **Intended Audience**: Science/Research
-- **Programming Language**: Python 3.13+
-- **Topic**: Scientific/Engineering :: Wireless Communications
-- **License**: Creative Commons Attribution 4.0 International
-
----
-
-**Maintained by**: RF Signal Processing Research Group  
-**Last Updated**: August 2024 (EXPERIMENTAL VALIDATION COMPLETE)  
-**Version**: 1.0.0 (PERFORMANCE VALIDATION PHASE)
+Issues and pull requests welcome.

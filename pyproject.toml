@@ -35,6 +35,7 @@ dependencies = [
     "torch>=2.7.1",
     "torchvision>=0.22.1",
     "torchaudio>=2.7.1",
+    "nbstripout>=0.8.1",
 ]
 
 [project.optional-dependencies]

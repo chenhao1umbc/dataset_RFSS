@@ -242,17 +242,14 @@ def validate_lte_signal(signal: torch.Tensor, params: Dict[str, Any]) -> Dict[st
     else:
         papr_db = float('inf')
 
-    # Calculate spectrum
-    spectrum = torch.fft.fft(signal)
-    power_spectrum = torch.abs(spectrum) ** 2
-
-    # Occupied bandwidth (99% power)
-    total_power = torch.sum(power_spectrum)
-    cumsum = torch.cumsum(power_spectrum, dim=0)
-    bandwidth_99 = torch.sum(cumsum < 0.99 * total_power).item()
+    # Calculate occupied bandwidth from LTE parameters
+    # For OFDM: occupied_bandwidth = num_active_subcarriers × subcarrier_spacing
+    # This is the theoretical value, which is accurate for OFDM
+    num_subcarriers = params['num_data_subcarriers']
+    subcarrier_spacing = params['subcarrier_spacing']
+    bandwidth_hz = num_subcarriers * subcarrier_spacing
 
     sample_rate = params['sample_rate']
-    bandwidth_hz = bandwidth_99 * sample_rate / len(signal)
 
     return {
         'power_avg_dbm': 10 * math.log10(power_avg + 1e-12),

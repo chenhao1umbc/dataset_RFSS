@@ -140,3 +140,12 @@ module = [
     "seaborn.*",
 ]
 ignore_missing_imports = true
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.30.1",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.7",
+    "pytest>=8.4.2",
+    "pytest-cov>=7.0.0",
+]

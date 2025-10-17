@@ -18,12 +18,34 @@
 - [x] Test 5G NR generator produces valid signals
 - [x] Validate all generators against 3GPP specs
 
-### 1.2 Channel Models - NOT VERIFIED
-- [ ] Review channel modeling code
-- [ ] Test multipath implementation
-- [ ] Test fading models (Rayleigh/Rician)
-- [ ] Test AWGN implementation
-- [ ] Validate channel effects are realistic
+### 1.2 Channel Models - PENDING REVIEW
+**Note**: Complete redesign from scratch based on 3GPP specifications
+- [ ] Research 3GPP TR 38.901 channel models (TDL/CDL specifications)
+- [ ] Extract numerical parameters for all TDL models from official sources
+- [ ] Implement 3GPP TDL-A model (NLOS, low delay spread, 23 taps)
+- [ ] Implement 3GPP TDL-B model (NLOS, medium delay spread, 23 taps)
+- [ ] Implement 3GPP TDL-C model (NLOS, high delay spread, 24 taps)
+- [ ] Implement 3GPP TDL-D model (LOS, low delay spread, 13 taps, K=13.3 dB)
+- [ ] Implement 3GPP TDL-E model (LOS, high delay spread, 14 taps, K=22 dB)
+- [ ] Implement Jakes' sum-of-sinusoids model for time-varying fading
+- [ ] Implement Rayleigh fading with Doppler effects
+- [ ] Implement Rician fading with Doppler effects
+- [ ] Implement CFO (Carrier Frequency Offset) per 3GPP TS 38.104/38.101
+- [ ] Implement SFO (Sampling Frequency Offset) with resampling
+- [ ] Implement I/Q imbalance per 3GPP TS 36.101 (image rejection requirements)
+- [ ] Implement DC offset (LO leakage modeling)
+- [ ] Implement phase noise as Wiener process per 3GPP TS 25.102
+- [ ] Implement PA nonlinearity using Rapp model
+- [ ] Implement MIMO channel generation with time-varying fading
+- [ ] Implement MIMO channel application with spatial correlation
+- [ ] Create comprehensive unit tests for all TDL models
+- [ ] Create unit tests for Jakes' fading models (Rayleigh/Rician)
+- [ ] Create unit tests for all hardware impairments (CFO/SFO/IQ/DC/PN/PA)
+- [ ] Create unit tests for MIMO channel generation and application
+- [ ] Create demonstration script (run_channel.py) showing all effects
+- [ ] Document all implementations with 3GPP citations in paper/amendment.md
+- [ ] Cross-verify numerical parameters with HermesPy implementation
+- [ ] Remove unused imports (numpy, Optional) for code cleanliness
 
 ### 1.3 Signal Mixing - NOT VERIFIED
 - [ ] Review signal mixer code

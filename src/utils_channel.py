@@ -256,8 +256,11 @@ def generate_rayleigh_fading_jakes(
         h_real = h_real + torch.cos(2 * math.pi * f_n * t + phi_n)
         h_imag = h_imag + torch.sin(2 * math.pi * f_n * t + phi_n)
 
-    # Normalize to unit average power
+    # Normalize
     h = torch.complex(h_real, h_imag) / math.sqrt(num_oscillators)
+
+    # Normalize to unit power
+    h = h / torch.sqrt(torch.mean(torch.abs(h) ** 2))
 
     return h
 

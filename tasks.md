@@ -18,34 +18,34 @@
 - [x] Test 5G NR generator produces valid signals
 - [x] Validate all generators against 3GPP specs
 
-### 1.2 Channel Models - PENDING REVIEW
+### 1.2 Channel Models - COMPLETE
 **Note**: Complete redesign from scratch based on 3GPP specifications
-- [ ] Research 3GPP TR 38.901 channel models (TDL/CDL specifications)
-- [ ] Extract numerical parameters for all TDL models from official sources
-- [ ] Implement 3GPP TDL-A model (NLOS, low delay spread, 23 taps)
-- [ ] Implement 3GPP TDL-B model (NLOS, medium delay spread, 23 taps)
-- [ ] Implement 3GPP TDL-C model (NLOS, high delay spread, 24 taps)
-- [ ] Implement 3GPP TDL-D model (LOS, low delay spread, 13 taps, K=13.3 dB)
-- [ ] Implement 3GPP TDL-E model (LOS, high delay spread, 14 taps, K=22 dB)
-- [ ] Implement Jakes' sum-of-sinusoids model for time-varying fading
-- [ ] Implement Rayleigh fading with Doppler effects
-- [ ] Implement Rician fading with Doppler effects
-- [ ] Implement CFO (Carrier Frequency Offset) per 3GPP TS 38.104/38.101
-- [ ] Implement SFO (Sampling Frequency Offset) with resampling
-- [ ] Implement I/Q imbalance per 3GPP TS 36.101 (image rejection requirements)
-- [ ] Implement DC offset (LO leakage modeling)
-- [ ] Implement phase noise as Wiener process per 3GPP TS 25.102
-- [ ] Implement PA nonlinearity using Rapp model
-- [ ] Implement MIMO channel generation with time-varying fading
-- [ ] Implement MIMO channel application with spatial correlation
-- [ ] Create comprehensive unit tests for all TDL models
-- [ ] Create unit tests for Jakes' fading models (Rayleigh/Rician)
-- [ ] Create unit tests for all hardware impairments (CFO/SFO/IQ/DC/PN/PA)
-- [ ] Create unit tests for MIMO channel generation and application
-- [ ] Create demonstration script (run_channel.py) showing all effects
-- [ ] Document all implementations with 3GPP citations in paper/amendment.md
-- [ ] Cross-verify numerical parameters with HermesPy implementation
-- [ ] Remove unused imports (numpy, Optional) for code cleanliness
+- [x] Research 3GPP TR 38.901 channel models (TDL/CDL specifications)
+- [x] Extract numerical parameters for all TDL models from official sources
+- [x] Implement 3GPP TDL-A model (NLOS, low delay spread, 23 taps)
+- [x] Implement 3GPP TDL-B model (NLOS, medium delay spread, 23 taps)
+- [x] Implement 3GPP TDL-C model (NLOS, high delay spread, 24 taps)
+- [x] Implement 3GPP TDL-D model (LOS, low delay spread, 13 taps, K=13.3 dB)
+- [x] Implement 3GPP TDL-E model (LOS, high delay spread, 14 taps, K=22 dB)
+- [x] Implement Jakes' sum-of-sinusoids model for time-varying fading
+- [x] Implement Rayleigh fading with Doppler effects
+- [x] Implement Rician fading with Doppler effects
+- [x] Implement CFO (Carrier Frequency Offset) per 3GPP TS 38.104/38.101
+- [x] Implement SFO (Sampling Frequency Offset) with resampling
+- [x] Implement I/Q imbalance per 3GPP TS 36.101 (image rejection requirements)
+- [x] Implement DC offset (LO leakage modeling)
+- [x] Implement phase noise as Wiener process per 3GPP TS 25.102
+- [x] Implement PA nonlinearity using Rapp model
+- [x] Implement MIMO channel generation with time-varying fading
+- [x] Implement MIMO channel application with spatial correlation
+- [x] Create comprehensive unit tests for all TDL models
+- [x] Create unit tests for Jakes' fading models (Rayleigh/Rician)
+- [x] Create unit tests for all hardware impairments (CFO/SFO/IQ/DC/PN/PA)
+- [x] Create unit tests for MIMO channel generation and application
+- [x] Create demonstration script (run_channel.py) showing all effects
+- [x] Document all implementations with 3GPP citations in paper/amendment.md
+- [x] Cross-verify numerical parameters with HermesPy implementation
+- [x] Remove unused imports (numpy, Optional) for code cleanliness
 
 ### 1.3 Signal Mixing - NOT VERIFIED
 - [ ] Review signal mixer code

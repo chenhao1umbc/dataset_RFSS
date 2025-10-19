@@ -432,6 +432,117 @@ Each implemented effect must be validated against:
 
 ---
 
+---
+
+## Amendment 2: Enhanced Visualization and Validation (Phase 1.2 Completion)
+
+**Date**: 2025-10-18
+**Status**: Complete
+**Reason**: Interactive validation and demonstration enhancement for comprehensive corner checking
+
+### Validation Approach
+
+Phase 1.2 underwent comprehensive interactive validation through systematic Q&A and demonstration review:
+
+#### 1. Technical Explanations Validated
+- **TDL Models**: Delay structure (delay=0 as reference, not direct path), power profiles, NLOS vs LOS
+- **Jakes' Model**: Sum-of-sinusoids with fixed random phases, smooth time-correlated fading
+- **Rayleigh/Rician**: Relationship to TDL (single-tap vs multi-tap), LOS component visualization
+- **MIMO**: Flat-fading assumption, time-domain multiplication (not convolution)
+- **Convolution vs Multiplication**: TDL applies convolution (multipath delays), MIMO applies multiplication
+
+#### 2. Enhanced Visualizations (check/demo_phase1_2.ipynb)
+
+**Philosophy**: "check/" folder checks ALL corners - no selective demonstration, all effects shown
+
+**Improvements Made:**
+
+1. **CFO Demonstration**:
+   - Added: Color-coded scatter plot showing time progression
+   - Shows: Phase rotation over time (blue→yellow gradient)
+   - Includes: Rotation angle calculation and period analysis
+   - Result: Clear visualization of continuous phase rotation
+
+2. **I/Q Imbalance**:
+   - Added: Unit circle distortion plot (circle → ellipse)
+   - Shows: How I/Q imbalance causes image frequency interference
+   - Includes: Amplitude distribution comparison
+   - Result: Physical meaning of amplitude/phase mismatch visible
+
+3. **Phase Noise**:
+   - Added: Phase vs time plots showing Wiener process
+   - Shows: Random walk behavior (integrated white noise)
+   - Includes: Constellation rotation blur
+   - Result: Demonstrates cumulative phase drift
+
+4. **DC Offset**:
+   - Added: Spectrum plot showing DC spike at 0 Hz
+   - Shows: Constant complex shift, non-zero mean
+   - Includes: Origin vs shifted center markers
+   - Result: Visual proof of LO leakage
+
+5. **Rician Fading**:
+   - Added: Red vertical line showing LOS component amplitude
+   - Shows: Deterministic LOS + random scattered components
+   - Includes: Power allocation (LOS vs scattered)
+   - Result: Clear distinction from Rayleigh fading
+
+6. **Realistic Combined Scenario**:
+   - Changed: From 2 scatter plots to 6-subplot progressive story
+   - Shows: Step-by-step degradation (Original → TDL → CFO → I/Q → AWGN)
+   - Includes: Power tracking at each step
+   - Result: Tells complete story of channel cascade
+
+#### 3. Demonstration Coverage
+
+**All Phase 1.2 implementations demonstrated**:
+- ✓ 5 TDL models (TDL-A/B/C/D/E) with power delay profiles
+- ✓ Jakes' time-varying fading (static vs Doppler comparison)
+- ✓ Rayleigh fading (amplitude distribution validation)
+- ✓ Rician fading (K-factor effect visualization)
+- ✓ CFO (phase rotation with time progression)
+- ✓ SFO (timing drift demonstration)
+- ✓ I/Q imbalance (ellipse distortion)
+- ✓ DC offset (spectrum spike and shift)
+- ✓ Phase noise (Wiener process)
+- ✓ PA nonlinearity (AM/AM characteristic)
+- ✓ MIMO (4×4 channel matrix time variation)
+- ✓ Realistic cascade (progressive degradation)
+
+#### 4. Code Quality Verification
+
+**Systematic import checking**:
+- Removed all unused imports from demo notebook
+- Removed `generate_tdl_channel`, `validate_channel_statistics` from run_channel.py
+- Added demonstrations for SFO, DC offset, phase noise to achieve complete coverage
+- Verified all imports are actually used in code
+
+#### 5. Educational Value
+
+Demo notebook now serves as:
+- **Validation tool**: Visual verification of all implementations
+- **Educational resource**: Clear explanations of physical effects
+- **Reference implementation**: Shows how to use all channel functions
+- **Story-telling**: Progressive degradation reveals channel behavior
+
+### Paper Impact
+
+**Section to Add**: 3.7 Validation and Demonstration
+
+Content:
+- All channel models validated through comprehensive unit tests (22+ tests)
+- Interactive demonstration notebook with enhanced visualizations
+- Progressive degradation scenarios showing realistic channel cascade
+- All implementations cross-verified with 3GPP specifications and HermesPy
+
+**Figures to Add**:
+- Figure: TDL power delay profile comparison (NLOS vs LOS)
+- Figure: Jakes' time-varying fading (static vs Doppler)
+- Figure: Hardware impairments effects (CFO rotation, I/Q ellipse, DC spectrum)
+- Figure: Realistic channel cascade (6-step progressive degradation)
+
+---
+
 **Document Status**: Living document - updated as implementation progresses
-**Last Updated**: 2025-10-09
+**Last Updated**: 2025-10-18
 **Author**: Hao Chen (with AI assistance)

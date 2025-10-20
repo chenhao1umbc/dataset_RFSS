@@ -10,7 +10,7 @@ Implements GMSK modulation per 3GPP TS 45.004:
 import torch
 import math
 from typing import Dict, Any
-from utils_modulation import GmskModulator
+from src.utils_modulation import GmskModulator
 
 
 # GSM specifications per 3GPP TS 45.004

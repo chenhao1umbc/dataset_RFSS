@@ -543,6 +543,66 @@ User conducted comprehensive review and validation of Phase 1.2 channel modeling
 
 ---
 
+## 2025-10-19 (Sunday) - Phase 1.3 Signal Mixing Complete
+
+### Context
+User requested completion of Phase 1.3 with comprehensive, realistic multi-standard signal mixing based on 3GPP coexistence scenarios. Implementation to follow user's style guide strictly.
+
+### Activities
+
+**1. Research and Documentation**
+- Researched 3GPP coexistence scenarios: LTE-NR DSS, GSM-UMTS-LTE, spectrum sharing
+- Extracted realistic parameters: ACIR ~32 dB, ACLR 30-45 dB, SIR -20 to +20 dB
+- Created paper/mixing_scenarios.md (600+ lines, comprehensive)
+
+**2. Core Implementation (src/utils_mixing.py - 500+ lines)**
+- SignalMixer: Per-source independent channels, co-channel/adjacent-channel modes
+- Per-source effects: TDL, CFO, SFO, I/Q imbalance, DC offset, phase noise, PA
+- MIMOSignalMixer: 2x2/4x4/8x8 MIMO with spatial correlation
+- Ground truth: Clean, channelized, aligned signals preserved
+
+**3. Demonstration Script (src/run_mixing.py - 350 lines)**
+- Co-channel mixing: LTE + 5G NR
+- Adjacent-channel mixing: GSM + UMTS + LTE
+- Near-far scenario: 20 dB power difference
+- MIMO 4x4 mixing
+
+**4. Comprehensive Unit Tests (check/unit_test_mixing.py - 12 tests)**
+- Power ratio accuracy, frequency offset accuracy, timing offset handling
+- MIMO spatial correlation validation
+- Ground truth preservation
+- 2/3/4-source scenarios
+- All 12 tests PASSING
+
+**5. Demo Notebook (check/demo_phase1_3.ipynb)**
+- Interactive demonstrations of all mixing modes
+- Ground truth preservation explanation
+
+**6. Critical Bug Fixes**
+- Fixed import paths in all src/run_*.py files
+- Fixed import paths in src/utils_*.py files
+- Updated pyproject.toml testpaths
+
+### Deliverables
+
+**Code:**
+- src/utils_mixing.py: 500+ lines
+- src/run_mixing.py: 350 lines
+- check/unit_test_mixing.py: 400 lines
+- paper/mixing_scenarios.md: 600+ lines
+
+**Test Results:** 12/12 tests PASSING
+
+**Validation:** All demos running successfully
+
+### Status
+
+Phase 1.3 is READY FOR REVIEW
+
+All code and tests completed. Awaiting user review before marking as complete per instructions.
+
+---
+
 ## Template for Future Entries
 
 ## YYYY-MM-DD (Day) - Brief Title

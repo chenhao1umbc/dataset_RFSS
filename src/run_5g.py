@@ -7,8 +7,8 @@ Generates 5G NR signals using OFDM with flexible numerology per 3GPP TS 38.211.
 import torch
 import argparse
 import math
-from utils_5g import generate_nr_baseband, get_nr_params, validate_nr_signal
-from utils_shared import normalize_power, add_awgn_noise, add_carrier_frequency
+from src.utils_5g import generate_nr_baseband, get_nr_params, validate_nr_signal
+from src.utils_shared import normalize_power, add_awgn_noise, add_carrier_frequency
 
 
 def generate_5g_signal(

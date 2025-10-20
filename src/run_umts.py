@@ -7,8 +7,8 @@ Generates 3G UMTS signals using W-CDMA per 3GPP TS 25.213.
 import torch
 import argparse
 import math
-from utils_umts import generate_umts_baseband, validate_umts_signal, UMTS_SPECS
-from utils_shared import normalize_power, add_awgn_noise, add_carrier_frequency
+from src.utils_umts import generate_umts_baseband, validate_umts_signal, UMTS_SPECS
+from src.utils_shared import normalize_power, add_awgn_noise, add_carrier_frequency
 
 
 def generate_umts_signal(

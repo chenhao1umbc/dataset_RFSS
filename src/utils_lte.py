@@ -122,7 +122,7 @@ def generate_lte_resource_grid(
     Returns:
         Resource grid of shape (num_symbols, num_subcarriers)
     """
-    from utils_modulation import generate_qam_constellation
+    from src.utils_modulation import generate_qam_constellation
 
     num_subcarriers = num_rbs * LTE_SUBCARRIERS_PER_RB
 
@@ -159,7 +159,7 @@ def generate_lte_baseband(
     Returns:
         Complex baseband signal
     """
-    from utils_modulation import get_modulation_order
+    from src.utils_modulation import get_modulation_order
 
     # Get LTE parameters
     params = get_lte_params(bandwidth_mhz)

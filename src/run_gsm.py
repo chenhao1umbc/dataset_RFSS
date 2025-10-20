@@ -6,9 +6,9 @@ Generates 2G GSM signals using GMSK modulation per 3GPP TS 45.004.
 
 import torch
 import argparse
-from utils_gsm import generate_gsm_baseband, generate_gsm_burst, validate_gsm_signal, GSM_SPECS
-from utils_shared import normalize_power, add_awgn_noise, add_carrier_frequency
-from utils_modulation import GmskModulator
+from src.utils_gsm import generate_gsm_baseband, generate_gsm_burst, validate_gsm_signal, GSM_SPECS
+from src.utils_shared import normalize_power, add_awgn_noise, add_carrier_frequency
+from src.utils_modulation import GmskModulator
 
 
 def generate_gsm_signal(

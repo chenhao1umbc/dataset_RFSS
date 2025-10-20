@@ -47,11 +47,67 @@
 - [x] Cross-verify numerical parameters with HermesPy implementation
 - [x] Remove unused imports (numpy, Optional) for code cleanliness
 
-### 1.3 Signal Mixing - NOT VERIFIED
-- [ ] Review signal mixer code
-- [ ] Test frequency shifting
-- [ ] Test power normalization
-- [ ] Validate mixed signals preserve source characteristics
+### 1.3 Signal Mixing - READY FOR REVIEW
+**Note**: Awaiting user review before marking complete
+
+**A. Fix Current Issues**
+- [ ] Fix import path in check/unit_test_channel.py (utils_channel → src.utils_channel)
+- [ ] Update pyproject.toml testpaths to point to check/ instead of tests/
+- [ ] Fix all import paths in src/run_*.py files (added src prefix)
+- [ ] Fix import paths in src/utils_*.py files (added src prefix)
+
+**B. Research and Specifications**
+- [ ] Research 3GPP coexistence scenarios (LTE-NR DSS, GSM-UMTS-LTE, spectrum sharing)
+- [ ] Extract realistic interference parameters (ACIR ~32 dB, ACLR 30-45 dB, SIR -20 to +20 dB)
+- [ ] Document mixing scenarios in paper/mixing_scenarios.md
+
+**C. Core Mixing Infrastructure (src/utils_mixing.py)**
+- [ ] Implement SignalMixer class with per-source independent channels
+- [ ] Implement per-source channel application (different TDL/CFO/impairments per source)
+- [ ] Implement timing offset support (asynchronous signal arrival)
+- [ ] Implement co-channel mixing (all sources at baseband, hardest case)
+- [ ] Implement adjacent-channel mixing (frequency shifting with realistic ACIR)
+- [ ] Implement realistic power ratio control (SIR: -20 to +20 dB for near-far)
+- [ ] Implement ground truth preservation (source signals, channels, metadata)
+- [ ] Implement comprehensive metadata output for reproducibility
+
+**D. MIMO Spatial Mixing**
+- [ ] Implement MIMO mixer with spatial correlation
+- [ ] Implement per-antenna different mixtures (spatial diversity)
+- [ ] Support 2x2, 4x4, 8x8 MIMO configurations
+- [ ] Validate spatial correlation properties
+- [ ] Test MIMO mixing with time-varying channels
+
+**E. Realistic Mixing Scenarios Definition**
+- [ ] Define 2-source scenarios (GSM+LTE, UMTS+5G, LTE+5G, GSM+UMTS, UMTS+LTE, GSM+5G)
+- [ ] Define 3-source scenarios (GSM+UMTS+LTE, UMTS+LTE+5G, GSM+LTE+5G, GSM+UMTS+5G)
+- [ ] Define 4-source scenario (GSM+UMTS+LTE+5G)
+- [ ] Define co-channel vs adjacent-channel configurations per scenario
+- [ ] Define power ratio distributions (equal, near-far, realistic SIR ranges)
+- [ ] Document all scenarios with 3GPP coexistence references
+
+**F. Comprehensive Unit Tests (check/unit_test_mixing.py)**
+- [ ] Test power ratio accuracy after mixing (validate SIR)
+- [ ] Test frequency offset accuracy for adjacent-channel mixing
+- [ ] Test timing offset handling and edge cases
+- [ ] Test MIMO spatial correlation validation
+- [ ] Test ground truth preservation for all source signals
+- [ ] Test metadata completeness and correctness
+- [ ] Test 2-source basic mixing
+- [ ] Test 3-source realistic scenario
+- [ ] Test 4-source near-far scenario
+- [ ] Test MIMO 2x2 and 4x4 configurations
+- [ ] Test mixer clear and source info methods
+
+**G. Demonstration Script and Notebook**
+- [ ] Create src/run_mixing.py demonstration script
+- [ ] Create check/demo_phase1_3.ipynb comprehensive demonstration
+- [ ] Visualize co-channel mixing
+- [ ] Visualize adjacent-channel mixing
+- [ ] Visualize MIMO mixing
+- [ ] Visualize power ratio effects
+- [ ] Demonstrate ground truth preservation
+- [ ] Show realistic 2/3/4-source mixing scenarios
 
 ### 1.4 Development Environment
 - [ ] Install missing dependencies (pytest, dev tools)

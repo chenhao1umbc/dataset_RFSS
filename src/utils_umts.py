@@ -191,7 +191,7 @@ def generate_umts_baseband(
     Returns:
         Complex baseband signal
     """
-    from utils_modulation import generate_qam_constellation
+    from src.utils_modulation import generate_qam_constellation
 
     # Generate random QPSK symbols
     qpsk_constellation = generate_qam_constellation(4, device=device)

@@ -7,8 +7,8 @@ Generates 4G LTE signals using OFDM per 3GPP TS 36.211.
 import torch
 import argparse
 import math
-from utils_lte import generate_lte_baseband, get_lte_params, validate_lte_signal
-from utils_shared import normalize_power, add_awgn_noise, add_carrier_frequency
+from src.utils_lte import generate_lte_baseband, get_lte_params, validate_lte_signal
+from src.utils_shared import normalize_power, add_awgn_noise, add_carrier_frequency
 
 
 def generate_lte_signal(

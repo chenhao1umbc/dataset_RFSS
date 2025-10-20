@@ -106,11 +106,12 @@ known_first_party = ["dataset_rfss"]
 minversion = "6.0"
 addopts = "-ra -q --cov=src --cov-report=term-missing"
 testpaths = [
-    "tests",
+    "check",
 ]
 python_files = [
     "test_*.py",
     "*_test.py",
+    "unit_test_*.py",
 ]
 
 [tool.mypy]

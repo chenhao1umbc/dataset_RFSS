@@ -6,7 +6,7 @@ Demonstrates 3GPP TDL models, hardware impairments, and RF effects.
 
 import torch
 import argparse
-from utils_channel import (
+from src.utils_channel import (
     add_awgn,
     apply_tdl_channel,
     apply_cfo,

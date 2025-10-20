@@ -10,7 +10,7 @@ Tests:
 
 import torch
 import math
-from utils_channel import (
+from src.utils_channel import (
     add_awgn,
     generate_tdl_channel,
     apply_tdl_channel,

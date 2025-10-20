@@ -90,15 +90,15 @@ def generate_lte_ofdm_symbol(
     freq_symbol = torch.zeros(fft_size, dtype=torch.complex64, device=device)
 
     # Map data to subcarriers (centered around DC)
-    # LTE uses subcarriers [-num_data_subcarriers/2, ..., -1, 0, 1, ..., num_data_subcarriers/2]
-    # DC subcarrier (index 0) is not used
+    # LTE uses subcarriers centered around DC, with DC null
+    # For N subcarriers: use -(N//2) to -1, skip 0, then 1 to (N//2)
 
     half_data = num_data_subcarriers // 2
 
-    # Negative frequencies (upper half of FFT)
+    # Negative frequencies: -half_data to -1 → FFT indices fft_size-half_data to fft_size-1
     freq_symbol[-half_data:] = data_symbols[:half_data]
 
-    # Positive frequencies (lower half of FFT, skip DC)
+    # Positive frequencies: 1 to half_data → FFT indices 1 to half_data
     freq_symbol[1:half_data+1] = data_symbols[half_data:]
 
     return freq_symbol

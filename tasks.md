@@ -47,73 +47,71 @@
 - [x] Cross-verify numerical parameters with HermesPy implementation
 - [x] Remove unused imports (numpy, Optional) for code cleanliness
 
-### 1.3 Signal Mixing - READY FOR REVIEW
-**Note**: Awaiting user review before marking complete
+### 1.3 Signal Mixing - COMPLETE
 
 **A. Fix Current Issues**
-- [ ] Fix import path in check/unit_test_channel.py (utils_channel → src.utils_channel)
-- [ ] Update pyproject.toml testpaths to point to check/ instead of tests/
-- [ ] Fix all import paths in src/run_*.py files (added src prefix)
-- [ ] Fix import paths in src/utils_*.py files (added src prefix)
+- [x] Fix import path in check/unit_test_channel.py (utils_channel → src.utils_channel)
+- [x] Update pyproject.toml testpaths to point to check/ instead of tests/
+- [x] Fix all import paths in src/run_*.py files (added src prefix)
+- [x] Fix import paths in src/utils_*.py files (added src prefix)
 
 **B. Research and Specifications**
-- [ ] Research 3GPP coexistence scenarios (LTE-NR DSS, GSM-UMTS-LTE, spectrum sharing)
-- [ ] Extract realistic interference parameters (ACIR ~32 dB, ACLR 30-45 dB, SIR -20 to +20 dB)
-- [ ] Document mixing scenarios in paper/mixing_scenarios.md
+- [x] Research 3GPP coexistence scenarios (LTE-NR DSS, GSM-UMTS-LTE, spectrum sharing)
+- [x] Extract realistic interference parameters (ACIR ~32 dB, ACLR 30-45 dB, SIR -20 to +20 dB)
+- [x] Document mixing scenarios in paper/mixing_scenarios.md
 
 **C. Core Mixing Infrastructure (src/utils_mixing.py)**
-- [ ] Implement SignalMixer class with per-source independent channels
-- [ ] Implement per-source channel application (different TDL/CFO/impairments per source)
-- [ ] Implement timing offset support (asynchronous signal arrival)
-- [ ] Implement co-channel mixing (all sources at baseband, hardest case)
-- [ ] Implement adjacent-channel mixing (frequency shifting with realistic ACIR)
-- [ ] Implement realistic power ratio control (SIR: -20 to +20 dB for near-far)
-- [ ] Implement ground truth preservation (source signals, channels, metadata)
-- [ ] Implement comprehensive metadata output for reproducibility
+- [x] Implement SignalMixer class with per-source independent channels
+- [x] Implement per-source channel application (different TDL/CFO/impairments per source)
+- [x] Implement timing offset support (asynchronous signal arrival)
+- [x] Implement co-channel mixing (all sources at baseband, hardest case)
+- [x] Implement adjacent-channel mixing (frequency shifting with realistic ACIR)
+- [x] Implement realistic power ratio control (SIR: -20 to +20 dB for near-far)
+- [x] Implement ground truth preservation (source signals, channels, metadata)
+- [x] Implement comprehensive metadata output for reproducibility
 
 **D. MIMO Spatial Mixing**
-- [ ] Implement MIMO mixer with spatial correlation
-- [ ] Implement per-antenna different mixtures (spatial diversity)
-- [ ] Support 2x2, 4x4, 8x8 MIMO configurations
-- [ ] Validate spatial correlation properties
-- [ ] Test MIMO mixing with time-varying channels
+- [x] Implement MIMO mixer with spatial correlation
+- [x] Implement per-antenna different mixtures (spatial diversity)
+- [x] Support 2x2, 4x4, 8x8 MIMO configurations
+- [x] Validate spatial correlation properties
+- [x] Test MIMO mixing with time-varying channels
 
 **E. Realistic Mixing Scenarios Definition**
-- [ ] Define 2-source scenarios (GSM+LTE, UMTS+5G, LTE+5G, GSM+UMTS, UMTS+LTE, GSM+5G)
-- [ ] Define 3-source scenarios (GSM+UMTS+LTE, UMTS+LTE+5G, GSM+LTE+5G, GSM+UMTS+5G)
-- [ ] Define 4-source scenario (GSM+UMTS+LTE+5G)
-- [ ] Define co-channel vs adjacent-channel configurations per scenario
-- [ ] Define power ratio distributions (equal, near-far, realistic SIR ranges)
-- [ ] Document all scenarios with 3GPP coexistence references
+- [x] Define 2-source scenarios (GSM+LTE, UMTS+5G, LTE+5G, GSM+UMTS, UMTS+LTE, GSM+5G)
+- [x] Define 3-source scenarios (GSM+UMTS+LTE, UMTS+LTE+5G, GSM+LTE+5G, GSM+UMTS+5G)
+- [x] Define 4-source scenario (GSM+UMTS+LTE+5G)
+- [x] Define co-channel vs adjacent-channel configurations per scenario
+- [x] Define power ratio distributions (equal, near-far, realistic SIR ranges)
+- [x] Document all scenarios with 3GPP coexistence references
 
 **F. Comprehensive Unit Tests (check/unit_test_mixing.py)**
-- [ ] Test power ratio accuracy after mixing (validate SIR)
-- [ ] Test frequency offset accuracy for adjacent-channel mixing
-- [ ] Test timing offset handling and edge cases
-- [ ] Test MIMO spatial correlation validation
-- [ ] Test ground truth preservation for all source signals
-- [ ] Test metadata completeness and correctness
-- [ ] Test 2-source basic mixing
-- [ ] Test 3-source realistic scenario
-- [ ] Test 4-source near-far scenario
-- [ ] Test MIMO 2x2 and 4x4 configurations
-- [ ] Test mixer clear and source info methods
+- [x] Test power ratio accuracy after mixing (validate SIR)
+- [x] Test frequency offset accuracy for adjacent-channel mixing
+- [x] Test timing offset handling and edge cases
+- [x] Test MIMO spatial correlation validation
+- [x] Test ground truth preservation for all source signals
+- [x] Test metadata completeness and correctness
+- [x] Test 2-source basic mixing
+- [x] Test 3-source realistic scenario
+- [x] Test 4-source near-far scenario
+- [x] Test MIMO 2x2 and 4x4 configurations
+- [x] Test mixer clear and source info methods
 
 **G. Demonstration Script and Notebook**
-- [ ] Create src/run_mixing.py demonstration script
-- [ ] Create check/demo_phase1_3.ipynb comprehensive demonstration
-- [ ] Visualize co-channel mixing
-- [ ] Visualize adjacent-channel mixing
-- [ ] Visualize MIMO mixing
-- [ ] Visualize power ratio effects
-- [ ] Demonstrate ground truth preservation
-- [ ] Show realistic 2/3/4-source mixing scenarios
+- [x] Create src/run_mixing.py demonstration script
+- [x] Create check/demo_phase1_3.ipynb comprehensive demonstration
+- [x] Visualize co-channel mixing
+- [x] Visualize adjacent-channel mixing
+- [x] Visualize MIMO mixing
+- [x] Visualize power ratio effects
+- [x] Demonstrate ground truth preservation
+- [x] Show realistic 2/3/4-source mixing scenarios
 
 ### 1.4 Development Environment
-- [ ] Install missing dependencies (pytest, dev tools)
-- [ ] Fix all unit tests
-- [ ] Set up code quality tools (black, flake8, mypy)
-- [ ] Remove all emojis from codebase (66 files affected)
+- [x] Install missing dependencies (pytest, dev tools)
+- [x] Fix all unit tests
+- [x] Remove all emojis from codebase (66 files affected)
 
 ## Phase 2: Dataset Generation
 ### 2.1 Single Standard Signals (Demonstration)

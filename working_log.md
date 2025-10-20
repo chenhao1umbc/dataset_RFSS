@@ -543,7 +543,7 @@ User conducted comprehensive review and validation of Phase 1.2 channel modeling
 
 ---
 
-## 2025-10-19 (Sunday) - Phase 1.3 Signal Mixing Complete
+## 2025-10-19 (Sunday) - Phase 1.3 Signal Mixing Implementation
 
 ### Context
 User requested completion of Phase 1.3 with comprehensive, realistic multi-standard signal mixing based on 3GPP coexistence scenarios. Implementation to follow user's style guide strictly.
@@ -591,15 +591,138 @@ User requested completion of Phase 1.3 with comprehensive, realistic multi-stand
 - check/unit_test_mixing.py: 400 lines
 - paper/mixing_scenarios.md: 600+ lines
 
-**Test Results:** 12/12 tests PASSING
+**Test Results:** 12/12 tests PASSING (initial implementation)
 
-**Validation:** All demos running successfully
+**Status:** Implementation complete, ready for user review
+
+---
+
+## 2025-10-19 (Sunday) - Phase 1.3 Demo Review and Completion
+
+### Context
+User conducted comprehensive demo review session to validate Phase 1.3 implementation. Interactive Q&A approach revealed critical bugs requiring fixes before final approval.
+
+### Activities
+
+**1. Interactive Demo Validation (check/demo_phase1_3.ipynb)**
+- Systematically reviewed all mixing demonstrations with user
+- Explained design choices: power ratio test plots, timing offset validation
+- Explained co-channel vs adjacent-channel mixing concepts and use cases
+- Clarified MIMO fading behavior: instantaneous diversity vs time-averaged ergodicity
+- User questioned why frequency offset error measurements all showed identical 751 kHz error
+
+**2. Critical Bug Fixes During Review**
+
+**Bug 1: FFT Frequency Axis Scrambling**
+- Issue: Missing np.fft.fftshift() caused frequency axis to be scrambled
+- Impact: -2 MHz and +2 MHz offsets looked identical in plots, red/green target lines disappeared
+- Fix: Added fftshift to both FFT computation and frequency array
+- Location: check/demo_phase1_3.ipynb, frequency offset test cell
+
+**Bug 2: Sample Rate Mismatch Causing Incorrect Frequency Shifts**
+- Issue: LTE 5MHz (7.68 MHz) and 10MHz (15.36 MHz) had different sample rates than mixer (15.36 MHz)
+- Impact: Frequency offset applied at wrong rate, causing incorrect spectral shifts
+- Fix: Added source_sample_rate parameter to SignalMixer.add_source() with automatic resampling using torch.nn.functional.interpolate()
+- Location: src/utils_mixing.py lines 98-120
+
+**Bug 3: Aliasing Due to Insufficient Mixer Sample Rate**
+- Issue: 15.36 MHz mixer (Nyquist=7.68 MHz) couldn't handle LTE 10MHz + 2MHz offset without wraparound
+- Impact: High frequency offsets aliased back into spectrum
+- Fix: Increased mixer sample rate from 15.36 MHz to 30.72 MHz
+- Location: check/demo_phase1_3.ipynb, setup cell
+
+**Bug 4: Incorrect Frequency Offset Error Measurement Methodology**
+- Issue: Demo compared absolute spectral peak position to target offset, not measuring actual shift
+- Impact: All offsets showed identical 751 kHz error (LTE center frequency), revealing flawed validation
+- User feedback: "why the error of all the offset are the same?" - critical observation
+- Fix: Measure baseline LTE spectral peak first, then calculate shift relative to baseline
+- Location: check/demo_phase1_3.ipynb, frequency offset validation cell
+
+**Bug 5: MIMO Power Normalization Destroying Spatial Diversity**
+- Issue: Normalizing each receive antenna individually to same power eliminated natural fading variation
+- Impact: Max power variation across antennas was near-zero (<0.01 dB), indicating broken spatial diversity
+- User feedback: "The test results... look suspicious... near-zero Max variation"
+- Fix: Normalize total power across all antennas instead of per-antenna
+- Location: src/utils_mixing.py lines 487-494
+
+**Bug 6: Incorrect MIMO Validation Approach**
+- Issue: Only checking time-averaged power showed ~0 dB variation (correct for ergodic Rayleigh fading)
+- Impact: Confused validation - missing instantaneous diversity demonstration
+- Fix: Added instantaneous power checks at random time samples showing 3-10 dB variation
+- Location: check/demo_phase1_3.ipynb, MIMO validation cell
+
+**Bug 7: Syntax Error in Demo Notebook**
+- Issue: Expression "**2.item()" parsed as invalid decimal literal
+- User feedback: Provided full traceback showing SyntaxError
+- Fix: Added parentheses: "(torch.abs(...) ** 2).item()"
+- Location: check/demo_phase1_3.ipynb, MIMO power calculation
+
+### Key Agreements
+
+**Demo Validation Philosophy:**
+- User emphasized thorough corner-checking during interactive review
+- Ask "why" questions to understand design rationale
+- Validate that error measurements are actually measuring what they claim
+- Don't accept suspicious patterns (like identical errors) without investigation
+
+**Realistic Test Design:**
+- Used non-integer MHz offsets (-2.5, -1.2, 1.3, 2.7 MHz) instead of exact multiples
+- Demonstrates realistic FFT bin quantization errors (not artificial perfect alignment)
+- Shows that small errors are expected and acceptable
+
+**MIMO Fading Understanding:**
+- Rayleigh fading is ergodic: instantaneous diversity exists (3-10 dB) but time-averages to unit power (<1 dB)
+- Both behaviors are theoretically correct and expected
+- Validation must check both instantaneous and time-averaged properties
+
+**Co-Channel vs Adjacent-Channel Mixing:**
+- Co-channel: All signals at baseband (hardest separation, requires blind source separation)
+- Adjacent-channel: Signals at different frequencies (realistic spectrum sharing with frequency diversity)
+
+### Issues Identified and Fixed
+
+**Frequency Offset Validation:**
+- Original: Compared absolute peak position to offset target (wrong)
+- Fixed: Measure shift relative to baseline peak (correct)
+- Revealed proper validation: errors < 10 kHz due to FFT bin quantization
+
+**Sample Rate Architecture:**
+- Established mixer needs higher rate than any individual signal to avoid aliasing
+- Implemented automatic resampling for signals with different native rates
+- 30.72 MHz mixer supports up to ±15.36 MHz Nyquist range
+
+**MIMO Spatial Diversity:**
+- Clarified difference between instantaneous diversity and ergodic time-averaging
+- Fixed power normalization to preserve spatial correlation
+- Validated both instantaneous variation (3-10 dB) and time-averaged convergence (<1 dB)
+
+### Validation Complete
+
+**Final Test Results:**
+- All 33 unit tests PASSING (21 channel + 12 mixing)
+- Demo notebook running without errors
+- All corner cases validated through interactive review
+- Frequency offset errors < 10 kHz (expected due to FFT quantization)
+- MIMO spatial diversity confirmed (3-10 dB instantaneous variation)
+
+**Code Quality:**
+- All bugs fixed during review session
+- Proper validation methodology established
+- Realistic test cases with non-integer parameters
+
+### Decisions Made
+
+1. Phase 1.3 officially COMPLETE after thorough validation
+2. All 47 tasks marked as done in tasks.md
+3. Interactive demo review approach proved effective at catching bugs
+4. Frequency offset validation methodology now properly measures shift, not absolute position
+5. MIMO validation now checks both instantaneous diversity and time-averaged ergodicity
 
 ### Status
 
-Phase 1.3 is READY FOR REVIEW
+Phase 1.3 is officially COMPLETE
 
-All code and tests completed. Awaiting user review before marking as complete per instructions.
+User approved after comprehensive demo review and all bug fixes validated.
 
 ---
 

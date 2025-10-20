@@ -67,7 +67,8 @@ class SignalMixer:
                    power_db: float = 0.0,
                    freq_offset_hz: float = 0.0,
                    timing_offset_samples: int = 0,
-                   channel_params: Optional[Dict] = None):
+                   channel_params: Optional[Dict] = None,
+                   source_sample_rate: Optional[float] = None):
         """
         Add a source signal to the mixer.
 
@@ -91,7 +92,33 @@ class SignalMixer:
                     'pa_backoff_db': float,
                     'pa_smoothness': float,
                 }
+            source_sample_rate: Original sample rate of the signal (if different from mixer rate,
+                              signal will be resampled automatically)
         """
+        # Resample if source sample rate differs from mixer sample rate
+        if source_sample_rate is not None and abs(source_sample_rate - self.sample_rate) > 1.0:
+            # Calculate new length after resampling
+            original_duration = len(signal) / source_sample_rate
+            new_length = int(original_duration * self.sample_rate)
+
+            # Resample using linear interpolation with align_corners=True for proper edge handling
+            # Interpolate real and imaginary parts separately
+            real_part = torch.nn.functional.interpolate(
+                signal.real.unsqueeze(0).unsqueeze(0),
+                size=new_length,
+                mode='linear',
+                align_corners=True
+            ).squeeze()
+
+            imag_part = torch.nn.functional.interpolate(
+                signal.imag.unsqueeze(0).unsqueeze(0),
+                size=new_length,
+                mode='linear',
+                align_corners=True
+            ).squeeze()
+
+            signal = torch.complex(real_part, imag_part)
+
         source_info = {
             'signal_clean': signal.to(self.device),
             'label': label,
@@ -457,9 +484,14 @@ class MIMOSignalMixer:
                 noise_power_db=-100  # Effectively no noise, just mixing
             )
 
-            # Normalize to target power
-            for i in range(self.num_rx):
-                rx_signals[i] = normalize_power(rx_signals[i], source['power_db'])
+            # Normalize to target power (preserve spatial diversity)
+            # Calculate total power across all receive antennas
+            total_power = torch.mean(torch.abs(rx_signals) ** 2)
+            target_power_linear = 10 ** (source['power_db'] / 10.0)
+
+            if total_power > 1e-12:
+                scale = torch.sqrt(target_power_linear / total_power)
+                rx_signals = rx_signals * scale
 
             # Add to mixture
             mixed_signals_mimo += rx_signals

@@ -114,28 +114,57 @@
 - [x] Remove all emojis from codebase (66 files affected)
 
 ## Phase 2: Dataset Generation
-### 2.1 Single Standard Signals (Demonstration)
-- [ ] Generate 100 GSM test samples
-- [ ] Generate 100 UMTS test samples
-- [ ] Generate 100 LTE test samples
-- [ ] Generate 100 5G NR test samples
-- [ ] Validate signal quality metrics (PAPR, bandwidth, EVM)
+### 2.1 Parameter Space Definition
+- [ ] Define bandwidth options per standard (GSM: 200kHz, UMTS: 5MHz, LTE: 1.4/3/5/10/15/20MHz, 5G: flexible)
+- [ ] Define modulation schemes per standard (e.g., LTE: QPSK/16QAM/64QAM/256QAM)
+- [ ] Define SNR ranges for training (e.g., -10 to +30 dB for realistic conditions)
+- [ ] Define channel model distribution (TDL-A/B/C/D/E proportions: NLOS vs LOS scenarios)
+- [ ] Define hardware impairment parameter ranges (CFO: 0.05-5 ppm, I/Q: 0.1-3 dB, etc.)
+- [ ] Define Doppler frequency ranges (0-500 Hz for different mobility scenarios)
+- [ ] Define mixing mode distribution (co-channel vs adjacent-channel proportions)
+- [ ] Define MIMO configuration distribution (SISO vs 2x2 vs 4x4 proportions)
+- [ ] Define source count distribution (1/2/3/4-source proportions)
+- [ ] Define power ratio ranges for mixed scenarios (SIR: -20 to +20 dB)
+- [ ] Calculate total parameter space size and combinations
+- [ ] Document all parameter choices with 3GPP justifications in paper/dataset_parameters.md
 
-### 2.2 Mixed Signal Scenarios (Demonstration)
-- [ ] Define mixing scenarios (2-source, 3-source, 4-source)
-- [ ] Define SNR/power ranges for realistic mixing
-- [ ] Generate 100 2-source mixed samples
-- [ ] Generate 100 3-source mixed samples
-- [ ] Validate ground truth preservation
+### 2.2 Demonstration Dataset (Small Scale Validation)
+- [ ] Generate 100 single-standard samples with full parameter variations (25 per standard)
+- [ ] Generate 100 2-source mixed samples (co-channel and adjacent-channel)
+- [ ] Generate 100 3-source mixed samples (realistic coexistence scenarios)
+- [ ] Generate 100 4-source mixed samples (GSM+UMTS+LTE+5G full spectrum)
+- [ ] Generate 100 MIMO mixed samples (2x2 and 4x4 configurations)
+- [ ] Validate signal quality metrics (PAPR, bandwidth, power) for all samples
+- [ ] Validate ground truth preservation (source signals, channel parameters, metadata)
+- [ ] Validate parameter coverage (ensure all dimensions are represented)
+- [ ] Create visualization of parameter distribution coverage
+- [ ] Document demonstration dataset statistics and findings
 
-### 2.3 Full Dataset Generation
-- [ ] Determine final dataset size based on experimental needs
-- [ ] Define train/val/test split ratios
-- [ ] Generate training set
-- [ ] Generate validation set
-- [ ] Generate test set
-- [ ] Document dataset statistics
-- [ ] Create dataset loading utilities
+### 2.3 Dataset Infrastructure
+- [ ] Design storage format (HDF5 with hierarchical metadata structure)
+- [ ] Define metadata schema (signal params, channel params, mixing params, ground truth)
+- [ ] Implement dataset writer with compression and chunking
+- [ ] Implement PyTorch Dataset class for loading samples
+- [ ] Implement data loader with batching and shuffling
+- [ ] Implement reproducibility framework (random seed management, version tracking)
+- [ ] Create dataset validation utilities (check integrity, coverage, statistics)
+- [ ] Create dataset inspection tools (query by parameters, visualize samples)
+- [ ] Test infrastructure with demonstration dataset
+- [ ] Document dataset format specification
+
+### 2.4 Full Dataset Generation
+- [ ] Determine final dataset size based on parameter space and deep learning needs
+- [ ] Define train/val/test split strategy (random vs stratified by scenario type)
+- [ ] Define train/val/test split ratios (e.g., 70/15/15 or 80/10/10)
+- [ ] Implement progress tracking and checkpointing for generation
+- [ ] Generate training set with balanced parameter sampling
+- [ ] Generate validation set with same distribution as training
+- [ ] Generate test set ensuring coverage of all scenario types
+- [ ] Run comprehensive quality assurance on full dataset
+- [ ] Calculate and verify final dataset statistics (size, coverage, balance)
+- [ ] Create dataset documentation (README, parameter distributions, sample access)
+- [ ] Estimate storage requirements and optimize compression
+- [ ] Package dataset with loading utilities and documentation
 
 ## Phase 3: Baseline Experiments
 ### 3.1 Traditional Methods Implementation

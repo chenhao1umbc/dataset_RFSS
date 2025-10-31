@@ -114,21 +114,22 @@
 - [x] Remove all emojis from codebase (66 files affected)
 
 ## Phase 2: Dataset Generation
-### 2.1 Parameter Space Definition
-- [ ] Define bandwidth options per standard (GSM: 200kHz, UMTS: 5MHz, LTE: 1.4/3/5/10/15/20MHz, 5G: flexible)
-- [ ] Define modulation schemes per standard (e.g., LTE: QPSK/16QAM/64QAM/256QAM)
-- [ ] Define SNR ranges for training (e.g., -10 to +30 dB for realistic conditions)
-- [ ] Define channel model distribution (TDL-A/B/C/D/E proportions: NLOS vs LOS scenarios)
-- [ ] Define hardware impairment parameter ranges (CFO: 0.05-5 ppm, I/Q: 0.1-3 dB, etc.)
-- [ ] Define Doppler frequency ranges (0-500 Hz for different mobility scenarios)
-- [ ] Define mixing mode distribution (co-channel vs adjacent-channel proportions)
-- [ ] Define MIMO configuration distribution (SISO vs 2x2 vs 4x4 proportions)
-- [ ] Define source count distribution (1/2/3/4-source proportions)
-- [ ] Define power ratio ranges for mixed scenarios (SIR: -20 to +20 dB)
-- [ ] Calculate total parameter space size and combinations
-- [ ] Document all parameter choices with 3GPP justifications in paper/dataset_parameters.md
+### 2.1 Parameter Space Definition - COMPLETE
+- [x] Define bandwidth options per standard (GSM: 200kHz, UMTS: 5MHz, LTE: 1.4/3/5/10/15/20MHz, 5G: flexible)
+- [x] Define modulation schemes per standard (e.g., LTE: QPSK/16QAM/64QAM/256QAM)
+- [x] Define SNR ranges for training (e.g., -10 to +30 dB for realistic conditions)
+- [x] Define channel model distribution (TDL-A/B/C/D/E proportions: NLOS vs LOS scenarios)
+- [x] Define hardware impairment parameter ranges (CFO: 0.05-5 ppm, I/Q: 0.1-3 dB, etc.)
+- [x] Define Doppler frequency ranges (0-500 Hz for different mobility scenarios)
+- [x] Define mixing mode distribution (co-channel vs adjacent-channel proportions)
+- [x] Define MIMO configuration distribution (SISO vs 2x2 vs 4x4 proportions)
+- [x] Define source count distribution (1/2/3/4-source proportions)
+- [x] Define power ratio ranges for mixed scenarios (SIR: -20 to +20 dB)
+- [x] Calculate total parameter space size and combinations
+- [x] Document all parameter choices with 3GPP justifications in paper/dataset_parameters.md
 
 ### 2.2 Demonstration Dataset (Small Scale Validation)
+- [ ] Create src/generate_dataset.py integration script (ParameterSampler → generators → channels → mixer → DatasetWriter)
 - [ ] Generate 100 single-standard samples with full parameter variations (25 per standard)
 - [ ] Generate 100 2-source mixed samples (co-channel and adjacent-channel)
 - [ ] Generate 100 3-source mixed samples (realistic coexistence scenarios)
@@ -141,9 +142,9 @@
 - [ ] Document demonstration dataset statistics and findings
 
 ### 2.3 Dataset Infrastructure
-- [ ] Design storage format (HDF5 with hierarchical metadata structure)
-- [ ] Define metadata schema (signal params, channel params, mixing params, ground truth)
-- [ ] Implement dataset writer with compression and chunking
+- [ ] Test HDF5 storage format (already designed in dataset_parameters.md)
+- [ ] Verify metadata schema implementation (already defined)
+- [ ] Test DatasetWriter class with sample data
 - [ ] Implement PyTorch Dataset class for loading samples
 - [ ] Implement data loader with batching and shuffling
 - [ ] Implement reproducibility framework (random seed management, version tracking)
@@ -153,9 +154,8 @@
 - [ ] Document dataset format specification
 
 ### 2.4 Full Dataset Generation
-- [ ] Determine final dataset size based on parameter space and deep learning needs
-- [ ] Define train/val/test split strategy (random vs stratified by scenario type)
-- [ ] Define train/val/test split ratios (e.g., 70/15/15 or 80/10/10)
+- [ ] Confirm final dataset size: 100k samples (per dataset_parameters.md)
+- [ ] Implement train/val/test split: 70/15/15 random (per dataset_parameters.md)
 - [ ] Implement progress tracking and checkpointing for generation
 - [ ] Generate training set with balanced parameter sampling
 - [ ] Generate validation set with same distribution as training

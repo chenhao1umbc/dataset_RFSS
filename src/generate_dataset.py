@@ -5,13 +5,14 @@ Integrates ParameterSampler with signal generators, channel models, and mixer
 to produce complete dataset samples per paper/dataset_parameters.md.
 """
 
+import argparse
+import json
 import torch
-import numpy as np
 from pathlib import Path
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, Tuple
 from tqdm import tqdm
 
-from src.utils_dataset import ParameterSampler, DatasetWriter
+from src.utils_dataset import ParameterSampler, DatasetWriter, STANDARDS
 from src.run_gsm import generate_gsm_signal
 from src.run_umts import generate_umts_signal
 from src.run_lte import generate_lte_signal
@@ -91,12 +92,15 @@ def generate_single_source(
     signal = result['signal']
     metadata = result['metadata']
 
+    # Use actual sample rate from generator (not sampler, which may differ for 5G)
+    actual_sample_rate = metadata['sample_rate']
+
     # Apply channel model
     signal_with_channel = apply_tdl_channel(
         signal,
         tdl_model=channel_params['tdl_model'],
         doppler_hz=channel_params['doppler_hz'],
-        sample_rate=signal_params['sample_rate'],
+        sample_rate=actual_sample_rate,
         device=device
     )
 
@@ -110,7 +114,7 @@ def generate_single_source(
         signal_impaired = apply_cfo(
             signal_impaired,
             cfo_hz=cfo_hz,
-            sample_rate=signal_params['sample_rate'],
+            sample_rate=actual_sample_rate,
             device=device
         )
 
@@ -144,7 +148,7 @@ def generate_single_source(
         signal_impaired = apply_phase_noise(
             signal_impaired,
             phase_noise_dbc_hz=impairment_params['phase_noise_dbc_hz'],
-            sample_rate=signal_params['sample_rate'],
+            sample_rate=actual_sample_rate,
             device=device
         )
 
@@ -198,35 +202,24 @@ def generate_sample(
         source_signals.append(signal)
         source_metadata.append(metadata)
 
-    # Mix signals if multiple sources
-    if num_sources == 1:
-        mixed_signal = source_signals[0]
-    else:
-        # Determine common sample rate (use maximum)
-        max_sample_rate = max(metadata['sample_rate'] for metadata in source_metadata)
+    # Determine common sample rate (use maximum across all sources)
+    max_sample_rate = max(meta['sample_rate'] for meta in source_metadata)
 
-        # Create mixer
-        mixer = SignalMixer(sample_rate=max_sample_rate, device=device)
+    # Create mixer and add all sources
+    mixer = SignalMixer(sample_rate=max_sample_rate, device=device)
+    for i, (signal, meta) in enumerate(zip(source_signals, source_metadata)):
+        source_sample_rate = meta['sample_rate']
+        mixer.add_source(
+            signal,
+            label=meta['standard'],
+            power_db=mixing_params['power_ratios_db'][i],
+            freq_offset_hz=mixing_params['frequency_offsets_hz'][i],
+            timing_offset_samples=0,
+            source_sample_rate=source_sample_rate if source_sample_rate != max_sample_rate else None
+        )
 
-        # Add sources with appropriate parameters
-        for i, (signal, metadata) in enumerate(zip(source_signals, source_metadata)):
-            source_sample_rate = metadata['sample_rate']
-            power_ratio_db = mixing_params['power_ratios_db'][i]
-            freq_offset_hz = mixing_params['frequency_offsets_hz'][i]
-            standard = metadata['standard']
-
-            mixer.add_source(
-                signal,
-                label=standard,
-                power_db=power_ratio_db,
-                freq_offset_hz=freq_offset_hz,
-                timing_offset_samples=0,
-                source_sample_rate=source_sample_rate if source_sample_rate != max_sample_rate else None
-            )
-
-        # Mix
-        mix_result = mixer.mix(mode=mixing_params['mixing_mode'])
-        mixed_signal = mix_result['mixed_signal']
+    mix_result = mixer.mix(mode=mixing_params['mixing_mode'])
+    mixed_signal = mix_result['mixed_signal']
 
     # Add AWGN noise to achieve target SNR
     if snr_db is not None:
@@ -247,16 +240,119 @@ def generate_sample(
     return sample
 
 
-def generate_dataset(
+def generate_single_source_sample(
+    config: Dict[str, Any],
+    duration_ms: float = 1.0,
+    device: str = 'cpu'
+) -> Dict[str, Any]:
+    """
+    Generate a single-standard sample (no mixing).
+
+    The source signal (channel + impairments, before AWGN) is stored as ground
+    truth. The mixed signal is the same signal with AWGN added.
+
+    Args:
+        config: Single-source configuration from ParameterSampler.generate_single_source_config()
+        duration_ms: Signal duration in milliseconds
+        device: PyTorch device
+
+    Returns:
+        Dictionary containing mixed signal, source signal, and metadata
+    """
+    signal, metadata = generate_single_source(config['sources'][0], duration_ms, device)
+    source_signal = signal.clone()
+    snr_db = config['snr_db']
+    if snr_db is not None:
+        mixed_signal = add_awgn_noise(signal, snr_db)
+    else:
+        mixed_signal = signal
+    return {
+        'mixed_signal': mixed_signal,
+        'source_signals': [source_signal],
+        'num_sources': 1,
+        'snr_db': snr_db,
+        'config': config,
+    }
+
+
+def generate_single_source_dataset(
     output_path: Path,
-    num_samples: int = 500,
+    num_samples_per_standard: int = 1000,
     duration_ms: float = 1.0,
     master_seed: int = 42,
     device: str = 'cpu',
-    show_progress: bool = True
+    show_progress: bool = True,
+    checkpoint_interval: int = 500
 ) -> None:
     """
-    Generate complete dataset.
+    Generate single-source dataset: 1000 samples per standard (GSM/UMTS/LTE/5G NR).
+
+    Samples are ordered by standard: 0–999 GSM, 1000–1999 UMTS,
+    2000–2999 LTE, 3000–3999 5G NR.
+
+    Args:
+        output_path: Path to output HDF5 file (e.g. data/rfss_single.h5)
+        num_samples_per_standard: Samples per standard (default 1000)
+        duration_ms: Signal duration in milliseconds
+        master_seed: Master random seed
+        device: PyTorch device
+        show_progress: Show tqdm progress bar
+        checkpoint_interval: Flush + save checkpoint every N samples
+    """
+    output_path = Path(output_path)
+    checkpoint_path = output_path.with_suffix('.ckpt.json')
+    total_samples = num_samples_per_standard * len(STANDARDS)
+
+    start_idx = 0
+    resume = False
+    if checkpoint_path.exists() and output_path.exists():
+        with open(checkpoint_path) as f:
+            ckpt = json.load(f)
+        start_idx = ckpt['next_idx']
+        resume = True
+        print(f"Resuming single-source generation from {start_idx}/{total_samples}")
+
+    sampler = ParameterSampler(seed=master_seed)
+
+    with DatasetWriter(output_path, max_samples=total_samples, resume=resume) as writer:
+        iterator = range(start_idx, total_samples)
+        if show_progress:
+            iterator = tqdm(iterator, total=total_samples - start_idx,
+                            initial=start_idx, desc="Generating single-source dataset")
+
+        for global_idx in iterator:
+            standard = STANDARDS[global_idx // num_samples_per_standard]
+            config = sampler.generate_single_source_config(standard, global_idx)
+            sample = generate_single_source_sample(config, duration_ms=duration_ms, device=device)
+            writer.write_sample(
+                mixed_signal=sample['mixed_signal'],
+                sources=sample['source_signals'],
+                config=config,
+            )
+
+            if (global_idx + 1) % checkpoint_interval == 0:
+                writer.flush()
+                with open(checkpoint_path, 'w') as f:
+                    json.dump({'next_idx': global_idx + 1, 'total': total_samples}, f)
+
+    if checkpoint_path.exists():
+        checkpoint_path.unlink()
+
+    print(f"\nSingle-source dataset complete: {total_samples} samples")
+    print(f"Output: {output_path}")
+
+
+def generate_dataset(
+    output_path: Path,
+    num_samples: int = 100000,
+    duration_ms: float = 1.0,
+    master_seed: int = 42,
+    device: str = 'cpu',
+    show_progress: bool = True,
+    checkpoint_interval: int = 1000
+) -> None:
+    """
+    Generate complete dataset with checkpointing for safe resumption.
 
     Args:
         output_path: Path to output HDF5 file
@@ -265,30 +361,47 @@ def generate_dataset(
         master_seed: Master random seed
         device: PyTorch device
         show_progress: Show progress bar
+        checkpoint_interval: Save checkpoint every N samples
     """
-    # Initialize sampler
+    output_path = Path(output_path)
+    checkpoint_path = output_path.with_suffix('.ckpt.json')
+
+    # Check for existing checkpoint to resume
+    start_idx = 0
+    resume = False
+    if checkpoint_path.exists() and output_path.exists():
+        with open(checkpoint_path) as f:
+            ckpt = json.load(f)
+        start_idx = ckpt['next_idx']
+        resume = True
+        print(f"Resuming from checkpoint: {start_idx}/{num_samples} samples done")
+
     sampler = ParameterSampler(seed=master_seed)
 
-    # Initialize writer
-    with DatasetWriter(output_path, max_samples=num_samples) as writer:
-        # Generate samples
-        iterator = range(num_samples)
+    with DatasetWriter(output_path, max_samples=num_samples, resume=resume) as writer:
+        iterator = range(start_idx, num_samples)
         if show_progress:
-            iterator = tqdm(iterator, desc="Generating dataset")
+            iterator = tqdm(iterator, total=num_samples - start_idx,
+                            initial=start_idx, desc="Generating dataset")
 
         for sample_id in iterator:
-            # Generate configuration
             config = sampler.generate_sample_config(sample_id)
-
-            # Generate sample
             sample = generate_sample(config, duration_ms=duration_ms, device=device)
-
-            # Write to dataset
             writer.write_sample(
                 mixed_signal=sample['mixed_signal'],
                 sources=sample['source_signals'],
                 config=config
             )
+
+            # Periodic checkpoint — flush HDF5 first to prevent corruption on kill
+            if (sample_id + 1) % checkpoint_interval == 0:
+                writer.flush()
+                with open(checkpoint_path, 'w') as f:
+                    json.dump({'next_idx': sample_id + 1, 'total': num_samples}, f)
+
+    # Remove checkpoint on successful completion
+    if checkpoint_path.exists():
+        checkpoint_path.unlink()
 
     print(f"\nDataset generation complete: {num_samples} samples")
     print(f"Output: {output_path}")
@@ -296,13 +409,16 @@ def generate_dataset(
 
 def main():
     """Command-line interface for dataset generation."""
-    import argparse
-
     parser = argparse.ArgumentParser(description='Generate RFSS dataset')
     parser.add_argument('--output', type=str, required=True,
                         help='Output HDF5 file path')
-    parser.add_argument('--num-samples', type=int, default=500,
-                        help='Number of samples (default: 500)')
+    parser.add_argument('--mode', type=str, default='multi',
+                        choices=['multi', 'single'],
+                        help='Generation mode: multi-source (default) or single-source')
+    parser.add_argument('--num-samples', type=int, default=100000,
+                        help='Number of samples for multi mode (default: 100000)')
+    parser.add_argument('--num-samples-per-standard', type=int, default=1000,
+                        help='Samples per standard for single mode (default: 1000)')
     parser.add_argument('--duration', type=float, default=1.0,
                         help='Signal duration in ms (default: 1.0)')
     parser.add_argument('--seed', type=int, default=42,
@@ -312,17 +428,26 @@ def main():
                         help='PyTorch device (default: cpu)')
 
     args = parser.parse_args()
-
     output_path = Path(args.output)
 
-    generate_dataset(
-        output_path=output_path,
-        num_samples=args.num_samples,
-        duration_ms=args.duration,
-        master_seed=args.seed,
-        device=args.device,
-        show_progress=True
-    )
+    if args.mode == 'single':
+        generate_single_source_dataset(
+            output_path=output_path,
+            num_samples_per_standard=args.num_samples_per_standard,
+            duration_ms=args.duration,
+            master_seed=args.seed,
+            device=args.device,
+            show_progress=True,
+        )
+    else:
+        generate_dataset(
+            output_path=output_path,
+            num_samples=args.num_samples,
+            duration_ms=args.duration,
+            master_seed=args.seed,
+            device=args.device,
+            show_progress=True,
+        )
 
 
 if __name__ == '__main__':

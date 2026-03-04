@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workflow Pain Points — RFSS Project</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 860px; margin: 48px auto; padding: 0 24px; color: #1a1a1a; line-height: 1.6; }
+  h1 { font-size: 1.5rem; border-bottom: 2px solid #1a1a1a; padding-bottom: 8px; }
+  h2 { font-size: 1rem; margin-top: 32px; color: #555; text-transform: uppercase; letter-spacing: 0.05em; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.93rem; }
+  th { text-align: left; padding: 8px 12px; background: #f0f0f0; border-bottom: 2px solid #ccc; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+  tr:hover td { background: #fafafa; }
+  .sev-high { color: #c0392b; font-weight: 600; }
+  .sev-med  { color: #d17a00; font-weight: 600; }
+  .sev-low  { color: #2980b9; font-weight: 600; }
+  .tag { display: inline-block; font-size: 0.78rem; padding: 1px 7px; border-radius: 3px; margin-right: 4px; background: #e8e8e8; color: #333; }
+  code { background: #f4f4f4; padding: 1px 5px; border-radius: 3px; font-size: 0.88em; }
+  .fixed { color: #27ae60; font-weight: 600; }
+  .open  { color: #c0392b; font-weight: 600; }
+  p.note { font-size: 0.88rem; color: #666; margin-top: 32px; border-top: 1px solid #e0e0e0; padding-top: 12px; }
+</style>
+</head>
+<body>
+
+<h1>Workflow Pain Points — RFSS Project</h1>
+<p>Recorded 2026-02-20. Items for the automation roadmap.</p>
+
+<h2>1. Agent Workflow</h2>
+<table>
+  <tr>
+    <th style="width:28%">Pain</th>
+    <th style="width:10%">Severity</th>
+    <th style="width:32%">Detail</th>
+    <th style="width:15%">Status</th>
+    <th style="width:15%">Target fix</th>
+  </tr>
+  <tr>
+    <td>Manual CC2 review invocation</td>
+    <td><span class="sev-high">High</span></td>
+    <td>After CC1 finishes work, user must manually switch to CC2 and ask it to review. No automation, no handoff trigger.</td>
+    <td><span class="open">Open</span></td>
+    <td>orchestrate.py integration + review/ handoff protocol</td>
+  </tr>
+  <tr>
+    <td>Task completion gate is manual</td>
+    <td><span class="sev-high">High</span></td>
+    <td>tasks.md can only be marked complete after CC2 approves. Currently requires human to coordinate between sessions.</td>
+    <td><span class="open">Open</span></td>
+    <td>Automated approval write-back from CC2</td>
+  </tr>
+  <tr>
+    <td>CC1 violated reviewer independence</td>
+    <td><span class="sev-high">High</span></td>
+    <td>CC1 initially claimed to be both coder and QC reviewer — reviewing its own work, which cannot catch logic flaws.</td>
+    <td><span class="fixed">Acknowledged</span></td>
+    <td>Two independent CC sessions enforced by design</td>
+  </tr>
+  <tr>
+    <td>Writer/reviewer agents lack project context</td>
+    <td><span class="sev-high">High</span></td>
+    <td><code>orchestrate.py</code> agents (writer.md, reviewer.md) have no knowledge of the RFSS codebase, 3GPP standards, or coding conventions. Cannot be used for project coding yet.</td>
+    <td><span class="open">Open</span></td>
+    <td>Project-level agent definitions + codebase onboarding step</td>
+  </tr>
+</table>
+
+<h2>2. Data Generation</h2>
+<table>
+  <tr>
+    <th style="width:28%">Pain</th>
+    <th style="width:10%">Severity</th>
+    <th style="width:32%">Detail</th>
+    <th style="width:15%">Status</th>
+    <th style="width:15%">Target fix</th>
+  </tr>
+  <tr>
+    <td>HDF5 corruption on process kill</td>
+    <td><span class="sev-high">High</span></td>
+    <td>Killing the generation process left HDF5 superblock unflushed. File became unreadable (addr overflow). 39k samples lost twice.</td>
+    <td><span class="fixed">Fixed</span></td>
+    <td><code>DatasetWriter.flush()</code> called every 1000 samples before checkpoint save</td>
+  </tr>
+  <tr>
+    <td>Mac sleep killed background jobs</td>
+    <td><span class="sev-med">Med</span></td>
+    <td>Generation runs for ~7 hours. Mac sleep suspended/killed the process. User had to point this out.</td>
+    <td><span class="fixed">Fixed</span></td>
+    <td><code>caffeinate -i</code> in <code>run_generation.sh</code></td>
+  </tr>
+  <tr>
+    <td>No progress monitoring initially</td>
+    <td><span class="sev-med">Med</span></td>
+    <td>Background job launched with no visibility into progress. User rightly called this out as wasted time.</td>
+    <td><span class="fixed">Fixed</span></td>
+    <td><code>data/monitor.py</code> — polls every 5 min, logs ETA, sends macOS notifications at 25/50/75/100%</td>
+  </tr>
+  <tr>
+    <td>Generation log appends across runs</td>
+    <td><span class="sev-low">Low</span></td>
+    <td><code>generation.log</code> uses <code>>></code> so old and new runs are mixed. Confusing to read — old "Resuming" messages looked like current state.</td>
+    <td><span class="open">Open</span></td>
+    <td>Timestamp-separate log files per run, or clear separator on restart</td>
+  </tr>
+  <tr>
+    <td>5G NR sample_rate bug in ParameterSampler</td>
+    <td><span class="sev-high">High</span></td>
+    <td>Sample rate was fixed (30.72 MHz for μ=1, 122.88 MHz for μ=3) regardless of actual bandwidth. Channel models and impairments applied at wrong rate — physically incorrect.</td>
+    <td><span class="fixed">Fixed</span></td>
+    <td><code>NR_SAMPLE_RATES</code> lookup table; actual rate now used throughout</td>
+  </tr>
+  <tr>
+    <td>μ=3 large bandwidth configs too large</td>
+    <td><span class="sev-med">Med</span></td>
+    <td>μ=3 with 200/400 MHz gives 245/491 MHz sample rates — signals up to 491k samples/ms. HDF5 pre-allocation would be ~393 GB.</td>
+    <td><span class="fixed">Fixed</span></td>
+    <td>μ=3 restricted to [50, 100] MHz; max sample rate capped at 122.88 MHz</td>
+  </tr>
+</table>
+
+<h2>3. Environment and Tooling</h2>
+<table>
+  <tr>
+    <th style="width:28%">Pain</th>
+    <th style="width:10%">Severity</th>
+    <th style="width:32%">Detail</th>
+    <th style="width:15%">Status</th>
+    <th style="width:15%">Target fix</th>
+  </tr>
+  <tr>
+    <td>PyTorch version lag</td>
+    <td><span class="sev-low">Low</span></td>
+    <td>CC1 updated to 2.9.0 without verifying 2.10.0 was available. User had to point it out. Proactive version checking not done.</td>
+    <td><span class="fixed">Fixed</span></td>
+    <td>Now on 2.10.0. Future: check latest before updating.</td>
+  </tr>
+  <tr>
+    <td>Ollama model cold-start overhead</td>
+    <td><span class="sev-med">Med</span></td>
+    <td>Ollama unloads models after 5 min of inactivity. In the review loop, each Claude call takes 2-4 min — model would be evicted between calls, causing cold-start delay every iteration.</td>
+    <td><span class="fixed">Fixed</span></td>
+    <td><code>keep_alive: -1</code> added to Ollama API requests in <code>orchestrate.py</code></td>
+  </tr>
+  <tr>
+    <td>PDF rule not propagated to agents</td>
+    <td><span class="sev-med">Med</span></td>
+    <td">glm-ocr PDF rule in <code>~/.claude/CLAUDE.md</code> is inherited by agents but not explicit in agent definitions — risk of built-in reader being used if task involves a PDF.</td>
+    <td><span class="fixed">Fixed</span></td>
+    <td>PDF rule added explicitly to <code>writer.md</code> and <code>reviewer.md</code></td>
+  </tr>
+</table>
+
+<h2>4. Automation Roadmap (what needs building)</h2>
+<table>
+  <tr>
+    <th style="width:40%">Item</th>
+    <th style="width:60%">Description</th>
+  </tr>
+  <tr>
+    <td>Project-level agent definitions</td>
+    <td>writer.md and reviewer.md with RFSS codebase context, 3GPP standards, coding conventions, and IEEE journal standard for paper review. Stored in <code>.claude/agents/</code>.</td>
+  </tr>
+  <tr>
+    <td>review/ handoff protocol</td>
+    <td>Structured directory for CC1→CC2 handoff: <code>pending.md</code> (CC1 submits), <code>feedback.md</code> (CC2 responds), <code>approved.md</code> (CC2 approves). tasks.md updated only on approval.</td>
+  </tr>
+  <tr>
+    <td>Orchestrator project mode</td>
+    <td>Extend <code>orchestrate.py</code> for coding tasks: writer reads codebase, edits files, runs tests; reviewer reads changed files; Ollama gates on test results + code quality.</td>
+  </tr>
+  <tr>
+    <td>Ollama watcher for generation</td>
+    <td>Replace current <code>monitor.py</code> with Ollama-powered watcher that can summarise progress, detect anomalies in the log, and write status reports for CC2 to check.</td>
+  </tr>
+</table>
+
+<p class="note">
+  Last updated: 2026-02-20 &nbsp;|&nbsp; Author: CC1 (sub-agent-1) &nbsp;|&nbsp;
+  Pending review by CC2 before roadmap items are actioned.
+</p>
+
+</body>
+</html>

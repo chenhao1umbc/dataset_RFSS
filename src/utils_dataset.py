@@ -1,8 +1,13 @@
 """
 Dataset generation utilities for RFSS project.
 
-Implements parameter sampling and dataset generation according to
-specifications in paper/dataset_parameters.md:
+Implements parameter sampling and dataset generation. Signal parameters
+are derived from 3GPP specifications:
+- 5G NR sample rates: 3GPP TS 38.211 §4.3.1, TS 38.104 §5.4
+- LTE bandwidths and sample rates: 3GPP TS 36.211 §5.6, TS 36.104 §5.6
+- TDL channel models: 3GPP TR 38.901 §7.7.2 Tables 7.7.2-1 to 7.7.2-5
+
+Dataset specifications per paper/dataset_parameters.md:
 - 100k samples total
 - 1 ms signal duration
 - Correlated CFO/SFO impairments
@@ -10,6 +15,7 @@ specifications in paper/dataset_parameters.md:
 - HDF5 storage with gzip compression
 """
 
+import warnings
 import torch
 import h5py
 import numpy as np
@@ -41,6 +47,7 @@ def convert_to_serializable(obj):
 STANDARDS = ['GSM', 'UMTS', 'LTE', '5G_NR']
 STANDARD_WEIGHTS = [0.125, 0.125, 0.375, 0.375]  # GSM:1, UMTS:1, LTE:24, 5G:40
 
+# 3GPP TS 36.211 §5.6 and TS 36.104 §5.6
 LTE_BANDWIDTHS = [1.4, 3.0, 5.0, 10.0, 15.0, 20.0]
 LTE_BW_WEIGHTS = [0.05, 0.10, 0.20, 0.30, 0.10, 0.25]
 
@@ -52,14 +59,26 @@ NR_NUM_WEIGHTS = [0.75, 0.25]
 
 NR_BANDWIDTHS = {
     1: [10, 20, 50, 100],
-    3: [50, 100, 200, 400]
+    3: [50, 100]  # Restricted to sample rates <= 122.88 MHz
 }
-NR_BW_WEIGHTS = [0.20, 0.25, 0.30, 0.25]  # Distribution across bandwidth options
+NR_BW_WEIGHTS = [0.20, 0.25, 0.30, 0.25]  # Used for μ=1 (4 options); first 2 entries used for μ=3
+
+# Actual sample rates per (numerology, bandwidth_mhz): fft_size * subcarrier_spacing
+# 3GPP TS 38.211 §4.3.1 (subcarrier spacings) and TS 38.104 §5.4 (channel bandwidths)
+NR_SAMPLE_RATES = {
+    (1, 10): 15.36e6,
+    (1, 20): 30.72e6,
+    (1, 50): 61.44e6,
+    (1, 100): 122.88e6,
+    (3, 50): 61.44e6,
+    (3, 100): 122.88e6,
+}
 
 NR_MODULATIONS = ['QPSK', '16QAM', '64QAM', '256QAM', '1024QAM']
 NR_MOD_WEIGHTS = [0.15, 0.20, 0.30, 0.25, 0.10]
 
 # Section 2: Channel Model Parameters
+# 3GPP TR 38.901 §7.7.2 Tables 7.7.2-1 to 7.7.2-5
 TDL_MODELS = ['TDL-A', 'TDL-B', 'TDL-C', 'TDL-D', 'TDL-E']
 TDL_WEIGHTS = [0.25, 0.20, 0.15, 0.20, 0.20]
 
@@ -100,8 +119,8 @@ SNR_RANGES = [(-10, 0), (0, 10), (10, 20), (20, 30), (30, 40)]  # dB
 SNR_WEIGHTS = [0.15, 0.25, 0.35, 0.20, 0.05]
 
 # Section 5: Mixed Signal Scenarios
-SOURCE_COUNTS = [1, 2, 3, 4]
-SOURCE_COUNT_WEIGHTS = [0.30, 0.35, 0.25, 0.10]
+SOURCE_COUNTS = [2, 3, 4]
+SOURCE_COUNT_WEIGHTS = [0.50, 0.35, 0.15]
 
 MIXING_MODES = ['co-channel', 'adjacent-channel']
 MIXING_MODE_WEIGHTS = [0.40, 0.60]
@@ -162,7 +181,7 @@ class ParameterSampler:
         elif standard == 'LTE':
             params['bandwidth_mhz'] = self.rng.choice(LTE_BANDWIDTHS, p=LTE_BW_WEIGHTS)
             params['modulation'] = self.rng.choice(LTE_MODULATIONS, p=LTE_MOD_WEIGHTS)
-            # Sample rate from LTE specs
+            # Sample rate per 3GPP TS 36.211 §5.6 and TS 36.104 §5.6
             bw_to_rate = {1.4: 1.92e6, 3.0: 3.84e6, 5.0: 7.68e6,
                          10.0: 15.36e6, 15.0: 23.04e6, 20.0: 30.72e6}
             params['sample_rate'] = bw_to_rate[params['bandwidth_mhz']]
@@ -170,20 +189,11 @@ class ParameterSampler:
         elif standard == '5G_NR':
             params['numerology'] = self.rng.choice(NR_NUMEROLOGIES, p=NR_NUM_WEIGHTS)
             bandwidths = NR_BANDWIDTHS[params['numerology']]
-            # Adjust weights based on number of bandwidths
             bw_weights = NR_BW_WEIGHTS[:len(bandwidths)]
-            bw_weights = np.array(bw_weights) / sum(bw_weights)  # Normalize
+            bw_weights = np.array(bw_weights) / sum(bw_weights)
             params['bandwidth_mhz'] = self.rng.choice(bandwidths, p=bw_weights)
             params['modulation'] = self.rng.choice(NR_MODULATIONS, p=NR_MOD_WEIGHTS)
-            # Calculate sample rate from numerology
-            # Sample rate = FFT_size × SCS × (1 + overhead)
-            # Using standard FFT sizes: 4096 for μ=1, 4096 for μ=3
-            if params['numerology'] == 1:
-                params['sample_rate'] = 30.72e6  # 30 kHz SCS, FFT 4096
-            elif params['numerology'] == 3:
-                params['sample_rate'] = 122.88e6  # 120 kHz SCS, FFT 4096
-            else:
-                params['sample_rate'] = 30.72e6  # Fallback
+            params['sample_rate'] = NR_SAMPLE_RATES[(params['numerology'], params['bandwidth_mhz'])]
 
         return params
 
@@ -302,59 +312,82 @@ class ParameterSampler:
         """Sample mixing parameters for multi-source scenario."""
         params = {}
         params['num_sources'] = num_sources
+        params['mixing_mode'] = self.rng.choice(MIXING_MODES, p=MIXING_MODE_WEIGHTS)
 
-        if num_sources == 1:
-            params['mixing_mode'] = None
-            params['power_ratios_db'] = [0.0]
-            params['frequency_offsets_hz'] = [0.0]
+        # Sample power ratios based on category
+        power_cat = self.rng.choice(POWER_RATIO_CATEGORIES, p=POWER_RATIO_WEIGHTS)
+
+        if power_cat == 'equal':
+            params['power_ratios_db'] = [self.rng.uniform(-2, 2) for _ in range(num_sources)]
+        elif power_cat == 'moderate':
+            params['power_ratios_db'] = [self.rng.uniform(-10, 10) for _ in range(num_sources)]
+        elif power_cat == 'near-far':
+            params['power_ratios_db'] = []
+            for _ in range(num_sources):
+                if self.rng.rand() < 0.5:
+                    params['power_ratios_db'].append(self.rng.uniform(-20, -10))
+                else:
+                    params['power_ratios_db'].append(self.rng.uniform(10, 20))
+        else:  # extreme
+            params['power_ratios_db'] = []
+            for _ in range(num_sources):
+                if self.rng.rand() < 0.5:
+                    params['power_ratios_db'].append(self.rng.uniform(-30, -20))
+                else:
+                    params['power_ratios_db'].append(self.rng.uniform(20, 30))
+
+        # Normalize so average is 0 dB
+        avg_power = np.mean(params['power_ratios_db'])
+        params['power_ratios_db'] = [p - avg_power for p in params['power_ratios_db']]
+
+        # Frequency offsets for adjacent-channel mixing
+        if params['mixing_mode'] == 'adjacent-channel':
+            spacing = 2e6  # 2 MHz spacing
+            params['frequency_offsets_hz'] = [i * spacing for i in range(-(num_sources // 2), num_sources - num_sources // 2)]
         else:
-            params['mixing_mode'] = self.rng.choice(MIXING_MODES, p=MIXING_MODE_WEIGHTS)
-
-            # Sample power ratios based on category
-            power_cat = self.rng.choice(POWER_RATIO_CATEGORIES, p=POWER_RATIO_WEIGHTS)
-
-            if power_cat == 'equal':
-                # All sources within ±2 dB
-                params['power_ratios_db'] = [self.rng.uniform(-2, 2) for _ in range(num_sources)]
-            elif power_cat == 'moderate':
-                # SIR: -10 to +10 dB
-                params['power_ratios_db'] = [self.rng.uniform(-10, 10) for _ in range(num_sources)]
-            elif power_cat == 'near-far':
-                # SIR: -20 to -10 or +10 to +20 dB
-                params['power_ratios_db'] = []
-                for _ in range(num_sources):
-                    if self.rng.rand() < 0.5:
-                        params['power_ratios_db'].append(self.rng.uniform(-20, -10))
-                    else:
-                        params['power_ratios_db'].append(self.rng.uniform(10, 20))
-            else:  # extreme
-                # Beyond ±20 dB
-                params['power_ratios_db'] = []
-                for _ in range(num_sources):
-                    if self.rng.rand() < 0.5:
-                        params['power_ratios_db'].append(self.rng.uniform(-30, -20))
-                    else:
-                        params['power_ratios_db'].append(self.rng.uniform(20, 30))
-
-            # Normalize so average is 0 dB
-            avg_power = np.mean(params['power_ratios_db'])
-            params['power_ratios_db'] = [p - avg_power for p in params['power_ratios_db']]
-
-            # Frequency offsets for adjacent-channel mixing
-            if params['mixing_mode'] == 'adjacent-channel':
-                # Realistic frequency offsets based on bandwidth
-                # For now, simple spacing: -2 MHz, 0, +2 MHz, +4 MHz, etc.
-                spacing = 2e6  # 2 MHz spacing
-                params['frequency_offsets_hz'] = [i * spacing for i in range(-(num_sources//2), num_sources - num_sources//2)]
-            else:
-                # Co-channel: all at baseband
-                params['frequency_offsets_hz'] = [0.0] * num_sources
+            params['frequency_offsets_hz'] = [0.0] * num_sources
 
         return params
 
     def sample_source_count(self) -> int:
         """Sample number of sources for mixing."""
         return self.rng.choice(SOURCE_COUNTS, p=SOURCE_COUNT_WEIGHTS)
+
+    def generate_single_source_config(self, standard: str, sample_id: int) -> Dict[str, Any]:
+        """
+        Generate configuration for a single-source sample of a specific standard.
+
+        Uses a seed offset of 2,000,000 to avoid collision with the multi-source
+        dataset (seeds 42 … 42+99,999).
+
+        Args:
+            standard: Wireless standard ('GSM', 'UMTS', 'LTE', '5G_NR')
+            sample_id: Sample index within the single-source dataset
+
+        Returns:
+            Configuration dict compatible with generate_single_source()
+        """
+        self.set_seed(self.master_seed + 2000000 + sample_id)
+        return {
+            'sample_id': sample_id,
+            'seed': self.master_seed + 2000000 + sample_id,
+            'num_sources': 1,
+            'sources': [{
+                'standard': standard,
+                'signal_params': self.sample_signal_params(standard),
+                'channel_params': self.sample_channel_params(),
+                'impairment_params': self.sample_impairment_params(),
+            }],
+            'mixing_params': {
+                'num_sources': 1,
+                'mixing_mode': 'single',
+                'power_ratios_db': [0.0],
+                'frequency_offsets_hz': [0.0],
+            },
+            'snr_db': self.sample_snr(),
+            'mimo_config': {'num_tx': 1, 'num_rx': 1, 'spatial_correlation': 0.0},
+            'generation_time': datetime.utcnow().isoformat(),
+        }
 
     def generate_sample_config(self, sample_id: int) -> Dict[str, Any]:
         """
@@ -403,68 +436,65 @@ class ParameterSampler:
 class DatasetWriter:
     """Write samples to HDF5 dataset with compression."""
 
-    def __init__(self, output_path: Path, max_samples: int = 100000):
+    # 1 ms at 122.88 MHz (max sample rate across all supported configurations)
+    MAX_SIGNAL_LEN = 122880
+
+    def __init__(self, output_path: Path, max_samples: int = 100000, resume: bool = False):
         """
         Initialize dataset writer.
 
         Args:
             output_path: Path to output HDF5 file
             max_samples: Maximum number of samples (for pre-allocation)
+            resume: If True and file exists, open in append mode to continue generation
         """
         self.output_path = Path(output_path)
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
-
         self.max_samples = max_samples
-        self.current_idx = 0
 
-        # Create HDF5 file
-        self.h5file = h5py.File(self.output_path, 'w')
+        if resume and self.output_path.exists():
+            self.h5file = h5py.File(self.output_path, 'r+')
+            self.current_idx = int(self.h5file.attrs.get('actual_samples', 0))
+            self.mixed_signals = self.h5file['mixed_signals']
+            self.source_signals = self.h5file['source_signals']
+            self.signal_lengths = self.h5file['signal_lengths']
+            self.metadata = self.h5file['metadata']
+        else:
+            self.current_idx = 0
+            self.h5file = h5py.File(self.output_path, 'w')
+            max_signal_len = self.MAX_SIGNAL_LEN
 
-        # Pre-allocate datasets with compression
-        # Signal duration: 1 ms @ max rate (122.88 MHz for 5G μ=3) = 122,880 samples
-        # Add generous buffer to accommodate signal generator variations
-        max_signal_len = 10 * 122880  # ~10ms at highest rate
-
-        # Mixed signals (complex float32)
-        self.mixed_signals = self.h5file.create_dataset(
-            'mixed_signals',
-            shape=(max_samples, max_signal_len),
-            dtype=np.complex64,
-            compression='gzip',
-            compression_opts=6,
-            chunks=(1, max_signal_len)
-        )
-
-        # Ground truth source signals (max 4 sources)
-        self.source_signals = self.h5file.create_dataset(
-            'source_signals',
-            shape=(max_samples, 4, max_signal_len),
-            dtype=np.complex64,
-            compression='gzip',
-            compression_opts=6,
-            chunks=(1, 1, max_signal_len)
-        )
-
-        # Actual signal lengths (variable due to different sample rates)
-        self.signal_lengths = self.h5file.create_dataset(
-            'signal_lengths',
-            shape=(max_samples,),
-            dtype=np.int32
-        )
-
-        # Metadata stored as JSON strings
-        self.metadata = self.h5file.create_dataset(
-            'metadata',
-            shape=(max_samples,),
-            dtype=h5py.string_dtype(encoding='utf-8')
-        )
-
-        # Dataset attributes
-        self.h5file.attrs['version'] = '1.0'
-        self.h5file.attrs['creation_time'] = datetime.utcnow().isoformat()
-        self.h5file.attrs['max_samples'] = max_samples
-        self.h5file.attrs['signal_duration_ms'] = 1.0
-        self.h5file.attrs['format'] = 'complex64'
+            self.mixed_signals = self.h5file.create_dataset(
+                'mixed_signals',
+                shape=(max_samples, max_signal_len),
+                dtype=np.complex64,
+                compression='gzip',
+                compression_opts=6,
+                chunks=(1, max_signal_len)
+            )
+            self.source_signals = self.h5file.create_dataset(
+                'source_signals',
+                shape=(max_samples, 4, max_signal_len),
+                dtype=np.complex64,
+                compression='gzip',
+                compression_opts=6,
+                chunks=(1, 1, max_signal_len)
+            )
+            self.signal_lengths = self.h5file.create_dataset(
+                'signal_lengths',
+                shape=(max_samples,),
+                dtype=np.int32
+            )
+            self.metadata = self.h5file.create_dataset(
+                'metadata',
+                shape=(max_samples,),
+                dtype=h5py.string_dtype(encoding='utf-8')
+            )
+            self.h5file.attrs['version'] = '1.0'
+            self.h5file.attrs['creation_time'] = datetime.utcnow().isoformat()
+            self.h5file.attrs['max_samples'] = max_samples
+            self.h5file.attrs['signal_duration_ms'] = 1.0
+            self.h5file.attrs['format'] = 'complex64'
 
     def write_sample(self, mixed_signal: torch.Tensor, sources: List[torch.Tensor],
                     config: Dict[str, Any]):
@@ -481,17 +511,21 @@ class DatasetWriter:
 
         # Convert to numpy
         mixed_np = mixed_signal.cpu().numpy()
-        signal_len = len(mixed_np)
+        max_len = self.mixed_signals.shape[1]
+        signal_len = min(len(mixed_np), max_len)
+        if len(mixed_np) > max_len:
+            warnings.warn(f"Signal length {len(mixed_np)} exceeds buffer {max_len}; truncating.")
 
         # Write mixed signal
-        self.mixed_signals[self.current_idx, :signal_len] = mixed_np
+        self.mixed_signals[self.current_idx, :signal_len] = mixed_np[:signal_len]
         self.signal_lengths[self.current_idx] = signal_len
 
         # Write source signals (pad to 4 sources with zeros)
         for i, source in enumerate(sources):
             if i < 4:
                 source_np = source.cpu().numpy()
-                self.source_signals[self.current_idx, i, :len(source_np)] = source_np
+                src_len = min(len(source_np), max_len)
+                self.source_signals[self.current_idx, i, :src_len] = source_np[:src_len]
 
         # Write metadata as JSON (convert numpy types first)
         config_serializable = convert_to_serializable(config)
@@ -499,12 +533,14 @@ class DatasetWriter:
 
         self.current_idx += 1
 
+    def flush(self):
+        """Flush HDF5 buffers to disk. Call at checkpoints to prevent data loss on crash."""
+        self.h5file.attrs['actual_samples'] = self.current_idx
+        self.h5file.flush()
+
     def close(self):
         """Close HDF5 file and finalize dataset."""
-        # Trim to actual size
-        if self.current_idx < self.max_samples:
-            self.h5file.attrs['actual_samples'] = self.current_idx
-
+        self.h5file.attrs['actual_samples'] = self.current_idx
         self.h5file.close()
 
     def __enter__(self):
@@ -575,7 +611,7 @@ class RFSSDataset(torch.utils.data.Dataset):
         source_signals = []
         for i in range(4):
             source = self.h5file['source_signals'][global_idx, i, :signal_len]
-            if np.any(source != 0):  # Non-zero source
+            if torch.any(torch.from_numpy(source) != 0):  # Non-zero source
                 source_signals.append(torch.from_numpy(source))
 
         # Load metadata
@@ -593,6 +629,31 @@ class RFSSDataset(torch.utils.data.Dataset):
         """Close HDF5 file on deletion."""
         if hasattr(self, 'h5file'):
             self.h5file.close()
+
+
+def _collate_rfss_batch(batch):
+    """Collate variable-length RFSS samples into padded batched tensors."""
+    n = len(batch)
+    signal_lens = [item['mixed_signal'].shape[0] for item in batch]
+    max_len = max(signal_lens)
+    max_sources = max(len(item['source_signals']) for item in batch)
+
+    mixed_signals = torch.zeros(n, max_len, dtype=torch.complex64)
+    source_signals = torch.zeros(n, max_sources, max_len, dtype=torch.complex64)
+
+    for i, item in enumerate(batch):
+        sig = item['mixed_signal']
+        mixed_signals[i, :sig.shape[0]] = sig
+        for j, source in enumerate(item['source_signals']):
+            source_signals[i, j, :source.shape[0]] = source
+
+    return {
+        'mixed_signals': mixed_signals,
+        'source_signals': source_signals,
+        'signal_lengths': torch.tensor(signal_lens, dtype=torch.int32),
+        'metadata': [item['metadata'] for item in batch],
+        'sample_ids': [item['sample_id'] for item in batch]
+    }
 
 
 def create_dataloader(
@@ -617,36 +678,12 @@ def create_dataloader(
     """
     dataset = RFSSDataset(h5_path, split=split)
 
-    # Custom collate function to handle variable-length sources
-    def collate_fn(batch):
-        mixed_signals = torch.stack([item['mixed_signal'] for item in batch])
-        metadata = [item['metadata'] for item in batch]
-        sample_ids = [item['sample_id'] for item in batch]
-
-        # Handle variable number of sources
-        max_sources = max(len(item['source_signals']) for item in batch)
-        batch_size = len(batch)
-        signal_len = mixed_signals.shape[1]
-
-        # Pad source signals
-        source_signals = torch.zeros(batch_size, max_sources, signal_len, dtype=torch.complex64)
-        for i, item in enumerate(batch):
-            for j, source in enumerate(item['source_signals']):
-                source_signals[i, j, :len(source)] = source
-
-        return {
-            'mixed_signals': mixed_signals,
-            'source_signals': source_signals,
-            'metadata': metadata,
-            'sample_ids': sample_ids
-        }
-
     return torch.utils.data.DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=shuffle,
         num_workers=num_workers,
-        collate_fn=collate_fn
+        collate_fn=_collate_rfss_batch
     )
 
 
@@ -734,7 +771,7 @@ def inspect_sample(h5_path: Path, sample_id: int) -> Dict[str, Any]:
     source_signals = []
     for i in range(4):
         source = h5file['source_signals'][sample_id, i, :signal_len]
-        if np.any(source != 0):
+        if torch.any(torch.from_numpy(source) != 0):
             source_signals.append(source)
 
     metadata_str = h5file['metadata'][sample_id]

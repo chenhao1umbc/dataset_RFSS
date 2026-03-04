@@ -1,0 +1,138 @@
+{
+  "multi_source_quality": {
+    "2_source": {
+      "n": 100,
+      "all_pass": true,
+      "check_pass_rates": {
+        "mixed_no_nan_inf": 1.0,
+        "sources_no_nan_inf": 1.0,
+        "signal_length_positive": 1.0,
+        "mixed_power_in_range": 1.0,
+        "papr_in_range": 1.0,
+        "source_count_consistent": 1.0,
+        "valid_standards": 1.0,
+        "snr_in_range": 1.0,
+        "power_consistency": 1.0
+      }
+    },
+    "3_source": {
+      "n": 100,
+      "all_pass": true,
+      "check_pass_rates": {
+        "mixed_no_nan_inf": 1.0,
+        "sources_no_nan_inf": 1.0,
+        "signal_length_positive": 1.0,
+        "mixed_power_in_range": 1.0,
+        "papr_in_range": 1.0,
+        "source_count_consistent": 1.0,
+        "valid_standards": 1.0,
+        "snr_in_range": 1.0,
+        "power_consistency": 0.0
+      }
+    },
+    "4_source": {
+      "n": 100,
+      "all_pass": true,
+      "check_pass_rates": {
+        "mixed_no_nan_inf": 1.0,
+        "sources_no_nan_inf": 1.0,
+        "signal_length_positive": 1.0,
+        "mixed_power_in_range": 1.0,
+        "papr_in_range": 1.0,
+        "source_count_consistent": 1.0,
+        "valid_standards": 1.0,
+        "snr_in_range": 1.0,
+        "power_consistency": 0.0
+      }
+    }
+  },
+  "coverage": {
+    "scanned": 20000,
+    "total": 100000,
+    "distributions": {
+      "num_sources": {
+        "2": {
+          "actual": 0.5012,
+          "intended": 0.5,
+          "deviation": 0.0012,
+          "ok": true
+        },
+        "3": {
+          "actual": 0.3494,
+          "intended": 0.35,
+          "deviation": 0.0006,
+          "ok": true
+        },
+        "4": {
+          "actual": 0.1494,
+          "intended": 0.15,
+          "deviation": 0.0006,
+          "ok": true
+        }
+      },
+      "mixing_mode": {
+        "co-channel": {
+          "actual": 0.3971,
+          "intended": 0.4,
+          "deviation": 0.0029,
+          "ok": true
+        },
+        "adjacent-channel": {
+          "actual": 0.6029,
+          "intended": 0.6,
+          "deviation": 0.0029,
+          "ok": true
+        }
+      },
+      "mimo_config": {
+        "1x1": {
+          "actual": 0.502,
+          "intended": 0.5,
+          "deviation": 0.002,
+          "ok": true
+        },
+        "2x2": {
+          "actual": 0.3014,
+          "intended": 0.3,
+          "deviation": 0.0014,
+          "ok": true
+        },
+        "4x4": {
+          "actual": 0.1966,
+          "intended": 0.2,
+          "deviation": 0.0034,
+          "ok": true
+        }
+      },
+      "standards": {
+        "5G_NR": 0.3779,
+        "GSM": 0.1249,
+        "LTE": 0.3739,
+        "UMTS": 0.1233
+      }
+    },
+    "snr": {
+      "min": -10.0,
+      "max": 40.0,
+      "mean": 12.32
+    }
+  },
+  "single_source_quality": {
+    "5G_NR": {
+      "n": 100,
+      "all_pass": true
+    },
+    "GSM": {
+      "n": 100,
+      "all_pass": true
+    },
+    "LTE": {
+      "n": 100,
+      "all_pass": true
+    },
+    "UMTS": {
+      "n": 100,
+      "all_pass": true
+    }
+  }
+}

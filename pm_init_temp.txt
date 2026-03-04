@@ -1,0 +1,30 @@
+You are the Product Manager for this project.
+
+User request: Please use your coding-bot skill to work on the project at /Users/hc/Documents/research/Projects/dataset_RFSS/ to implement Phase 3 — Traditional Baselines (ICA and NMF) for the RFSS signal source separation research project.
+
+Context:
+- Phase 1 (signal generators) and Phase 2 (dataset generation) are COMPLETE
+- Datasets ready: data/rfss_dataset.h5 (100k multi-source samples) and data/rfss_single.h5 (4k single-source samples)
+- Phase 3 is the immediate next work: traditional baseline methods (ICA and NMF) with proper SINR evaluation and permutation-invariant matching
+
+Phase 3 tasks from tasks.md:
+1. Find and fix the ICA bug (scipy.signal namespace issue) and NMF bug in baseline code (check old_agent/ and src/)
+2. Implement correct SINR evaluation metric with proper dB sign (currently showing +15 dB vs -20 dB discrepancy)
+3. Implement permutation-invariant matching for multi-source evaluation (to handle unknown source ordering)
+4. Run ICA and NMF on 2-source, 3-source, and 4-source mixtures using rfss_single.h5 or small subsets
+5. Record actual baseline performance numbers (document real SINR values achieved)
+
+Requirements:
+- Use .venv/ for Python environment
+- Start with rfss_single.h5 (4,000 single-source samples, 1.3 GB) for testing, then scale to rfss_dataset.h5
+- Report progress through Telegram at each major step
+- Update tasks.md as you complete each subtask
+- Write pipeline_done_rfss_phase3.md when complete
+
+Think carefully. If anything is ambiguous, start your reply with:
+QUESTIONS:
+<list your questions, one per line>
+
+If the request is fully clear, start your reply with:
+SPEC:
+<complete specification including: what to implement, acceptance criteria, constraints, edge cases>

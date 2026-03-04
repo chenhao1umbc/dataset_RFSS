@@ -32,10 +32,11 @@ dependencies = [
     "loguru>=0.5.3",
     "seaborn>=0.11.0",
     "plotly>=5.0.0",
-    "torch>=2.7.1",
-    "torchvision>=0.22.1",
-    "torchaudio>=2.7.1",
+    "torch>=2.10.0",
+    "torchvision>=0.25.0",
+    "torchaudio>=2.10.0",
     "nbstripout>=0.8.1",
+    "huggingface-hub>=0.23",
 ]
 
 [project.optional-dependencies]

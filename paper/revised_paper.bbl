@@ -1,0 +1,132 @@
+\begin{thebibliography}{10}
+
+\bibitem{3gpp38901}
+{3GPP}, ``Study on channel model for frequencies from 0.5 to 100~{GHz} (release
+  17),'' Tech. Rep. TR 38.901 V17.0.0, 3rd Generation Partnership Project,
+  March 2022.
+
+\bibitem{luo2019conv}
+Y.~Luo and N.~Mesgarani, ``{Conv-TasNet}: Surpassing ideal time-frequency
+  magnitude masking for speech separation,'' {\em IEEE/ACM Transactions on
+  Audio, Speech, and Language Processing}, vol.~27, no.~8, pp.~1256--1266,
+  2019.
+
+\bibitem{luo2020dual}
+Y.~Luo, Z.~Chen, and T.~Yoshioka, ``Dual-path {RNN}: Efficient long sequence
+  modeling for time-domain single-channel speech separation,'' in {\em
+  Proceedings of the IEEE International Conference on Acoustics, Speech and
+  Signal Processing (ICASSP)}, pp.~8501--8505, 2020.
+
+\bibitem{leroux2019sdr}
+J.~Le~Roux, S.~Wisdom, H.~Erdogan, and J.~R. Hershey, ``{SDR} -- half-baked or
+  well done?,'' in {\em Proceedings of the IEEE International Conference on
+  Acoustics, Speech and Signal Processing (ICASSP)}, pp.~626--630, 2019.
+
+\bibitem{cabric2004implementation}
+D.~Cabric, S.~M. Mishra, and R.~W. Brodersen, ``Implementation issues in
+  spectrum sensing for cognitive radios,'' in {\em Conference Record of the
+  Thirty-Eighth Asilomar Conference on Signals, Systems and Computers}, vol.~1,
+  pp.~772--776, IEEE, 2004.
+
+\bibitem{mitola1999cognitive}
+J.~Mitola and G.~Q. Maguire, ``Cognitive radio: making software radios more
+  personal,'' {\em IEEE Personal Communications}, vol.~6, no.~4, pp.~13--18,
+  1999.
+
+\bibitem{haykin2005cognitive}
+S.~Haykin, ``Cognitive radio: brain-empowered wireless communications,'' {\em
+  IEEE Journal on Selected Areas in Communications}, vol.~23, no.~2,
+  pp.~201--220, 2005.
+
+\bibitem{goldsmith2009breaking}
+A.~Goldsmith, S.~A. Jafar, I.~Maric, and S.~Srinivasa, ``Breaking spectrum
+  gridlock with cognitive radios: An information theoretic perspective,'' {\em
+  Proceedings of the IEEE}, vol.~97, no.~5, pp.~894--914, 2009.
+
+\bibitem{oshea2017introduction}
+T.~J. O'Shea and J.~Hoydis, ``An introduction to deep learning for the physical
+  layer,'' {\em IEEE Transactions on Cognitive Communications and Networking},
+  vol.~3, no.~4, pp.~563--575, 2017.
+
+\bibitem{west2017deep}
+N.~E. West and T.~O'Shea, ``Deep architectures for modulation recognition,'' in
+  {\em 2017 IEEE International Symposium on Dynamic Spectrum Access Networks
+  (DySPAN)}, pp.~1--6, IEEE, 2017.
+
+\bibitem{oshea2018over}
+T.~J. O'Shea, T.~Roy, and T.~C. Clancy, ``Over-the-air deep learning based
+  radio signal classification,'' {\em IEEE Journal of Selected Topics in Signal
+  Processing}, vol.~12, no.~1, pp.~168--179, 2018.
+
+\bibitem{oshea2016radio}
+T.~J. O'Shea and N.~West, ``Radio machine learning dataset generation with
+  {GNU} radio,'' in {\em Proceedings of the GNU Radio Conference}, 2016.
+
+\bibitem{oshea2016convolutional}
+T.~J. O'Shea, J.~Corgan, and T.~C. Clancy, ``Convolutional radio modulation
+  recognition networks,'' in {\em International Conference on Engineering
+  Applications of Neural Networks}, pp.~213--226, Springer, 2016.
+
+\bibitem{rajendran2018deep}
+S.~Rajendran, W.~Meert, D.~Giustiniano, V.~Lenders, and S.~Pollin, ``Deep
+  learning models for wireless signal classification with distributed low-cost
+  spectrum sensors,'' {\em IEEE Transactions on Cognitive Communications and
+  Networking}, vol.~4, no.~3, pp.~433--445, 2018.
+
+\bibitem{blossom2004gnu}
+E.~Blossom, ``{GNU} radio: tools for exploring the radio frequency spectrum,''
+  {\em Linux Journal}, vol.~2004, no.~122, p.~4, 2004.
+
+\bibitem{hyvarinen2000ica}
+A.~Hyv{\"a}rinen and E.~Oja, ``Independent component analysis: algorithms and
+  applications,'' {\em Neural Networks}, vol.~13, no.~4--5, pp.~411--430, 2000.
+
+\bibitem{fevotte2011nmf}
+C.~F{\'e}votte and J.~Idier, ``Algorithms for nonnegative matrix factorization
+  with the {$\beta$}-divergence,'' {\em Neural Computation}, vol.~23, no.~9,
+  pp.~2421--2456, 2011.
+
+\bibitem{3gpp45004}
+{3GPP}, ``{3GPP TS 45.004}: Digital cellular telecommunications system ({Phase
+  2+}); modulation,'' tech. rep., 3rd Generation Partnership Project, 2018.
+\newblock Release 15.
+
+\bibitem{3gpp25211}
+{3GPP}, ``{3GPP TS 25.211}: Physical channels and mapping of transport channels
+  onto physical channels ({FDD}) (release 15),'' tech. rep., 3rd Generation
+  Partnership Project, 2018.
+
+\bibitem{3gpp36211}
+{3GPP}, ``{3GPP TS 36.211}: Evolved universal terrestrial radio access
+  ({E-UTRA}); physical channels and modulation (release 15),'' tech. rep., 3rd
+  Generation Partnership Project, 2018.
+
+\bibitem{3gpp38211}
+{3GPP}, ``{3GPP TS 38.211}: {NR}; physical channels and modulation (release
+  16),'' tech. rep., 3rd Generation Partnership Project, 2020.
+
+\bibitem{jakes1994microwave}
+W.~C. Jakes, {\em Microwave Mobile Communications}.
+\newblock Wiley-IEEE Press, 1994.
+
+\bibitem{3gpp38104}
+{3GPP}, ``{NR}; base station ({BS}) radio transmission and reception (release
+  17),'' Tech. Rep. TS 38.104 V17.0.0, 3rd Generation Partnership Project,
+  March 2022.
+
+\bibitem{3gpp38101}
+{3GPP}, ``{NR}; user equipment ({UE}) radio transmission and reception (release
+  17),'' Tech. Rep. TS 38.101 V17.0.0, 3rd Generation Partnership Project,
+  March 2022.
+
+\bibitem{3gpp36101}
+{3GPP}, ``User equipment ({UE}) radio transmission and reception (release
+  15),'' Tech. Rep. TS 36.101 V15.0.0, 3rd Generation Partnership Project,
+  2018.
+
+\bibitem{rapp1991effects}
+C.~Rapp, ``Effects of {HPA}-nonlinearity on a 4-{DPSK}/{OFDM}-signal for a
+  digital sound broadcasting system,'' in {\em ESA Special Publication},
+  vol.~332, pp.~179--184, 1991.
+
+\end{thebibliography}

@@ -25,12 +25,12 @@ OUT = Path(__file__).parent / "figures" / "fig_signal_quality.pdf"
 
 plt.rcParams.update({
     "font.family": "serif",
-    "font.size": 8,
-    "axes.titlesize": 8,
-    "axes.labelsize": 7,
-    "xtick.labelsize": 6.5,
-    "ytick.labelsize": 6.5,
-    "legend.fontsize": 7,
+    "font.size": 10,
+    "axes.titlesize": 11,
+    "axes.labelsize": 10,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "legend.fontsize": 9,
     "figure.dpi": 300,
     "savefig.dpi": 300,
     "pdf.fonttype": 42,
@@ -139,7 +139,7 @@ def compute_psd(sig, n_fft=2048):
 
 
 # ── figure ───────────────────────────────────────────────────────────────────
-fig, axes = plt.subplots(1, 3, figsize=(7.16, 2.4))
+fig, axes = plt.subplots(1, 3, figsize=(7.16, 2.9))
 fig.subplots_adjust(wspace=0.42)
 
 COLORS = {"GSM": "#D55E00", "UMTS": "#E69F00", "LTE": "#0072B2", "5G NR": "#009E73"}
@@ -158,8 +158,7 @@ ax.set_axisbelow(True)
 ax.set_ylim(0, max(paprs) * 1.25)
 for bar, v in zip(bars, paprs):
     ax.text(bar.get_x() + bar.get_width() / 2, v + 0.15,
-            f"{v:.1f}", ha="center", va="bottom", fontsize=7)
-ax.tick_params(axis="x", labelsize=6.5)
+            f"{v:.1f}", ha="center", va="bottom", fontsize=9)
 
 # ── (b) PSD ──────────────────────────────────────────────────────────────────
 ax = axes[1]

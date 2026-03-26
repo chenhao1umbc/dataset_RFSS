@@ -86,6 +86,13 @@ C.~F{\'e}votte and J.~Idier, ``Algorithms for nonnegative matrix factorization
   with the {$\beta$}-divergence,'' {\em Neural Computation}, vol.~23, no.~9,
   pp.~2421--2456, 2011.
 
+\bibitem{lancho2024rfchallenge}
+A.~Lancho, A.~Weiss, G.~C.~F. Lee, T.~Jayashankar, B.~Kurien, Y.~Polyanskiy,
+  and G.~W. Wornell, ``{RF} challenge: The data-driven radio frequency signal
+  separation challenge,'' {\em IEEE Open Journal of the Communications
+  Society}, 2025.
+\newblock arXiv:2409.08839.
+
 \bibitem{3gpp45004}
 {3GPP}, ``{3GPP TS 45.004}: Digital cellular telecommunications system ({Phase
   2+}); modulation,'' tech. rep., 3rd Generation Partnership Project, 2018.

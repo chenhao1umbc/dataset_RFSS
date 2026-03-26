@@ -22,11 +22,11 @@ OUT = Path(__file__).parent / "figures" / "fig_spectrograms.pdf"
 
 plt.rcParams.update({
     "font.family": "serif",
-    "font.size": 8,
-    "axes.titlesize": 8,
-    "axes.labelsize": 7,
-    "xtick.labelsize": 6.5,
-    "ytick.labelsize": 6.5,
+    "font.size": 10,
+    "axes.titlesize": 11,
+    "axes.labelsize": 10,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
     "figure.dpi": 300,
     "savefig.dpi": 300,
     "pdf.fonttype": 42,
@@ -118,7 +118,7 @@ NFFT = 512
 HOP  = 128
 WIN  = hann(NFFT, sym=False)
 
-fig, axes = plt.subplots(2, 2, figsize=(7.16, 3.6))
+fig, axes = plt.subplots(2, 2, figsize=(7.16, 4.4))
 fig.subplots_adjust(hspace=0.38, wspace=0.28)
 
 labels = ["GSM", "UMTS", "LTE", "5G NR"]
@@ -149,9 +149,9 @@ for ax, label, subtitle in zip(axes.flat, labels, subtitles):
 
 cb = fig.colorbar(im, ax=axes.ravel().tolist(), shrink=0.6, pad=0.02,
                   label="Normalised PSD (dB)")
-cb.ax.tick_params(labelsize=6.5)
+cb.ax.tick_params(labelsize=9)
 
-fig.suptitle("Multi-Standard RF Signal Spectrograms", y=1.01, fontsize=9)
+fig.suptitle("Multi-Standard RF Signal Spectrograms", y=1.01, fontsize=12)
 OUT.parent.mkdir(parents=True, exist_ok=True)
 fig.savefig(OUT, bbox_inches="tight")
 print(f"Saved: {OUT}")

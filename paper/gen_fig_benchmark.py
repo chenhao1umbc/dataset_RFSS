@@ -26,12 +26,12 @@ OUT = Path(__file__).parent / "figures" / "fig_benchmark.pdf"
 # ── publication style ──────────────────────────────────────────────────────────
 plt.rcParams.update({
     "font.family": "serif",
-    "font.size": 8,
-    "axes.titlesize": 8,
-    "axes.labelsize": 8,
-    "xtick.labelsize": 7,
-    "ytick.labelsize": 7,
-    "legend.fontsize": 7,
+    "font.size": 10,
+    "axes.titlesize": 11,
+    "axes.labelsize": 10,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "legend.fontsize": 9,
     "lines.linewidth": 1.0,
     "axes.linewidth": 0.6,
     "xtick.major.width": 0.6,
@@ -80,7 +80,7 @@ HATCHES = {
 }
 
 # ── layout ─────────────────────────────────────────────────────────────────────
-fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.6), sharey=False)
+fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.2), sharey=False)
 fig.subplots_adjust(wspace=0.35)
 
 n_methods = len(METHODS)
@@ -134,7 +134,7 @@ for ax_idx, (ax, channel, title) in enumerate(zip(
                 ax.text(
                     x_centers[si] + offsets[mi], v + 0.4,
                     f"{v:.1f}", ha="center", va="bottom",
-                    fontsize=5.5, rotation=90, color="black",
+                    fontsize=8.5, rotation=90, color="black",
                 )
 
 # legend on right axis

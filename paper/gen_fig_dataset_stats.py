@@ -31,12 +31,12 @@ STD_NORM = {"GSM": "GSM", "UMTS": "UMTS", "LTE": "LTE", "5G_NR": "5G NR"}
 
 plt.rcParams.update({
     "font.family": "serif",
-    "font.size": 8,
-    "axes.titlesize": 8,
-    "axes.labelsize": 8,
-    "xtick.labelsize": 7,
-    "ytick.labelsize": 7,
-    "legend.fontsize": 7,
+    "font.size": 10,
+    "axes.titlesize": 11,
+    "axes.labelsize": 10,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "legend.fontsize": 9,
     "figure.dpi": 300,
     "savefig.dpi": 300,
     "pdf.fonttype": 42,
@@ -81,7 +81,7 @@ with h5py.File(HDF5, "r") as f:
 print("Scan complete.")
 
 # ── figure ──────────────────────────────────────────────────────────────────────
-fig, axes = plt.subplots(1, 3, figsize=(7.16, 2.4))
+fig, axes = plt.subplots(1, 3, figsize=(7.16, 2.9))
 fig.subplots_adjust(wspace=0.42)
 
 BLUE  = "#0072B2"
@@ -101,7 +101,7 @@ ax.set_axisbelow(True)
 ax.set_ylim(0, 65)
 for bar, val in zip(bars, src_vals):
     ax.text(bar.get_x() + bar.get_width() / 2, val + 0.8,
-            f"{val:.1f}%", ha="center", va="bottom", fontsize=7)
+            f"{val:.1f}%", ha="center", va="bottom", fontsize=9)
 
 # ── (b) Mixing mode distribution ──────────────────────────────────────────────
 ax = axes[1]
@@ -117,7 +117,7 @@ ax.set_axisbelow(True)
 ax.set_ylim(0, 80)
 for bar, val in zip(bars, mode_vals):
     ax.text(bar.get_x() + bar.get_width() / 2, val + 0.8,
-            f"{val:.1f}%", ha="center", va="bottom", fontsize=7)
+            f"{val:.1f}%", ha="center", va="bottom", fontsize=9)
 
 # ── (c) 2-source standard co-occurrence heatmap ───────────────────────────────
 ax = axes[2]
@@ -134,15 +134,15 @@ matrix = matrix / total_2src * 100
 im = ax.imshow(matrix, cmap="Blues", aspect="auto", vmin=0)
 ax.set_xticks(range(4))
 ax.set_yticks(range(4))
-ax.set_xticklabels(STANDARDS, rotation=30, ha="right", fontsize=6.5)
-ax.set_yticklabels(STANDARDS, fontsize=6.5)
+ax.set_xticklabels(STANDARDS, rotation=30, ha="right", fontsize=9)
+ax.set_yticklabels(STANDARDS, fontsize=9)
 ax.set_title("(c) 2-Source Pairs (%)", pad=4)
 for i in range(4):
     for j in range(4):
         val = matrix[i, j]
         if val > 0.5:
             ax.text(j, i, f"{val:.1f}", ha="center", va="center",
-                    fontsize=5.5,
+                    fontsize=8.5,
                     color="white" if val > matrix.max() * 0.6 else "black")
 plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
 

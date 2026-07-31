@@ -2,7 +2,10 @@ import os
 import sys
 from huggingface_hub import HfApi
 
-TOKEN = "ROTATED_TOKEN_REDACTED"
+TOKEN_PATH = os.path.expanduser("~/Documents/research/.secrets/HF_api")
+with open(TOKEN_PATH) as f:
+    TOKEN = f.read().split("=", 1)[1].strip().strip('"')
+
 REPO_ID = "Chrishao/rfss"
 DATA_DIR = "/Users/hc/Documents/research/Projects/dataset_RFSS/data"
 

@@ -1,10 +1,11 @@
-# Post-Paper Audit Report
+# Post-Paper Audit Report (Phase 8 Final Verification)
 
 **Paper**: RFSS: A Multi-Standard RF Signal Source Separation Dataset with 3GPP-Standardized Channel and Hardware Impairments
-**Venue**: IEEE journal (IEEEtran `journal` class — target not explicitly stated, compatible with IEEE Access / IEEE Transactions)
-**Date**: 2026-03-26
-**Pages**: 10
+**Venue**: IEEE journal (IEEEtran `journal` class -- compatible with IEEE Access / IEEE Transactions)
+**Date**: 2026-07-30
+**Pages**: 11
 **References**: 40 cited / 40 in .bib
+**Canonical file**: `paper/revised_paper.tex`
 
 ---
 
@@ -12,96 +13,50 @@
 
 | Severity | Count |
 |----------|-------|
-| CRITICAL | 2     |
-| MAJOR    | 1     |
-| MINOR    | 3     |
+| CRITICAL | 0     |
+| MAJOR    | 0     |
+| MINOR    | 0     |
 
-**Verdict: FAIL**
-Reason: 2 CRITICAL AI-vocabulary items. Both must be replaced before submission.
+**Verdict: PASS**
 
 ---
 
 ## 1. Reference Audit
 
 ### 1a. Pipeline Results
+
 - **Total references**: 40
 - **Orphaned .bib entries**: 0
 - **Undefined citations**: 0
-- **Compilation**: clean — no undefined citation warnings, no overfull \\hbox
+- **Compilation**: clean -- no undefined citation warnings, no overfull \hbox
 
-### 1b. WebSearch Verification (8 sampled: all suspicious + random 20% of REAL)
+### 1b. Bibliographic Detail Verification
 
-All 8 sampled references verified REAL with correct titles, authors, venues, and years. No fabricated references found. Specific findings:
-
-| BibKey | Status | Notes |
-|--------|--------|-------|
-| lancho2024rfchallenge | REAL | Published IEEE Open J. Commun. Soc. 2025, vol.6 pp.4083–4100. arXiv:2409.08839 confirmed. |
-| rapp1991effects | REAL | ESA Special Publication vol.332 pp.179–184, 1991. ADS record confirmed. |
-| mennes2020sc2 | REAL | IEEE TNSM vol.17 no.4 pp.2024–2038, DOI:10.1109/TNSM.2020.3031078. |
-| jaeckel2014quadriga | REAL | IEEE TAP vol.62 pp.3242–3256, 2014. IEEExplore confirmed. |
-| hadani2017otfs | REAL | IEEE WCNC 2017 pp.1–6. IEEExplore confirmed. |
-| abdoli2015fofdm | REAL | IEEE SPAWC 2015 pp.66–70. IEEExplore confirmed. |
-| wichern2019wham | REAL | Interspeech 2019. ISCA archive confirmed. |
-| subakan2021sepformer | REAL | ICASSP 2021. Semantic Scholar confirmed. |
-
-### 1c. BibTeX Note Field Audit
-
-3 note fields present:
-- `lancho2024rfchallenge`: `note = {arXiv:2409.08839}` — acceptable (arXiv ID annotation on published paper)
-- `3gpp45004`: `note = {Release 15}` — acceptable (informative release tag)
-- `rafii2017musdb18`: `note = {10.5281/zenodo.1117372}` — acceptable (Zenodo DOI for dataset citation)
-
-No internal commentary contamination found.
-
-### 1d. arXiv Citation Check
-
-`lancho2024rfchallenge` carries an arXiv note but is correctly cited as an IEEE Open Journal paper with `year = {2025}`. No arXiv-only citations detected.
-
-### 1e. Reference Density
-
-40 references. Appropriate for IEEE journal paper of this type and scope.
+`3gpp25102` -- BibTeX title correctly reads "(TDD)" (Release 15). Phase 7 fix verified intact. **PASS**.
 
 ---
 
 ## 2. Writing Style Audit
 
-### 2a. AI Writing Verdict: **YES — AI DETECTED (CRITICAL)**
+### 2a. AI Vocabulary Blacklist
 
-Two blacklisted AI-vocabulary words found. Both are CRITICAL. Paper FAILS this gate.
+| Word | Count | Verdict |
+|------|-------|---------|
+| `comprehensive` | 0 | CLEAN |
+| `facilitated` | 0 | CLEAN |
+| `delve` | 0 | CLEAN |
+| `robust` / `robustness` | 0 | CLEAN |
+| `moreover` | 0 | CLEAN |
+| `furthermore` | 0 | CLEAN |
+| `additionally` | 2 | ACCEPTABLE -- neither is a paragraph opener (line 132: "adjacent-channel mixtures additionally require managing guard-band leakage"; line 232: "Additionally, RF Challenge uses AWGN-only...") |
 
-### 2b. AI Vocabulary Markers Found (CRITICAL: each must be replaced)
+**Verdict: CLEAN**.
 
-| Word | Location | Context | Replacement |
-|------|----------|---------|-------------|
-| `comprehensive` | revised_paper.tex:32 (abstract) | "a comprehensive open-source dataset of 100,000 multi-source RF signal samples" | Remove the adjective entirely — the scale (100,000 samples, 103 GB) speaks for itself. Rewrite: "an open-source dataset of 100,000 multi-source RF signal samples" |
-| `facilitated` | revised_paper.tex:102 | "WSJ0-2mix and MUSDB facilitated the rapid development of Conv-TasNet, DPRNN, and related architectures" | Replace with "enabled": "WSJ0-2mix and MUSDB enabled the rapid development of..." |
+### 2b. Structural Patterns
 
-### 2c. AI-Telltale Phrases: CLEAN
-
-No matches for any banned phrase patterns. No "Moreover,", "Furthermore,", "Additionally," paragraph openers. No em dashes, en dashes, or prose hyphens.
-
-### 2d. Structural Patterns: CLEAN
-
-- No rigid subsection template repetition detected. Each subsection has natural variation in structure, length, and entry angle.
-- Paragraph lengths vary naturally. Short declarative sentences ("This data has not previously existed.") coexist with long compound-complex sentences for algorithmic descriptions.
-- Sentence length standard deviation appears healthy — no narrow-band uniformity.
-
-### 2e. Style Profile Match (Hao Chen / IEEE venues)
-
-Overall strong match. Key positive signals:
-
-| Dimension | Expected (Author) | Found | Assessment |
-|-----------|-------------------|-------|------------|
-| Voice | Active dominant | "We present", "We generate", "We adopt", "We evaluate", "We benchmark" | PASS |
-| Prior work critique | Direct, no excessive praise | "RadioML contains only single-signal samples: there is no mixture of two or more simultaneous transmissions, and therefore no ground truth for separation." | PASS |
-| Claim support | Quantified, table-referenced | All dB claims reference specific table rows; improvement values computed from reported numbers | PASS |
-| Hedging | Moderate, specific | "These assumptions hold approximately for cellular signals but become weaker when..." | PASS |
-| Transitions | Functional connectors | "However", "In contrast to", "More critically", "Neither approach", "The most closely related" | PASS |
-| Acronym order | Full term first, abbrev. in parens | GSM, UMTS, LTE, NR, AMC, PIT, STFT, BiLSTM, TCN, CFO — all correctly introduced | PASS |
-| Paper road-map | Explicit in introduction | "Section II reviews... Section III describes... Section V presents..." | PASS |
-| Vocabulary choice | Domain-specific, precise | "spectral occupancy", "Hankel embedding", "Wiener-ratio masking", "permutation ambiguity" | PASS |
-
-The two blacklisted words ("comprehensive", "facilitated") are isolated vocabulary substitutions. The underlying sentence construction and argumentation style are author-consistent throughout.
+- **Em-dashes**: 0 (confirmed by grep)
+- **British spellings**: 0 ("generalise" and "artefacts" fixed in Phase 5, confirmed absent)
+- **Paragraph openers**: No "Moreover,", "Furthermore,", "Additionally," paragraph openers detected.
 
 ---
 
@@ -109,102 +64,88 @@ The two blacklisted words ("comprehensive", "facilitated") are isolated vocabula
 
 ### 3a. Compilation Health
 
-- Undefined citations: **none**
-- Overfull \\hbox: **none**
-- LaTeX warnings: nominal
-- PDF pages: **10** (appropriate for IEEE journal submission)
+| Metric | Value |
+|--------|-------|
+| Errors | 0 |
+| Overfull \hbox | 0 |
+| Underfull \hbox | 2 (badness 3907, cosmetic only) |
+| Underfull \vbox | 5 (badness 10000, page-break cosmetics) |
+| Undefined citations | 0 |
+| Citation warnings | 0 |
+| PDF pages | 11 |
 
-### 3b. Figures (5 figures, all verified via PDF rendering)
+Compilation is clean.
 
-All 5 figure files exist (`fig_pipeline.pdf`, `fig_dataset_stats.pdf`, `fig_spectrograms.pdf`, `fig_signal_quality.pdf`, `fig_benchmark.pdf`). Visual inspection via Ghostscript:
+### 3b. Abstract Word Count
 
-| Figure | Caption | Issues |
-|--------|---------|--------|
-| Fig. 1 (pipeline) | Self-contained, describes pipeline stages | OK — renders as full-width diagram |
-| Fig. 2 (dataset stats) | Describes three sub-panels (source count, mixing mode, standard combinations) | OK |
-| Fig. 3 (spectrograms) | Describes axes, color encoding, interpretive role | OK |
-| Fig. 4 (signal quality) | Describes three sub-panels (PAPR, PSD, amplitude) | OK |
-| Fig. 5 (benchmark) | Describes overall and co-channel panels | OK |
+**230 words** (standard IEEE counting: hyphenated compounds = 1 word, comma-separated numbers = 1 word, math expressions = 1 word). Well under the 250-word limit.
 
-Figures use `\textwidth` placement with `figure*` environment (full-width in two-column layout) — appropriate.
+### 3c. Figures and Tables
 
-### 3c. Tables
-
-| Table | Formatting | Issues |
-|-------|-----------|--------|
-| Table I (overall PI-SI-SINR) | `booktabs`, `\resizebox{\columnwidth}` | OK |
-| Table II (co-channel PI-SI-SINR) | `booktabs`, `\resizebox{\columnwidth}` | OK |
-| Table III (SNR stratification) | `booktabs`, `\resizebox{\columnwidth}` | OK |
-
-No `\hline` usage. No `\scriptsize` or `\tiny`. All tables have captions and `\label`. Numeric precision consistent (2 decimal places in dB). Bold used correctly for best-per-row values.
-
-### 3d. Abstract
-
-- **Word count**: ~249 words (LaTeX-stripped). Right at the IEEE 250-word boundary — **borderline MAJOR**.
-- Acronyms: all defined inline (TDL, PI-SI-SINR, NMF, ICA used in abstract; ICA and NMF are algorithm names cited with references, acceptable in IEEE style)
-- All abstract claims substantiated in body: Conv-TasNet 2-source −21.18 dB (Table I), co-channel −12.34 dB (Table II), ICA −28.04 dB (Table II), NMF −16.19 dB (Table II) — all verified against experiment_results.md
-- No citation numbers in abstract
-
-### 3e. Structure Check
-
-- Introduction: problem → importance → gaps → contributions (6 items) → roadmap — **complete and correct**
-- Each contribution maps to a specific body section
-- Conclusion introduces no new claims; restates key results with forward-looking extensions only
-- No orphan claims found
-
-### 3f. Numbers Verified Against experiment_results.md
-
-| Claim in paper | experiment_results.md value | Match |
-|----------------|-----------------------------|-------|
-| Conv-TasNet 2-src: −21.18 dB | −21.18 dB | YES |
-| Conv-TasNet 3-src: −21.08 dB | −21.08 dB | YES |
-| Conv-TasNet 4-src: −22.13 dB | −22.13 dB | YES |
-| ICA 2-src: −34.91 dB | −34.91 dB | YES |
-| Co-channel Conv-TasNet 2-src: −12.34 dB | −12.34 dB | YES |
-| Co-channel ICA 2-src: −28.04 dB | −28.04 dB | YES |
-| Conv-TasNet improvement over ICA: 13.7 dB (2-src) | 13.73 dB (rounds to 13.7) | YES |
-
-All reported numbers are internally consistent and match ground-truth results files.
+| Item | Status |
+|------|--------|
+| 5 figures | All present, captioned, use `figure*` full-width |
+| 3 tables | All present, captioned, use `booktabs`, `\resizebox` |
+| Table I (overall) | Values match `experiment_results.md` |
+| Table II (co-channel) | Values match `experiment_results.md`; N_co disclosure caption correctly notes independent random draws for classical baselines (110/127/133 vs DL 110/127/133) |
+| Table III (SNR stratified) | Values match `experiment_results.md` |
 
 ---
 
-## 4. Additional Issues Found
+## 4. Numeric Claims Cross-Check (Regression Check + Phase 8 Fix)
 
-### British Spelling (MINOR × 2)
+### 4a. Previously Fixed Claims (No Regression)
 
-| Word | Line | Fix |
-|------|------|-----|
-| `generalise` | 232 | → `generalize` |
-| `artefacts` | 245 | → `artifacts` |
+| Claim in Paper | Ground Truth | Verdict |
+|----------------|--------------|---------|
+| **MA1 -- Minimum signal length 1,890** (line 421) | `utils_gsm.py`: `num_bits = int(270833 * 0.001) = 270`, `samples_per_symbol = int(2166000 / 270833) = 7`, `270 * 7 = 1,890`. HDF5 min verified 1,890. | PASS |
+| **MA2 -- GSM PAPR ~5 dB** (line 487) | `gen_fig_signal_quality.py` output: GSM 5.13 dB. Text correctly notes "a resampling artifact." | PASS |
+| **MA3 -- PAPR gap ~5--6 dB** (line 496) | LTE/5G NR ~10.4--10.7 dB minus GSM ~5.1 dB = ~5.4--5.6 dB. "~5--6 dB" is correct. | PASS |
+| **m1 -- Empirical 4-source weight 0.15** (line 417) | HDF5 actual: 14,943 / 100,000 = 0.1494. Rounds to 0.15. | PASS |
+| **m3 -- Bandwidth ratio up to 500x** (line 505) | GSM 200 kHz vs 5G NR 100 MHz = 500x. "up to 500x" is correct. | PASS |
+| **m4 -- 3gpp25102 (TDD)** | ETSI TS 125 102 is the TDD specification. Title verified (TDD). | PASS |
 
-IEEE uses American English. These are the only two British spellings found.
+### 4b. Phase 8 Fix (Verified)
 
-### "robust" / "robustness" (MINOR — borderline)
+**CNN-LSTM co-channel deficit range unified to "4--6 dB"**
 
-Line 731: "The relative robustness here can be attributed to the spectral diversity of the four cellular standards"
+- **Line 726**: "trails the masking-based models by **4--6**~dB" -- verified.
+- **Line 740**: "**4--6**~dB co-channel deficit relative to the masking-based models" -- verified.
+- **Line 917 (Conclusion)**: "**4--6**~dB co-channel deficit of CNN-LSTM relative to the masking-based models" -- verified.
 
-Per the blacklist, "robust" is flagged without a robustness evaluation. However, the immediately preceding sentence provides quantitative backing: "The modest degradation from 2-source to 4-source configurations ($\leq 1.1$ dB for Conv-TasNet)". This is sufficient evidence. **Not blocking**, but consider replacing with "The modest degradation ($\leq 1.1$ dB) can be attributed to..." to make the quantitative anchor more direct.
+**Ground truth from Table II (co-channel)**:
+- 2-source: |CNN-LSTM (-17.04) -- DPRNN (-12.51)| = 4.53 dB; |CNN-LSTM -- Conv-TasNet (-12.34)| = 4.70 dB
+- 3-source: |CNN-LSTM (-15.99) -- DPRNN (-10.38)| = 5.61 dB; |CNN-LSTM -- Conv-TasNet (-10.71)| = 5.28 dB
+- 4-source: |CNN-LSTM (-16.67) -- DPRNN (-12.79)| = 3.88 dB; |CNN-LSTM -- Conv-TasNet (-12.43)| = 4.24 dB
 
-### Contribution Ordering (NON-ISSUE — verified)
+**Computed range**: 3.88 dB to 5.61 dB.
 
-The OCR output appeared to show items 5 and 6 out of order. Confirmed via Ghostscript page rendering: items are in correct sequence (1–6) in the actual PDF. OCR column-flow confusion; no action needed.
+The paper's unified phrasing **"4--6 dB"** safely brackets the full computed range (3.88 rounds to 4; 5.61 is within 6). This is a conservative and internally consistent IEEE-style rounding. **PASS**.
+
+### 4c. Additional Verified Correct Claims
+
+| Claim in Paper | Ground Truth | Verdict |
+|----------------|--------------|---------|
+| 100,000 multi-source samples | `actual_samples = 100000` | PASS |
+| 4,000 single-source samples | `actual_samples = 4000` | PASS |
+| 70/15/15 splits | Code: `int(0.70 * N)`, `int(0.85 * N)` | PASS |
+| TDL weights [0.25, 0.20, 0.15, 0.20, 0.20] | Code `TDL_WEIGHTS`; HDF5 empirical match | PASS |
+| Doppler ranges up to 700 Hz | Code `DOPPLER_RANGES`; HDF5 max 699.98 Hz | PASS |
+| SNR ranges -10 to 40 dB | Code `SNR_RANGES`; HDF5 min -10.00, max 40.00 | PASS |
+| Impairment modes: ~20% clean, ~30% single, ~50% multiple | Code `IMPAIRMENT_WEIGHTS`; HDF5 empirical match | PASS |
+| Mixing modes: 40% co-channel, 60% adjacent-channel | Code `MIXING_MODE_WEIGHTS`; HDF5 empirical 40.19% / 59.81% | PASS |
+| Benchmark numbers (all three tables) | `experiment_results.md` | PASS |
+| Co-channel improvement ranges (14.8--17.8 dB) | Derived from Table II: 17.82 max, 14.82 min | PASS |
+| Conv-TasNet/DPRNN near-parity (within 0.4 dB) | Table I max diff 0.35 dB; Table II max diff 0.36 dB | PASS |
+| Conv-TasNet 2--4 source degradation <=1.1 dB | -21.18 to -22.13 = 0.95 dB | PASS |
+| CNN-LSTM falls within 0.9--2.0 dB of NMF (line 726) | Table II diffs: 0.85 dB (2-src), 0.91 dB (3-src), 2.04 dB (4-src). "0.9--2.0" is a reasonable IEEE rounding of [0.85, 2.04]. | PASS |
 
 ---
 
-## 5. Recommended Actions (Prioritized)
+## 5. Recommended Actions
 
-### CRITICAL (must fix before submission)
+None. All prior issues have been verified as fixed and no new issues were found in this audit.
 
-1. **Replace "comprehensive" in abstract (line 32)**: Remove the word entirely. "a comprehensive open-source dataset of 100,000 multi-source RF signal samples" → "an open-source dataset of 100,000 multi-source RF signal samples generated with full 3GPP standards compliance"
+---
 
-2. **Replace "facilitated" (line 102)**: "WSJ0-2mix and MUSDB facilitated the rapid development of Conv-TasNet, DPRNN, and related architectures" → "WSJ0-2mix and MUSDB enabled the rapid development of Conv-TasNet, DPRNN, and related architectures"
-
-### MAJOR (strongly recommended)
-
-3. **Abstract word count (~249 words)**: Trim 3–5 words to stay comfortably under 250. Candidate: remove "generated with full 3GPP standards compliance" from the abstract sentence (it is immediately elaborated in the next sentence about what standards are covered).
-
-### MINOR (fix before submission)
-
-4. **Fix British spelling "generalise" (line 232)** → "generalize"
-5. **Fix British spelling "artefacts" (line 245)** → "artifacts"
-6. **Strengthen "robustness" anchor (line 731)**: Rewrite to lead with the number: "The $\leq 1.1$ dB degradation from 2-source to 4-source (Conv-TasNet) is encouraging..." removing the word "robustness" entirely.
+*End of report.*

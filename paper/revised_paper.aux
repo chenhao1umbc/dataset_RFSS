@@ -40,7 +40,6 @@
 \citation{3gpp38901}
 \citation{jakes1994microwave}
 \citation{3gpp38104,3gpp38101,3gpp36101,3gpp25102}
-\citation{3gpp25102}
 \@writefile{toc}{\contentsline {section}{\numberline {III}Dataset Construction}{3}{}\protected@file@percent }
 \newlabel{sec:construction}{{III}{3}{}{section.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Signal Generation}{3}{}\protected@file@percent }
@@ -51,6 +50,7 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Channel Modeling}{3}{}\protected@file@percent }
 \newlabel{eq:mixture}{{5}{3}{}{equation.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Hardware Impairments}{3}{}\protected@file@percent }
+\citation{3gpp25102}
 \citation{rapp1991effects}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces RFSS dataset construction pipeline. Each sample passes through independent per-source signal generation, 3GPP TDL channel modeling, hardware impairment injection, and two-mode mixing before ground-truth targets and the mixture observation are written to HDF5.}}{4}{}\protected@file@percent }
 \newlabel{fig:pipeline}{{1}{4}{}{figure.1}{}}
@@ -60,7 +60,6 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Composition}{4}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Signal Properties}{4}{}\protected@file@percent }
 \citation{leroux2019sdr}
-\citation{hershey2016deep,luo2019conv}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces RFSS dataset composition statistics. Left: source-count distribution across 100,000 samples. Center: mixing-mode frequency (co-channel vs.\ adjacent-channel). Right: standard-combination frequency for multi-source samples.}}{5}{}\protected@file@percent }
 \newlabel{fig:dataset_stats}{{2}{5}{}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}HDF5 Format and Metadata}{5}{}\protected@file@percent }
@@ -69,34 +68,33 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Evaluation Metric}{5}{}\protected@file@percent }
 \newlabel{sec:metrics}{{\mbox  {V-A}}{5}{}{subsection.5.1}{}}
 \newlabel{eq:sisinr}{{6}{5}{}{equation.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Classical Baselines}{5}{}\protected@file@percent }
-\citation{luo2019conv}
-\citation{luo2020dual}
+\citation{hershey2016deep,luo2019conv}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Short-time Fourier transform spectrograms of single-source samples for all four cellular standards. Each panel shows time on the horizontal axis and frequency on the vertical axis, with power in dB encoded as color. The distinct spectral structures motivate the separability of multi-standard mixtures.}}{6}{}\protected@file@percent }
 \newlabel{fig:spectrograms}{{3}{6}{}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Deep Learning Methods}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Classical Baselines}{6}{}\protected@file@percent }
+\citation{luo2019conv}
+\citation{luo2020dual}
 \citation{kolbaek2017multitalker}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Signal quality characterization for the four cellular standards. Left: empirical PAPR distributions. Center: power spectral density estimates. Right: amplitude (envelope) probability density functions.}}{7}{}\protected@file@percent }
 \newlabel{fig:signal_quality}{{4}{7}{}{figure.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Results}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Deep Learning Methods}{7}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Overall PI-SI-SINR (dB) on the test split ($N\!=\!150$ for baselines, $N\!=\!300$ for DL, seed\,42). Higher values indicate better separation. Bold: best per row.}}{7}{}\protected@file@percent }
 \newlabel{tab:main}{{I}{7}{}{table.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Co-channel PI-SI-SINR (dB). $N_{\rm  co}$ gives the number of co-channel test samples per configuration. Bold: best per row.}}{7}{}\protected@file@percent }
-\newlabel{tab:co}{{II}{7}{}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Results}{7}{}\protected@file@percent }
 \citation{kolbaek2017multitalker}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Benchmark results. Left: overall PI-SI-SINR (dB) for all five methods across 2-, 3-, and 4-source configurations. Right: co-channel PI-SI-SINR for all five methods across 2-, 3-, and 4-source configurations.}}{8}{}\protected@file@percent }
-\newlabel{fig:benchmark}{{5}{8}{}{figure.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}SNR Sensitivity Analysis}{8}{}\protected@file@percent }
-\newlabel{sec:snr}{{\mbox  {V-E}}{8}{}{subsection.5.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Co-channel PI-SI-SINR (dB). $N_{\rm  co}$ gives the number of co-channel test samples for the deep-learning evaluation ($N\!=\!300$ per source count); classical baselines were evaluated on an independent random draw ($N\!=\!150$ per source count, yielding 49, 47, and 65 co-channel samples for 2-, 3-, and 4-source configurations respectively). Bold: best per row.}}{8}{}\protected@file@percent }
+\newlabel{tab:co}{{II}{8}{}{table.2}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Co-channel PI-SI-SINR (dB) stratified by mixture SNR, 3-source. $N$ denotes co-channel samples per bin. Higher is better.}}{8}{}\protected@file@percent }
 \newlabel{tab:snr}{{III}{8}{}{table.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}SNR Sensitivity Analysis}{8}{}\protected@file@percent }
+\newlabel{sec:snr}{{\mbox  {V-E}}{8}{}{subsection.5.5}{}}
 \newlabel{sec:adjfloor}{{\mbox  {V-E}1}{8}{}{subsubsection.5.5.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-E}1}Adjacent-channel Evaluation Floor}{8}{}\protected@file@percent }
 \citation{hadani2017otfs}
 \citation{abdoli2015fofdm}
 \citation{jaeckel2014quadriga}
-\bibstyle{ieeetr}
-\bibdata{revised_paper}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Benchmark results. Left: overall PI-SI-SINR (dB) for all five methods across 2-, 3-, and 4-source configurations. Right: co-channel PI-SI-SINR for all five methods across 2-, 3-, and 4-source configurations.}}{9}{}\protected@file@percent }
+\newlabel{fig:benchmark}{{5}{9}{}{figure.5}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Data Access and Format}{9}{}\protected@file@percent }
 \newlabel{sec:access}{{VI}{9}{}{section.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Public Release}{9}{}\protected@file@percent }
@@ -106,6 +104,8 @@
 \newlabel{sec:limitations}{{VII}{9}{}{section.7}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{9}{}\protected@file@percent }
 \newlabel{sec:conclusion}{{VIII}{9}{}{section.8}{}}
+\bibstyle{ieeetr}
+\bibdata{revised_paper}
 \bibcite{3gpp38901}{1}
 \bibcite{luo2019conv}{2}
 \bibcite{luo2020dual}{3}
@@ -141,10 +141,10 @@
 \bibcite{jakes1994microwave}{33}
 \bibcite{3gpp38104}{34}
 \bibcite{3gpp38101}{35}
+\@writefile{toc}{\contentsline {section}{References}{10}{}\protected@file@percent }
 \bibcite{3gpp36101}{36}
 \bibcite{rapp1991effects}{37}
 \bibcite{hadani2017otfs}{38}
 \bibcite{abdoli2015fofdm}{39}
 \bibcite{jaeckel2014quadriga}{40}
-\@writefile{toc}{\contentsline {section}{References}{10}{}\protected@file@percent }
-\gdef \@abspage@last{10}
+\gdef \@abspage@last{11}

@@ -110,3 +110,155 @@ Source: `pp_review_report.md` — 2 CRITICAL, 1 MAJOR, 3 MINOR. All fixed, PDF v
 - DPRNN/Conv-TasNet 3-source mixed scheduler footnotes: acceptable but reproducibility claim must be qualified
 - Signal length: 122,880 samples = 4 ms at 30.72 MHz (correct); the md file says 30,720 = stale
 - Conv-TasNet receptive field calculation needs verification — likely ~75 µs not 500 µs
+
+---
+
+## Phase 6: Dataset Accuracy and Prose Consistency Fixes [x] **[APPROVED — 2026-07-30]**
+
+All 11 tasks approved after 2 revisions (1st submission: CHANGES REQUESTED with 1 MINOR issue; 2nd revision: verified and approved).
+
+**Trigger**: Independent IEEE-journal-rigor review (`project_understanding.md`) found new discrepancies between `revised_paper.tex` and actual generation code (`src/utils_dataset.py`, `check/run_baselines.py`, `check/eval_breakdown.py`) never covered by Phases 1–5.
+
+**Verification rule**: Every numeric/statistical claim in Section III must be re-verified against `src/utils_dataset.py` and actual HDF5 metadata (not cross-checked against prior review memory) before being marked APPROVED. This is the exact class of error that slipped through prior phases.
+
+---
+
+### BLOCKING (must fix before approval)
+
+- [x] **[APPROVED]** B1 — Rewrite Section III (Dataset Construction) to match actual code
+  - **Sample rate**: Paper says "common intermediate sample rate of 30.72 MHz" for all waveforms. Code: variable per-standard rates (GSM 2.166 MHz, UMTS 7.68 MHz, LTE 1.92–30.72 MHz, 5G NR 15.36–122.88 MHz). Correct text: sources are generated at native rate then resampled to a common mixture rate.
+  - **Signal duration**: Paper says "fixed signal duration of 122,880 IQ samples at 30.72 MHz (≈ 4 ms)". Code: 1 ms at native rate, then resampled. `MAX_SIGNAL_LEN = 122880` is the buffer size for the max-rate configuration (122.88 MHz × 1 ms), not a fixed duration for all samples. Correct text: each sample is 1 ms long; the resampled length depends on the mixture sample rate (range: ~2,166 to 122,880 samples).
+  - **Channel type**: Paper says "selected uniformly at random". Code: `TDL_WEIGHTS = [0.25, 0.20, 0.15, 0.20, 0.20]` — weighted, not uniform.
+  - **Doppler**: Paper says "drawn uniformly from 1 to 300 Hz". Code: weighted ranges up to 700 Hz (`DOPPLER_RANGES = [(0,10), (30,120), (150,300), (400,700)]`, weights `[0.30, 0.40, 0.20, 0.10]`).
+  - **SNR**: Paper says "drawn uniformly from 0 to 30 dB". Code: weighted ranges from −10 to 40 dB (`SNR_RANGES = [(-10,0), (0,10), (10,20), (20,30), (30,40)]`, weights `[0.15, 0.25, 0.35, 0.20, 0.05]`).
+  - **Downstream consistency**: Once Section III is corrected, fix downstream claims that depend on the old misdescription:
+    - Line 622: "Input crops of 7,680 samples (250 µs)" — this is only true at 30.72 MHz; the crop is 7,680 samples regardless of rate, so the time duration varies. State this explicitly or clarify that the quoted time applies to the max-rate subset.
+    - Line 629: "Classical baselines are evaluated on the full 122,880-sample signal" — only true for samples at 122.88 MHz. Baselines are evaluated on `signal_lengths[idx]` samples, which varies per sample. Correct to "the full resampled signal for each sample" or similar.
+
+- [x] **[APPROVED]** B2 — Table II (`tab:co`) N_co disclosure
+  - The shared `N_co` column (110/127/133) implies classical and DL methods were evaluated on the same held-out co-channel samples. They were not: `check/run_baselines.py` and `check/eval_breakdown.py` draw independent random samples from the test split (confirmed: 49/47/65 co-channel baseline samples vs 110/127/133 for DL).
+  - Fix options (pick one): (a) separate `N_co` columns for baselines and DL, or (b) keep one column but add an explicit note in the table caption and text that the two method families were evaluated on independent random draws.
+
+### MODERATE (strongly recommended)
+
+- [x] **[APPROVED]** M1 — Prose range mismatches
+  - Line 655: "CNN-LSTM trails by 1.4--2.4~dB" — actual range from Table I: 1.43--2.57 dB. Tighten to "1.4--2.6~dB" or compute exact bounds.
+  - Line 706: "15.2--17.8~dB improvement" — the lower bound 15.2 comes from Conv-TasNet 4-src, the upper bound 17.8 from DPRNN 3-src. This mixes different methods at each bound. True combined range across both methods: 14.8--17.8 dB. Correct to "14.8--17.8~dB" or split by method.
+  - Line 705: "reach $-10$ to $-12$~dB" co-channel — DPRNN 4-source is $-12.79$~dB, which falls outside this range. Tighten to "$-10$ to $-13$~dB" or "$-10$ to $-12.8$~dB".
+
+- [x] **[APPROVED]** M2 — PAPR text/figure reconciliation
+  - Section 4.2 text says "LTE and 5G NR ($\approx\!11$--$13$~dB)". The figure script (`gen_fig_signal_quality.py`) and `work_log.md:51` show measured values of ~10.1 dB (LTE) and ~10.2 dB (5G NR). The text overstates by ~1 dB.
+  - The figure script has no fixed seed (`np.random.default_rng(1)` in fallback, but `generate_*_signal()` calls may use their own random state). Add a fixed seed to the generation calls and regenerate the figure, or stop presenting these as precise measured values and instead report ranges or synthetic bounds.
+  - If regenerating, verify the new values and update the text to match.
+
+- [x] **[APPROVED]** M3 — HDF5 `signal_lengths` description
+  - Line 517--519: "`signal_lengths` ... the active length of each source". It is actually one scalar per mixed sample (the resampled mixture length), not per source. Correct to: "`signal_lengths`, shape $(100000,)$, int32: the length of the resampled mixture signal for each sample".
+
+- [x] **[APPROVED]** M4 — Hardware impairment application rate
+  - Section 3.3 text implies all sources receive all impairments. Code: `IMPAIRMENT_MODES = ['clean', 'single', 'multiple']` with weights `[0.20, 0.30, 0.50]`. Approximately 20% of sources are clean, 30% receive a single impairment, 50% receive multiple.
+  - Add a sentence in §3.3 (or §3.2, or the dataset description paragraph) stating this distribution explicitly.
+
+### MINOR (should fix)
+
+- [x] **[APPROVED]** m1 — Source-count weights wording
+  - Line 406: "sampling weights chosen to oversample easier configurations ... (2-source: 0.49, 3-source: 0.34, 4-source: 0.17)". These are empirical realized weights, not the target design weights (`SOURCE_COUNT_WEIGHTS = [0.50, 0.35, 0.15]` in code). Clarify: either state the target weights and note the empirical realization, or rephrase to avoid implying these were the design targets.
+
+- [x] **[APPROVED]** m2 — Mixing-mode wording
+  - Line 427: "both mixing modes appear with roughly balanced frequency". Actual: 40% co-channel, 60% adjacent-channel (`MIXING_MODE_WEIGHTS = [0.40, 0.60]`). Replace "roughly balanced" with "weighted toward adjacent-channel (40\% co-channel, 60\% adjacent-channel)" or similar.
+
+- [x] **[APPROVED]** m3 — `upload_hf.py` REPO_ID reconciliation (outstanding: `tasks.md` placeholder URL "rfss/rfss-dataset" remains unreconciled with `upload_hf.py` docstring "username/rfss-dataset"; non-blocking, handled at release time)
+  - `upload_hf.py` uses REPO_ID "Chrishao/rfss" but `tasks.md` records placeholder URL "rfss/rfss-dataset". Reconcile before the real link goes in. (Note: SECURITY — a live HuggingFace write token is committed in git history at commit f3b0638. This must be rotated by the user directly; it is outside the writer/reviewer scope.)
+
+---
+
+### Phase 6 completion gate
+
+- [x] **[APPROVED]** 6.1 Compile clean: 0 errors, 0 Overfull \hbox, 0 undefined citations, 11 pages, 40 bib entries
+- [x] **[APPROVED]** 6.2 Re-verify all Section III claims against `src/utils_dataset.py` and actual HDF5 metadata
+- [x] **[APPROVED]** 6.3 No figure regeneration required; text changed to report ranges encompassing empirical values
+- [x] **[APPROVED]** 6.4 Full paper audit performed as part of Phase 6 multi-pass review — verdict: PASS
+
+---
+
+## Phase 7: Post-Paper Final Numeric Audit Fixes [x] **[APPROVED — 2026-07-30]**
+
+All 7 tasks approved after 2 revisions (1st submission: CHANGES REQUESTED with 1 CRITICAL sign-inversion error in m2; 2nd revision: verified and approved).
+
+**Trigger**: `pp_review_report.md` (2026-07-30) returned **CONDITIONAL PASS** with 0 CRITICAL, 3 MAJOR, 3 MINOR. These are numeric-claim errors discovered by a final independent cross-check against actual HDF5 metadata and figure generation code.
+
+**Verification rule**: Every corrected numeric claim must be independently re-verified against `src/utils_dataset.py`, actual HDF5 metadata, or the regenerated figure before being marked APPROVED. No approval without this cross-check.
+
+---
+
+### MAJOR (must fix before submission)
+
+- [x] **[APPROVED]** MA1 — Signal-length lower bound (line 421) — independently verified against `src/utils_gsm.py`: 270 bits × 7 sps = 1,890
+  - Paper: "ranges from approximately **2,166** samples (GSM-only mixture)"
+  - Ground truth: actual HDF5 minimum is **1,890** samples. The nominal 2.166 MHz × 1 ms = 2,166 is wrong because the generation code uses `int()` truncation twice (`int(270833*0.001)=270`, `int(2166000/270833)=7`, result `270*7=1,890`).
+  - Fix: Replace with "approximately **1,890** samples (GSM-only mixture)". Check no downstream text depends on 2,166.
+
+- [x] **[APPROVED]** MA2 — GSM PAPR misdescription (line 487) — Option B chosen: text corrected to "~5 dB, a resampling artifact"
+  - Paper: "(PAPR $\approx\!1$--$2$~dB)"
+  - Ground truth: `gen_fig_signal_quality.py` produces GSM PAPR **~5.1 dB** (resampling artifact destroys constant envelope). The figure does **not** show 1--2 dB.
+  - **Option A (preferred)**: Regenerate `fig_signal_quality.pdf` using a constant-envelope-preserving resampling method (e.g., CIC, analytical phase interpolation, or sinc). Verify GSM PAPR becomes ~0--1 dB. Update text to match new figure.
+  - **Option B**: Keep current figure and change text to "(PAPR $\approx\!5$~dB for GSM, a resampling artifact, versus $\approx\!10$~dB for LTE and 5G~NR)".
+  - **Note**: If Option A is chosen, MA3 gap becomes correct as-is. If Option B is chosen, MA3 must be updated to ~5--6 dB.
+
+- [x] **[APPROVED]** MA3 — PAPR gap cascading error (line 496) — corrected to "~5--6 dB" consistent with MA2 Option B
+  - Paper: "The **8--11**~dB PAPR gap between OFDM and GMSK"
+  - Ground truth: With actual figure values (LTE ~10.4, 5G NR ~10.7, GSM ~5.1), gap is **~5--6 dB**. The 8--11 dB was derived from the incorrect 1--2 dB GSM anchor.
+  - Fix: If MA2 Option A (regenerate figure) → gap stays 8--11 dB. If MA2 Option B (text-only fix) → change to "**~5--6**~dB PAPR gap".
+
+### MINOR (fix before submission)
+
+- [x] **[APPROVED]** m1 — Empirical 4-source weight (line 417) — verified against HDF5 audit: 14,943/100,000 = 0.1494 → 0.15
+  - Paper: "realized empirical weights ... 0.49, 0.34, and **0.17**"
+  - Ground truth: HDF5 actual counts: 2-source 49,899 (0.4990), 3-source 35,158 (0.3516), 4-source 14,943 (**0.1494**).
+  - Fix: Change **0.17** → **0.15**.
+
+- [x] **[APPROVED]** m2 — CNN-LSTM/NMF proximity phrasing (line 726) — 1st submission had CRITICAL sign inversion ("outperforms NMF" when CNN-LSTM is worse); 2nd revision: "falls within 0.9--2.0 dB of NMF" verified against Table II
+  - Paper: "CNN-LSTM sits **4--5**~dB closer to NMF than to Conv-TasNet/DPRNN on co-channel mixtures"
+  - Ground truth (Table II): closeness differences are 3.85 dB (2-src), 4.37 dB (3-src), 2.20 dB (4-src) — range **2.2--4.4 dB**, not 4--5 dB.
+  - Fix: Rephrase to avoid the misleading construction. Suggested: "CNN-LSTM trails the masking-based models by 4--5~dB on co-channel mixtures and sits within 1--2~dB of NMF."
+
+- [x] **[APPROVED]** m3 — Bandwidth span ratio (line 505) — 100 MHz / 200 kHz = 500×
+  - Paper: "**250$\times$** ratio from GSM to 5G~NR"
+  - Ground truth: Dataset includes 5G NR up to 100 MHz. GSM = 200 kHz. Max ratio = **500×**.
+  - Fix: Change to "**up to 500$\times$**" or "**250$\times$ or greater**".
+
+- [x] **[APPROVED]** m4 — BibTeX title error (`3gpp25102`) — verified in `.bib`: (FDD) → (TDD)
+  - `revised_paper.bib` line 349: title reads "(FDD)" but 3GPP TS 25.102 is the **TDD** specification. The FDD equivalent is TS 25.101.
+  - Fix: Change "(FDD)" to "(TDD)" in the `3gpp25102` bib entry title, **or** switch the citation to `3gpp25101` if the FDD document was intended.
+
+---
+
+### Phase 7 completion gate
+
+- [x] **[APPROVED]** 7.1 Compile clean: 0 errors, 0 Overfull \hbox, 0 undefined citations, 11 pages, 40 bib entries
+- [x] **[APPROVED]** 7.2 All numeric claims independently re-verified: MA1 against `src/utils_gsm.py`, MA2/MA3 against actual figure values, m1 against HDF5 audit, m3 against dataset spec, m4 against `.bib`
+- [x] **[APPROVED]** 7.3 MA2 Option B chosen — no figure regeneration required
+- [x] **[APPROVED]** 7.4 Full paper audit performed as part of Phase 7 multi-pass review — verdict: PASS
+
+---
+
+## Phase 8: CNN-LSTM Deficit Range Unification [x] **[APPROVED — 2026-07-30]**
+
+All 3 locations unified to "4--6 dB" and verified in 1 revision.
+
+**Trigger**: Re-audit returned CONDITIONAL PASS with 0 CRITICAL, 0 MAJOR, 1 MINOR. CNN-LSTM co-channel deficit is phrased inconsistently across three locations and neither range matches the actual computed bounds.
+
+**Actual computed range** (Table II co-channel, vs DPRNN): 3.88 dB (4-src) to 5.61 dB (3-src). Rounded: **4--6 dB**.
+
+---
+
+- [x] **[APPROVED]** m1 — Unify CNN-LSTM co-channel deficit range across all three locations — lines 726, 740, 917 all changed to "4--6 dB"; verified against Table II co-channel vs DPRNN: 3.88--5.61 dB
+  - Line 726: "trails the masking-based models by **3--5**~dB" → "trails the masking-based models by **4--6**~dB"
+  - Line 740: "CNN-LSTM's **4--5**~dB co-channel deficit" → "CNN-LSTM's **4--6**~dB co-channel deficit"
+  - Line 917: "**4--5**~dB co-channel deficit of CNN-LSTM" → "**4--6**~dB co-channel deficit of CNN-LSTM"
+  - Verification: 2-src vs DPRNN = 4.53 dB, 3-src vs DPRNN = 5.61 dB, 4-src vs DPRNN = 3.88 dB. Range 3.88--5.61 → rounded to 4--6 dB.
+
+### Phase 8 completion gate
+
+- [x] **[APPROVED]** 8.1 Compile clean: 0 errors, 0 Overfull \hbox, 0 undefined citations, 11 pages, 40 bib entries
+- [x] **[APPROVED]** 8.2 All three locations verified: line 726, 740, 917 — all "4--6 dB"
+- [x] **[APPROVED]** 8.3 Re-audit trigger: CONDITIONAL PASS → PASS expected after this fix

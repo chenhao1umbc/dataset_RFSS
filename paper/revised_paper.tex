@@ -26,27 +26,24 @@ Engineering. (\textit{Manuscript submitted 2026.})}%
 \begin{abstract}
 % ============================================================
 The coexistence of heterogeneous cellular standards (2G through 5G) in shared
-spectrum has created complex electromagnetic environments that demand
-sophisticated RF source separation techniques. However, no publicly available
-dataset exists to support data-driven research on this problem. We present
-RFSS (RF Signal Source Separation), an open-source dataset of
-100,000 multi-source RF signal samples generated with full 3GPP standards
-compliance. The dataset covers four cellular standards: GSM (3GPP TS~45.004),
+spectrum has created complex RF environments that demand source separation.
+However, no dataset exists for data-driven research on this task. We present
+RFSS (RF Signal Source Separation), a dataset of
+100,000 multi-source RF signal samples generated per 3GPP standards. The dataset covers four cellular standards: GSM (3GPP TS~45.004),
 Universal Mobile Telecommunications System (UMTS, 3GPP TS~25.211),
 Long-Term Evolution (LTE, 3GPP TS~36.211), and 5G New Radio (NR, 3GPP TS~38.211), with
 2 to 4 simultaneous sources per sample (plus 4,000 single-source
-reference samples in a companion file), at a common sample rate of
-30.72~MHz. Each sample is processed through independent 3GPP Tapped Delay Line (TDL) multipath
+reference samples in a companion file), with per-standard sample rates
+resampled to a common mixture rate for each sample. Each sample is processed through independent 3GPP Tapped Delay Line (TDL) multipath
 fading channels~\cite{3gpp38901} and realistic hardware impairments including
 carrier frequency offset, I/Q imbalance, phase noise, DC offset, and PA
-nonlinearity (Rapp model). Two complementary mixing modes are provided:
-co-channel (all sources at baseband) and adjacent-channel (each source
-frequency-shifted to its standard-specific carrier). The dataset totals 103~GB
-in HDF5 format with a 70/15/15 train/validation/test split. We benchmark five
+nonlinearity (Rapp model). Mixing modes are co-channel and
+adjacent-channel. The dataset is 103~GB
+in HDF5 format with 70/15/15 splits. We benchmark five
 methods: FastICA, Frobenius-norm NMF, Conv-TasNet~\cite{luo2019conv},
 DPRNN~\cite{luo2020dual}, and a CNN-LSTM baseline, evaluated using permutation-invariant
-scale-invariant signal-to-interference-plus-noise ratio (PI-SI-SINR)~\cite{leroux2019sdr}
-(defined formally in Section~\ref{sec:metrics}).
+scale-invariant signal-to-interference-plus-noise ratio (PI-SI-SINR)~\cite{leroux2019sdr}.
+
 Conv-TasNet achieves $-21.18$~dB PI-SI-SINR on 2-source mixtures versus
 $-34.91$~dB for ICA, a 13.7~dB improvement. On co-channel mixtures, which
 represent the primary separation challenge, Conv-TasNet reaches $-12.34$~dB
@@ -271,9 +268,15 @@ separation targets alongside the mixture.
 
 \subsection{Signal Generation}
 
-All waveforms are generated at a common intermediate sample rate of 30.72~MHz,
-the standard LTE/NR reference clock, before mixing. Each standard is
-independently implemented from its 3GPP physical-layer specification.
+Each waveform is generated at its native sample rate according to the
+3GPP physical-layer specification for that standard: GSM at 2.166~MHz,
+UMTS at 7.68~MHz, LTE at 1.92--30.72~MHz depending on bandwidth configuration,
+and 5G~NR at 15.36--122.88~MHz depending on numerology and bandwidth.
+After per-source generation, all sources in a sample are resampled to a
+common mixture rate equal to the maximum source rate in that sample,
+ensuring no aliasing and preserving the full bandwidth of the widest source.
+Each standard is independently implemented from its 3GPP physical-layer
+specification.
 
 \textbf{GSM (2G).} GMSK modulation per 3GPP TS~45.004~\cite{3gpp45004}:
 \begin{equation}
@@ -336,14 +339,17 @@ Each source signal passes through an independent single-input single-output
 TR~38.901~\cite{3gpp38901}: TDL-A and TDL-B are non-line-of-sight delay
 profiles; TDL-C is the primary NLOS wideband profile; TDL-D and TDL-E are
 Rician (line-of-sight) profiles with K-factors of 13.3~dB and 22~dB
-respectively. Channel type is selected uniformly at random per source per
-sample.
+respectively. Channel type is selected from a weighted distribution
+per source per sample, with weights
+$[0.25, 0.20, 0.15, 0.20, 0.20]$ for TDL-A through TDL-E.
 
 Time-varying Doppler is generated using Jakes' sum-of-sinusoids
-model~\cite{jakes1994microwave}, with maximum Doppler frequency drawn
-uniformly from 1 to 300~Hz. AWGN with SNR drawn uniformly from 0 to 30~dB
-is added after channel filtering, providing a realistic range of received
-signal quality.
+model~\cite{jakes1994microwave}, with maximum Doppler frequency drawn from
+weighted range categories up to 700~Hz, spanning pedestrian (0--10~Hz),
+urban (30--120~Hz), highway (150--300~Hz), and high-speed rail (400--700~Hz)
+scenarios. AWGN with SNR drawn from weighted range categories from $-10$ to
+40~dB is added after channel filtering, providing a realistic range of
+received signal quality.
 
 The mixture model combining $N_{\rm src}$ impaired sources is:
 \begin{equation}
@@ -363,7 +369,11 @@ is additive white Gaussian noise.
 
 Realistic receiver hardware impairments are modeled per 3GPP specifications
 and applied independently to each source before
-mixing~\cite{3gpp38104,3gpp38101,3gpp36101,3gpp25102}:
+mixing~\cite{3gpp38104,3gpp38101,3gpp36101,3gpp25102}.
+For each source, the impairment application mode is drawn from a weighted
+distribution: approximately 20\% of sources receive no impairments (clean),
+30\% receive a single impairment type, and 50\% receive multiple impairments
+simultaneously:
 
 \textit{Carrier Frequency Offset (CFO).} A multiplicative phase rotation
 $e^{j2\pi f_{\rm CFO} t}$ with $f_{\rm CFO}$ drawn from $\pm0.05$--$5$~ppm
@@ -402,11 +412,13 @@ overlap but introduces the frequency-management aspect of multi-standard
 reception.
 
 The number of simultaneous sources $N_{\rm src}$ is drawn from $\{2, 3, 4\}$
-with sampling weights chosen to oversample easier configurations for training
-stability (2-source: 0.49, 3-source: 0.34, 4-source: 0.17). Across the
-full 100,000-sample corpus, approximately 49\% of samples are two-source,
-34\% are three-source, and 17\% are four-source. Each sample has a fixed
-signal duration of 122,880 IQ samples at 30.72~MHz ($\approx 4$~ms).
+with target sampling weights $[0.50, 0.35, 0.15]$, chosen to oversample
+easier configurations for training stability. The realized empirical
+weights across the 100,000-sample corpus are 0.49, 0.34, and 0.15.
+Each sample has a fixed duration of 1~ms at the native source rate;
+after resampling to the common mixture rate (the maximum of all source
+rates in that sample), the resampled length ranges from approximately
+1,890 samples (GSM-only mixture) to 122,880 samples (5G~NR at 122.88~MHz).
 
 % ============================================================
 \section{Dataset Characterization}
@@ -424,7 +436,8 @@ characterization and per-standard classification experiments.
 Figure~\ref{fig:dataset_stats} shows the distribution of source counts,
 mixing modes, and standard combinations across the corpus. Source count
 follows an approximately geometric distribution (heavier weight on smaller
-counts), and both mixing modes appear with roughly balanced frequency. All
+counts), and mixing modes are weighted toward adjacent-channel (40\% co-channel,
+60\% adjacent-channel). All
 $\binom{4}{k}$ standard combinations for $k \in \{2,3,4\}$ are represented.
 
 \begin{figure*}[t]
@@ -471,7 +484,7 @@ pairs combining GMSK with an OFDM standard, given their reduced spectral contras
 
 Figure~\ref{fig:signal_quality} characterizes three signal quality
 dimensions. The PAPR panel confirms GSM's constant-envelope property
-(PAPR $\approx\!1$--$2$~dB) versus LTE and 5G NR ($\approx\!11$--$13$~dB),
+(PAPR $\approx\!5$~dB, a resampling artifact) versus LTE and 5G NR ($\approx\!10$--$12$~dB),
 consistent with their multi-carrier waveforms. The power spectral density
 panel highlights the 200-kHz GSM band, 5-MHz UMTS spread, 10-MHz LTE
 rectangle, and 50-MHz NR rectangle. The amplitude distribution panel shows
@@ -480,7 +493,7 @@ of LTE and 5G NR, as expected from the central-limit behavior of OFDM
 symbols.
 
 These differences carry direct implications for the separation task. The
-9--12~dB PAPR gap between OFDM and GMSK creates amplitude-domain cues
+~5--6~dB PAPR gap between OFDM and GMSK creates amplitude-domain cues
 absent from audio mixtures: because GSM maintains near-constant power while
 LTE can enter deep spectral nulls, the mixture amplitude is often dominated
 by a single source for short intervals, providing instantaneous
@@ -489,9 +502,10 @@ the Rayleigh-like envelope of OFDM introduces dynamic range variation within
 a single training crop; crops in which one OFDM source enters a null while
 another remains at full power create extreme amplitude ratios that standard
 batch normalization must accommodate. The PSD panel further quantifies the
-bandwidth span across standards (250$\times$ ratio from GSM to 5G NR), which
-motivates the 30.72~MHz common sample rate that places all four standards
-within a single Nyquist band.
+bandwidth span across standards (up to 500$\times$ ratio from GSM to 5G~NR).
+A common mixture rate of 30.72~MHz suffices to place all four standards
+within a single Nyquist band; the actual mixture rate for each sample is
+the maximum of its source rates and can reach 122.88~MHz.
 
 \begin{figure*}[t]
   \centering
@@ -514,9 +528,9 @@ four datasets:
   \item \texttt{source\_signals}, shape $(100000,\, 4,\, 122880)$,
     complex64: per-source ground-truth waveforms, zero-padded to a
     maximum of four sources.
-  \item \texttt{signal\_lengths}, shape $(100000,)$, int32: the active
-    length of each source, supporting variable-length sources within the
-    fixed array.
+  \item \texttt{signal\_lengths}, shape $(100000,)$, int32: the length of
+    the resampled mixture signal for each sample, supporting variable-length
+    signals within the fixed array.
   \item \texttt{metadata}, shape $(100000,)$, variable-length JSON
     string: per-sample metadata including source count, standard
     identifiers, mixing mode, SNR values, channel type, and hardware
@@ -619,14 +633,14 @@ All models are trained with permutation-invariant training
 best permutation of source estimates.
 Optimization uses Adam with learning rate $10^{-3}$, gradient clip norm
 1.0, batch size 8, and cosine annealing over 30 epochs with
-$\eta_{\min}\!=\!10^{-5}$. Input crops of 7,680 samples (250~$\mu$s) are
-randomly drawn during training. The best checkpoint per configuration
+$\eta_{\min}\!=\!10^{-5}$. Input crops of 7,680 samples are randomly
+drawn during training. The best checkpoint per configuration
 (lowest validation loss) is selected for evaluation on $N\!=\!300$ test
 samples per source count. All experiments use single-channel (SISO) signals;
 spatial diversity is not exploited. DL models are evaluated on a single
-7,680-sample (250~$\mu$s) crop drawn from each test signal with fixed seed
-42, yielding one PI-SI-SINR score per sample. Classical baselines are
-evaluated on the full 122,880-sample signal.
+7,680-sample crop drawn from each test signal with fixed seed 42,
+yielding one PI-SI-SINR score per sample. Classical baselines are
+evaluated on the full resampled signal for each sample.
 
 \subsection{Results}
 
@@ -652,7 +666,7 @@ Sources & ICA & NMF & CNN-LSTM & DPRNN & Conv-TasNet \\
 
 Deep learning models consistently outperform classical baselines across all
 source counts. Conv-TasNet and DPRNN are nearly tied (within 0.4~dB),
-while CNN-LSTM trails by 1.4--2.4~dB. The improvement of Conv-TasNet over
+while CNN-LSTM trails by 1.4--2.6~dB. The improvement of Conv-TasNet over
 ICA ranges from 13.7~dB (2-source) to 15.9~dB (3-source); over NMF, the
 improvement is 4.9--8.6~dB across source counts. The overall trend is non-monotone: the Conv-TasNet 3-source result ($-21.08$~dB) is
 marginally better than 2-source ($-21.18$~dB) because the 3-source test draw contains
@@ -688,7 +702,11 @@ measure of source separation capability.
 \begin{table}[t]
 \centering
 \caption{Co-channel PI-SI-SINR (dB). $N_{\rm co}$ gives the number of
-co-channel test samples per configuration. Bold: best per row.}
+co-channel test samples for the deep-learning evaluation ($N\!=\!300$ per
+source count); classical baselines were evaluated on an independent random
+draw ($N\!=\!150$ per source count, yielding 49, 47, and 65 co-channel
+samples for 2-, 3-, and 4-source configurations respectively). Bold: best
+per row.}
 \label{tab:co}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrrrrrr}
@@ -702,24 +720,24 @@ Sources & $N_{\rm co}$ & ICA & NMF & CNN-LSTM & DPRNN & Conv-TasNet \\
 \end{tabular}}
 \end{table}
 
-On co-channel mixtures Conv-TasNet and DPRNN reach $-10$ to $-12$~dB versus
-$-28$~dB for ICA, a 15.2--17.8~dB improvement. NMF performs at $-14$ to
+On co-channel mixtures Conv-TasNet and DPRNN reach $-10$ to $-13$~dB versus
+$-28$~dB for ICA, a 14.8--17.8~dB improvement. NMF performs at $-14$ to
 $-16$~dB on co-channel, leveraging spectral shape differences between
-standards. CNN-LSTM sits 4--5~dB closer to NMF than to Conv-TasNet/DPRNN on co-channel
-mixtures ($-15$ to $-17$~dB vs $-10$ to $-12$~dB).
+standards. CNN-LSTM on co-channel mixtures trails the masking-based models by 4--6~dB
+and falls within 0.9--2.0~dB of NMF.
 
 The near-parity between Conv-TasNet and DPRNN (within 0.4~dB across all
 configurations) warrants interpretation. Conv-TasNet uses a fixed TCN receptive field determined by its dilated convolution stack,
 while DPRNN's dual-path recurrence can in principle capture arbitrary sequence-length
 dependencies within the input crop. In this benchmark both training and evaluation use
-the same 250~$\mu$s crop (7,680 samples), so DPRNN's long-range recurrence capability
+the same 7,680-sample crop, so DPRNN's long-range recurrence capability
 is not exercised. Their equivalence suggests that long-range temporal context
-beyond the 250~$\mu$s training crop provides little additional benefit for
+beyond the 7,680-sample training crop provides little additional benefit for
 RF separation, consistent with the TDL channel coherence time (Doppler
-bandwidths of 1--300~Hz): channel variation is slow relative to the crop length
+bandwidths up to 700~Hz): channel variation is slow relative to the crop length
 and therefore cannot provide useful inter-symbol context within a single crop.
 
-CNN-LSTM's 4--5~dB co-channel deficit relative to the masking-based models reflects the
+CNN-LSTM's 4--6~dB co-channel deficit relative to the masking-based models reflects the
 combined effect of the direct-regression output head and the LSTM backbone; isolating
 the contribution of masking alone would require an ablation study that is beyond the
 scope of this benchmark paper.
@@ -891,12 +909,12 @@ scale.
 The benchmark results establish the current state of the art and yield
 concrete insights about deep learning for RF signal separation. Deep
 architectures transfer directly from audio: Conv-TasNet and DPRNN achieve
-$-10$ to $-12$~dB PI-SI-SINR on co-channel mixtures, a 15.2--17.8~dB improvement
+$-10$ to $-13$~dB PI-SI-SINR on co-channel mixtures, a 14.8--17.8~dB improvement
 over FastICA. The near-parity between these two architectures (within 0.4~dB)
 indicates that temporal modeling capacity is not the primary bottleneck at
 current scales, suggesting that RF-specific architectural priors, rather
 than simply scaling audio models, may be needed for further gains. The
-4--5~dB co-channel deficit of CNN-LSTM relative to the masking-based models reflects the
+4--6~dB co-channel deficit of CNN-LSTM relative to the masking-based models reflects the
 combined effect of the regression output head and the LSTM backbone; an ablation study
 would be needed to isolate the contribution of masking alone.
 

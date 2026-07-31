@@ -4,18 +4,26 @@
 \citation{luo2020dual}
 \citation{leroux2019sdr}
 \citation{cabric2004implementation,mitola1999cognitive}
-\citation{haykin2005cognitive,goldsmith2009breaking}
+\citation{andrews2014what}
+\citation{haykin2005cognitive,goldsmith2009breaking,axell2012sensing}
 \citation{oshea2017introduction,west2017deep,oshea2018over}
 \citation{oshea2016radio,oshea2016convolutional}
 \citation{rajendran2018deep,blossom2004gnu}
 \@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
+\citation{3gpp25102}
 \citation{oshea2016radio,oshea2016convolutional,oshea2018over}
+\citation{mennes2020sc2}
 \citation{rajendran2018deep}
 \citation{blossom2004gnu}
+\citation{hershey2016deep}
+\citation{kolbaek2017multitalker}
+\citation{wichern2019wham}
+\citation{rafii2017musdb18}
 \citation{leroux2019sdr}
 \citation{leroux2019sdr}
 \citation{luo2019conv}
 \citation{luo2020dual}
+\citation{subakan2021sepformer}
 \citation{hyvarinen2000ica}
 \citation{fevotte2011nmf}
 \citation{lancho2024rfchallenge}
@@ -26,12 +34,13 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}RF Source Separation Prior Work}{2}{}\protected@file@percent }
 \citation{3gpp45004}
 \citation{3gpp25211}
+\citation{3gpp25213}
 \citation{3gpp36211}
 \citation{3gpp38211}
 \citation{3gpp38901}
 \citation{jakes1994microwave}
-\citation{3gpp38104,3gpp38101,3gpp36101}
-\citation{rapp1991effects}
+\citation{3gpp38104,3gpp38101,3gpp36101,3gpp25102}
+\citation{3gpp25102}
 \@writefile{toc}{\contentsline {section}{\numberline {III}Dataset Construction}{3}{}\protected@file@percent }
 \newlabel{sec:construction}{{III}{3}{}{section.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Signal Generation}{3}{}\protected@file@percent }
@@ -42,6 +51,7 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Channel Modeling}{3}{}\protected@file@percent }
 \newlabel{eq:mixture}{{5}{3}{}{equation.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Hardware Impairments}{3}{}\protected@file@percent }
+\citation{rapp1991effects}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces RFSS dataset construction pipeline. Each sample passes through independent per-source signal generation, 3GPP TDL channel modeling, hardware impairment injection, and two-mode mixing before ground-truth targets and the mixture observation are written to HDF5.}}{4}{}\protected@file@percent }
 \newlabel{fig:pipeline}{{1}{4}{}{figure.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Mixing Scenarios}{4}{}\protected@file@percent }
@@ -50,12 +60,14 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Composition}{4}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Signal Properties}{4}{}\protected@file@percent }
 \citation{leroux2019sdr}
+\citation{hershey2016deep,luo2019conv}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces RFSS dataset composition statistics. Left: source-count distribution across 100,000 samples. Center: mixing-mode frequency (co-channel vs.\ adjacent-channel). Right: standard-combination frequency for multi-source samples.}}{5}{}\protected@file@percent }
 \newlabel{fig:dataset_stats}{{2}{5}{}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}HDF5 Format and Metadata}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {V}Benchmark Experiments}{5}{}\protected@file@percent }
 \newlabel{sec:benchmark}{{V}{5}{}{section.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Evaluation Metric}{5}{}\protected@file@percent }
+\newlabel{sec:metrics}{{\mbox  {V-A}}{5}{}{subsection.5.1}{}}
 \newlabel{eq:sisinr}{{6}{5}{}{equation.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Classical Baselines}{5}{}\protected@file@percent }
 \citation{luo2019conv}
@@ -63,58 +75,76 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Short-time Fourier transform spectrograms of single-source samples for all four cellular standards. Each panel shows time on the horizontal axis and frequency on the vertical axis, with power in dB encoded as color. The distinct spectral structures motivate the separability of multi-standard mixtures.}}{6}{}\protected@file@percent }
 \newlabel{fig:spectrograms}{{3}{6}{}{figure.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Deep Learning Methods}{6}{}\protected@file@percent }
+\citation{kolbaek2017multitalker}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Signal quality characterization for the four cellular standards. Left: empirical PAPR distributions. Center: power spectral density estimates. Right: amplitude (envelope) probability density functions.}}{7}{}\protected@file@percent }
 \newlabel{fig:signal_quality}{{4}{7}{}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Results}{7}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Overall PI-SI-SINR (dB) on the test split ($N\!=\!150$ for baselines, $N\!=\!300$ for DL, seed\,42). Higher values indicate better separation. Bold: best per row.}}{7}{}\protected@file@percent }
 \newlabel{tab:main}{{I}{7}{}{table.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Results}{7}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Co-channel PI-SI-SINR (dB). $N_{\rm  co}$ gives the number of co-channel test samples per configuration. Bold: best per row.}}{7}{}\protected@file@percent }
 \newlabel{tab:co}{{II}{7}{}{table.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Benchmark results. Left: overall PI-SI-SINR (dB) for all methods across 2-, 3-, and 4-source configurations. Right: co-channel versus adjacent-channel PI-SI-SINR for all methods (2-source shown). Dashed boxes highlight the adjacent-channel evaluation floor (Section~\ref {sec:adjfloor}).}}{8}{}\protected@file@percent }
+\citation{kolbaek2017multitalker}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Benchmark results. Left: overall PI-SI-SINR (dB) for all five methods across 2-, 3-, and 4-source configurations. Right: co-channel PI-SI-SINR for all five methods across 2-, 3-, and 4-source configurations.}}{8}{}\protected@file@percent }
 \newlabel{fig:benchmark}{{5}{8}{}{figure.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Co-channel PI-SI-SINR (dB) stratified by mixture SNR, 3-source. $N$ denotes co-channel samples per bin. Higher is better.}}{8}{}\protected@file@percent }
-\newlabel{tab:snr}{{III}{8}{}{table.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}SNR Sensitivity Analysis}{8}{}\protected@file@percent }
 \newlabel{sec:snr}{{\mbox  {V-E}}{8}{}{subsection.5.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Co-channel PI-SI-SINR (dB) stratified by mixture SNR, 3-source. $N$ denotes co-channel samples per bin. Higher is better.}}{8}{}\protected@file@percent }
+\newlabel{tab:snr}{{III}{8}{}{table.3}{}}
 \newlabel{sec:adjfloor}{{\mbox  {V-E}1}{8}{}{subsubsection.5.5.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-E}1}Adjacent-channel Evaluation Floor}{8}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Data Access and Format}{8}{}\protected@file@percent }
-\newlabel{sec:access}{{VI}{8}{}{section.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Public Release}{8}{}\protected@file@percent }
+\citation{hadani2017otfs}
+\citation{abdoli2015fofdm}
+\citation{jaeckel2014quadriga}
 \bibstyle{ieeetr}
 \bibdata{revised_paper}
-\bibcite{3gpp38901}{1}
-\bibcite{luo2019conv}{2}
-\bibcite{luo2020dual}{3}
-\bibcite{leroux2019sdr}{4}
-\bibcite{cabric2004implementation}{5}
-\bibcite{mitola1999cognitive}{6}
-\bibcite{haykin2005cognitive}{7}
-\bibcite{goldsmith2009breaking}{8}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Data Access and Format}{9}{}\protected@file@percent }
+\newlabel{sec:access}{{VI}{9}{}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Public Release}{9}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}HDF5 Access Example}{9}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Evaluation Code}{9}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Limitations and Future Work}{9}{}\protected@file@percent }
 \newlabel{sec:limitations}{{VII}{9}{}{section.7}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{9}{}\protected@file@percent }
 \newlabel{sec:conclusion}{{VIII}{9}{}{section.8}{}}
-\@writefile{toc}{\contentsline {section}{References}{9}{}\protected@file@percent }
-\bibcite{oshea2017introduction}{9}
-\bibcite{west2017deep}{10}
-\bibcite{oshea2018over}{11}
-\bibcite{oshea2016radio}{12}
-\bibcite{oshea2016convolutional}{13}
-\bibcite{rajendran2018deep}{14}
-\bibcite{blossom2004gnu}{15}
-\bibcite{hyvarinen2000ica}{16}
-\bibcite{fevotte2011nmf}{17}
-\bibcite{lancho2024rfchallenge}{18}
-\bibcite{3gpp45004}{19}
-\bibcite{3gpp25211}{20}
-\bibcite{3gpp36211}{21}
-\bibcite{3gpp38211}{22}
-\bibcite{jakes1994microwave}{23}
-\bibcite{3gpp38104}{24}
-\bibcite{3gpp38101}{25}
-\bibcite{3gpp36101}{26}
-\bibcite{rapp1991effects}{27}
+\bibcite{3gpp38901}{1}
+\bibcite{luo2019conv}{2}
+\bibcite{luo2020dual}{3}
+\bibcite{leroux2019sdr}{4}
+\bibcite{cabric2004implementation}{5}
+\bibcite{mitola1999cognitive}{6}
+\bibcite{andrews2014what}{7}
+\bibcite{haykin2005cognitive}{8}
+\bibcite{goldsmith2009breaking}{9}
+\bibcite{axell2012sensing}{10}
+\bibcite{oshea2017introduction}{11}
+\bibcite{west2017deep}{12}
+\bibcite{oshea2018over}{13}
+\bibcite{oshea2016radio}{14}
+\bibcite{oshea2016convolutional}{15}
+\bibcite{rajendran2018deep}{16}
+\bibcite{blossom2004gnu}{17}
+\bibcite{3gpp25102}{18}
+\bibcite{mennes2020sc2}{19}
+\bibcite{hershey2016deep}{20}
+\bibcite{kolbaek2017multitalker}{21}
+\bibcite{wichern2019wham}{22}
+\bibcite{rafii2017musdb18}{23}
+\bibcite{subakan2021sepformer}{24}
+\bibcite{hyvarinen2000ica}{25}
+\bibcite{fevotte2011nmf}{26}
+\bibcite{lancho2024rfchallenge}{27}
+\bibcite{3gpp45004}{28}
+\bibcite{3gpp25211}{29}
+\bibcite{3gpp25213}{30}
+\bibcite{3gpp36211}{31}
+\bibcite{3gpp38211}{32}
+\bibcite{jakes1994microwave}{33}
+\bibcite{3gpp38104}{34}
+\bibcite{3gpp38101}{35}
+\bibcite{3gpp36101}{36}
+\bibcite{rapp1991effects}{37}
+\bibcite{hadani2017otfs}{38}
+\bibcite{abdoli2015fofdm}{39}
+\bibcite{jaeckel2014quadriga}{40}
+\@writefile{toc}{\contentsline {section}{References}{10}{}\protected@file@percent }
 \gdef \@abspage@last{10}

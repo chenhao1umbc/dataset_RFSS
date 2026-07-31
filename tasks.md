@@ -252,6 +252,18 @@
 
 ## Phase 6: Paper Revision (Full Rewrite)
 
+### Comparable Paper Benchmark (2026-03-09)
+- [x] Identify closest comparable paper: RF Challenge (arXiv:2409.08839, IEEE Open J. Commun. Soc. 2025)
+- [x] Conduct full comparison: RF Challenge (1-vs-1 interference rejection, AWGN only, BER metric)
+      vs RFSS (blind multi-source separation, 3GPP TDL, 5 hardware impairments, PI-SI-SINR)
+- [x] Identify quality gaps: no fundamental quality gap — RFSS solves harder problem; gaps are
+      (a) real-world captures absent (RF Challenge has OTA recordings), (b) BER not reported,
+      (c) SINR-stratified results absent
+- [x] Add RF Challenge to paper related work with explicit problem-scope contrast
+- [x] Add SNR-stratified analysis (check/eval_snr_stratified.py) — new Table III in paper
+- [ ] Add BER evaluation for ≥1 standard pair (future: requires demodulator code per standard)
+- [ ] Real-world OTA validation experiment (future: requires SDR hardware)
+
 ### Venue Strategy (decided 2026-03-07)
 - **Primary target**: NeurIPS 2026 Datasets & Benchmarks track
   - No APC; maximum dataset visibility; ML community adoption

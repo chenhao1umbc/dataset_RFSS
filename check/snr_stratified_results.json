@@ -1,0 +1,437 @@
+{
+  "2src_ica": {
+    "0-10 dB": {
+      "n": 39,
+      "mean_si_sinr_db": -34.114,
+      "std_si_sinr_db": 10.982,
+      "co_channel": -26.582,
+      "n_co": 15,
+      "adjacent_channel": -38.822,
+      "n_adj": 24
+    },
+    "10-20 dB": {
+      "n": 50,
+      "mean_si_sinr_db": -35.471,
+      "std_si_sinr_db": 12.384,
+      "co_channel": -27.4,
+      "n_co": 16,
+      "adjacent_channel": -39.27,
+      "n_adj": 34
+    },
+    "20-30 dB": {
+      "n": 32,
+      "mean_si_sinr_db": -34.572,
+      "std_si_sinr_db": 15.196,
+      "co_channel": -26.413,
+      "n_co": 11,
+      "adjacent_channel": -38.846,
+      "n_adj": 21
+    }
+  },
+  "2src_nmf": {
+    "0-10 dB": {
+      "n": 39,
+      "mean_si_sinr_db": -23.694,
+      "std_si_sinr_db": 15.343,
+      "co_channel": -11.491,
+      "n_co": 15,
+      "adjacent_channel": -31.321,
+      "n_adj": 24
+    },
+    "10-20 dB": {
+      "n": 50,
+      "mean_si_sinr_db": -26.736,
+      "std_si_sinr_db": 15.45,
+      "co_channel": -16.66,
+      "n_co": 16,
+      "adjacent_channel": -31.477,
+      "n_adj": 34
+    },
+    "20-30 dB": {
+      "n": 32,
+      "mean_si_sinr_db": -24.226,
+      "std_si_sinr_db": 16.155,
+      "co_channel": -13.083,
+      "n_co": 11,
+      "adjacent_channel": -30.063,
+      "n_adj": 21
+    }
+  },
+  "3src_ica": {
+    "0-10 dB": {
+      "n": 36,
+      "mean_si_sinr_db": -37.148,
+      "std_si_sinr_db": 9.685,
+      "co_channel": -29.741,
+      "n_co": 13,
+      "adjacent_channel": -41.334,
+      "n_adj": 23
+    },
+    "10-20 dB": {
+      "n": 53,
+      "mean_si_sinr_db": -38.502,
+      "std_si_sinr_db": 10.367,
+      "co_channel": -28.646,
+      "n_co": 15,
+      "adjacent_channel": -42.393,
+      "n_adj": 38
+    },
+    "20-30 dB": {
+      "n": 30,
+      "mean_si_sinr_db": -34.109,
+      "std_si_sinr_db": 9.924,
+      "co_channel": -26.324,
+      "n_co": 10,
+      "adjacent_channel": -38.001,
+      "n_adj": 20
+    }
+  },
+  "3src_nmf": {
+    "0-10 dB": {
+      "n": 36,
+      "mean_si_sinr_db": -29.132,
+      "std_si_sinr_db": 13.848,
+      "co_channel": -14.848,
+      "n_co": 13,
+      "adjacent_channel": -37.205,
+      "n_adj": 23
+    },
+    "10-20 dB": {
+      "n": 53,
+      "mean_si_sinr_db": -31.146,
+      "std_si_sinr_db": 13.379,
+      "co_channel": -17.831,
+      "n_co": 15,
+      "adjacent_channel": -36.402,
+      "n_adj": 38
+    },
+    "20-30 dB": {
+      "n": 30,
+      "mean_si_sinr_db": -25.872,
+      "std_si_sinr_db": 14.451,
+      "co_channel": -9.954,
+      "n_co": 10,
+      "adjacent_channel": -33.83,
+      "n_adj": 20
+    }
+  },
+  "4src_ica": {
+    "0-10 dB": {
+      "n": 39,
+      "mean_si_sinr_db": -35.088,
+      "std_si_sinr_db": 9.599,
+      "co_channel": -26.193,
+      "n_co": 16,
+      "adjacent_channel": -41.277,
+      "n_adj": 23
+    },
+    "10-20 dB": {
+      "n": 54,
+      "mean_si_sinr_db": -37.327,
+      "std_si_sinr_db": 9.998,
+      "co_channel": -28.826,
+      "n_co": 22,
+      "adjacent_channel": -43.172,
+      "n_adj": 32
+    },
+    "20-30 dB": {
+      "n": 25,
+      "mean_si_sinr_db": -33.291,
+      "std_si_sinr_db": 9.708,
+      "co_channel": -24.76,
+      "n_co": 12,
+      "adjacent_channel": -41.167,
+      "n_adj": 13
+    }
+  },
+  "4src_nmf": {
+    "0-10 dB": {
+      "n": 39,
+      "mean_si_sinr_db": -27.586,
+      "std_si_sinr_db": 14.312,
+      "co_channel": -13.117,
+      "n_co": 16,
+      "adjacent_channel": -37.652,
+      "n_adj": 23
+    },
+    "10-20 dB": {
+      "n": 54,
+      "mean_si_sinr_db": -29.068,
+      "std_si_sinr_db": 12.836,
+      "co_channel": -16.541,
+      "n_co": 22,
+      "adjacent_channel": -37.68,
+      "n_adj": 32
+    },
+    "20-30 dB": {
+      "n": 25,
+      "mean_si_sinr_db": -23.377,
+      "std_si_sinr_db": 15.038,
+      "co_channel": -8.762,
+      "n_co": 12,
+      "adjacent_channel": -36.868,
+      "n_adj": 13
+    }
+  },
+  "4src_cnn_lstm": {
+    "0-10 dB": {
+      "n": 90,
+      "mean_si_sinr_db": -22.798,
+      "std_si_sinr_db": 8.82,
+      "co_channel": -15.468,
+      "n_co": 43,
+      "adjacent_channel": -29.504,
+      "n_adj": 47
+    },
+    "10-20 dB": {
+      "n": 99,
+      "mean_si_sinr_db": -22.973,
+      "std_si_sinr_db": 8.286,
+      "co_channel": -16.632,
+      "n_co": 47,
+      "adjacent_channel": -28.705,
+      "n_adj": 52
+    },
+    "20-30 dB": {
+      "n": 50,
+      "mean_si_sinr_db": -22.896,
+      "std_si_sinr_db": 8.053,
+      "co_channel": -16.268,
+      "n_co": 22,
+      "adjacent_channel": -28.104,
+      "n_adj": 28
+    }
+  },
+  "4src_dprnn": {
+    "0-10 dB": {
+      "n": 90,
+      "mean_si_sinr_db": -21.5,
+      "std_si_sinr_db": 10.639,
+      "co_channel": -12.192,
+      "n_co": 43,
+      "adjacent_channel": -30.016,
+      "n_adj": 47
+    },
+    "10-20 dB": {
+      "n": 99,
+      "mean_si_sinr_db": -20.679,
+      "std_si_sinr_db": 10.749,
+      "co_channel": -11.473,
+      "n_co": 47,
+      "adjacent_channel": -29.0,
+      "n_adj": 52
+    },
+    "20-30 dB": {
+      "n": 50,
+      "mean_si_sinr_db": -21.928,
+      "std_si_sinr_db": 11.198,
+      "co_channel": -12.253,
+      "n_co": 22,
+      "adjacent_channel": -29.529,
+      "n_adj": 28
+    }
+  },
+  "4src_conv_tasnet": {
+    "0-10 dB": {
+      "n": 90,
+      "mean_si_sinr_db": -21.356,
+      "std_si_sinr_db": 10.825,
+      "co_channel": -11.738,
+      "n_co": 43,
+      "adjacent_channel": -30.156,
+      "n_adj": 47
+    },
+    "10-20 dB": {
+      "n": 99,
+      "mean_si_sinr_db": -20.803,
+      "std_si_sinr_db": 11.074,
+      "co_channel": -11.207,
+      "n_co": 47,
+      "adjacent_channel": -29.475,
+      "n_adj": 52
+    },
+    "20-30 dB": {
+      "n": 50,
+      "mean_si_sinr_db": -22.295,
+      "std_si_sinr_db": 12.032,
+      "co_channel": -12.082,
+      "n_co": 22,
+      "adjacent_channel": -30.32,
+      "n_adj": 28
+    }
+  },
+  "3src_cnn_lstm": {
+    "0-10 dB": {
+      "n": 72,
+      "mean_si_sinr_db": -24.416,
+      "std_si_sinr_db": 9.221,
+      "co_channel": -14.362,
+      "n_co": 24,
+      "adjacent_channel": -29.443,
+      "n_adj": 48
+    },
+    "10-20 dB": {
+      "n": 102,
+      "mean_si_sinr_db": -23.006,
+      "std_si_sinr_db": 8.764,
+      "co_channel": -16.049,
+      "n_co": 43,
+      "adjacent_channel": -28.076,
+      "n_adj": 59
+    },
+    "20-30 dB": {
+      "n": 69,
+      "mean_si_sinr_db": -23.126,
+      "std_si_sinr_db": 9.527,
+      "co_channel": -15.121,
+      "n_co": 30,
+      "adjacent_channel": -29.283,
+      "n_adj": 39
+    }
+  },
+  "3src_dprnn": {
+    "0-10 dB": {
+      "n": 72,
+      "mean_si_sinr_db": -23.154,
+      "std_si_sinr_db": 11.328,
+      "co_channel": -10.171,
+      "n_co": 24,
+      "adjacent_channel": -29.645,
+      "n_adj": 48
+    },
+    "10-20 dB": {
+      "n": 102,
+      "mean_si_sinr_db": -20.654,
+      "std_si_sinr_db": 12.019,
+      "co_channel": -9.934,
+      "n_co": 43,
+      "adjacent_channel": -28.467,
+      "n_adj": 59
+    },
+    "20-30 dB": {
+      "n": 69,
+      "mean_si_sinr_db": -19.966,
+      "std_si_sinr_db": 13.125,
+      "co_channel": -8.127,
+      "n_co": 30,
+      "adjacent_channel": -29.073,
+      "n_adj": 39
+    }
+  },
+  "3src_conv_tasnet": {
+    "0-10 dB": {
+      "n": 72,
+      "mean_si_sinr_db": -22.969,
+      "std_si_sinr_db": 11.038,
+      "co_channel": -10.846,
+      "n_co": 24,
+      "adjacent_channel": -29.031,
+      "n_adj": 48
+    },
+    "10-20 dB": {
+      "n": 102,
+      "mean_si_sinr_db": -20.238,
+      "std_si_sinr_db": 11.31,
+      "co_channel": -10.266,
+      "n_co": 43,
+      "adjacent_channel": -27.506,
+      "n_adj": 59
+    },
+    "20-30 dB": {
+      "n": 69,
+      "mean_si_sinr_db": -19.81,
+      "std_si_sinr_db": 12.277,
+      "co_channel": -8.559,
+      "n_co": 30,
+      "adjacent_channel": -28.465,
+      "n_adj": 39
+    }
+  },
+  "2src_cnn_lstm": {
+    "0-10 dB": {
+      "n": 78,
+      "mean_si_sinr_db": -22.872,
+      "std_si_sinr_db": 9.722,
+      "co_channel": -15.618,
+      "n_co": 28,
+      "adjacent_channel": -26.935,
+      "n_adj": 50
+    },
+    "10-20 dB": {
+      "n": 99,
+      "mean_si_sinr_db": -23.157,
+      "std_si_sinr_db": 9.587,
+      "co_channel": -16.888,
+      "n_co": 34,
+      "adjacent_channel": -26.437,
+      "n_adj": 65
+    },
+    "20-30 dB": {
+      "n": 66,
+      "mean_si_sinr_db": -22.382,
+      "std_si_sinr_db": 10.451,
+      "co_channel": -14.954,
+      "n_co": 27,
+      "adjacent_channel": -27.524,
+      "n_adj": 39
+    }
+  },
+  "2src_dprnn": {
+    "0-10 dB": {
+      "n": 78,
+      "mean_si_sinr_db": -21.292,
+      "std_si_sinr_db": 14.037,
+      "co_channel": -8.985,
+      "n_co": 28,
+      "adjacent_channel": -28.183,
+      "n_adj": 50
+    },
+    "10-20 dB": {
+      "n": 99,
+      "mean_si_sinr_db": -21.832,
+      "std_si_sinr_db": 14.468,
+      "co_channel": -12.577,
+      "n_co": 34,
+      "adjacent_channel": -26.674,
+      "n_adj": 65
+    },
+    "20-30 dB": {
+      "n": 66,
+      "mean_si_sinr_db": -18.792,
+      "std_si_sinr_db": 14.519,
+      "co_channel": -9.06,
+      "n_co": 27,
+      "adjacent_channel": -25.529,
+      "n_adj": 39
+    }
+  },
+  "2src_conv_tasnet": {
+    "0-10 dB": {
+      "n": 78,
+      "mean_si_sinr_db": -20.813,
+      "std_si_sinr_db": 13.678,
+      "co_channel": -8.915,
+      "n_co": 28,
+      "adjacent_channel": -27.476,
+      "n_adj": 50
+    },
+    "10-20 dB": {
+      "n": 99,
+      "mean_si_sinr_db": -21.436,
+      "std_si_sinr_db": 14.134,
+      "co_channel": -13.063,
+      "n_co": 34,
+      "adjacent_channel": -25.816,
+      "n_adj": 65
+    },
+    "20-30 dB": {
+      "n": 66,
+      "mean_si_sinr_db": -18.908,
+      "std_si_sinr_db": 14.967,
+      "co_channel": -8.485,
+      "n_co": 27,
+      "adjacent_channel": -26.123,
+      "n_adj": 39
+    }
+  }
+}

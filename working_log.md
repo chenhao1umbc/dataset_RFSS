@@ -1706,3 +1706,41 @@ Paper to be written from scratch (not patching the original) in `IEEEtran` journ
 - `paper/revised_paper.bib` — 24 BibTeX entries (complete)
 - `paper/revised_paper.md` — scratch notes only, not a paper source
 - `paper/figures/` — to be created with Python-generated plots
+
+---
+
+## 2026-03-09 — Paper Narrative Improvement + Comparison Analysis
+
+### Activities
+
+**1. Paper narrative revised (journal vs tech-report)**
+- Introduction: contributions rewritten as argued claims, not feature bullets
+- Related work: RF source separation paragraph strengthened; 3 specific barriers named
+- Section IV: two new analytical paragraphs connecting signal properties to task difficulty
+- Section V results: three new interpretation paragraphs (Conv-TasNet≈DPRNN; masking bias; 4-src robustness)
+- Conclusion: rewritten to synthesize, not summarize
+
+**2. All 5 figures upgraded**
+- All font sizes doubled (~8 pt → 10 pt base; 6.5 pt → 9 pt ticks)
+- All figures converted from single-column (`figure`) to two-column (`figure*`) + `\textwidth`
+- Pipeline figure: removed `- ` bullet prefix; shortened overflowing Channel Model text
+- Pipeline figure: fixed "1–4 sources" → "2–4 sources" (data error)
+
+**3. RF Challenge comparison**
+- Found: arXiv:2409.08839 "RF Challenge" (MIT, IEEE Open J. Commun. Soc. 2025)
+- Key distinction: RF Challenge = 1-vs-1 interference rejection (SOI type known, no permutation);
+  RFSS = blind multi-source separation (all unknown, 2–4 sources, permutation ambiguity real)
+- RF Challenge uses AWGN only, no hardware impairments; RFSS uses 3GPP TDL + 5 impairment categories
+- Added RF Challenge to paper related work with explicit scope contrast
+- Citation added to revised_paper.bib as `lancho2024rfchallenge`
+
+**4. SNR-stratified analysis (new)**
+- Script: `check/eval_snr_stratified.py` — reads per-sample data + HDF5 snr_db metadata
+- Results: `check/snr_stratified_results.json`
+- Key findings: ICA SNR-invariant (structural failure); Conv-TasNet/DPRNN improve ~2 dB over
+  0→30 dB SNR range (3-src co-channel); CNN-LSTM also SNR-flat (matches ICA pattern)
+- New Table III added to paper (Section V, SNR Sensitivity Analysis subsection)
+
+**5. Paper status**
+- Compiles: 0 errors, 0 Overfull warnings, 9 pages
+- All 5 figures: legible fonts, full two-column width

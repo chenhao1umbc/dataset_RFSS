@@ -33,6 +33,11 @@ J.~Mitola and G.~Q. Maguire, ``Cognitive radio: making software radios more
   personal,'' {\em IEEE Personal Communications}, vol.~6, no.~4, pp.~13--18,
   1999.
 
+\bibitem{andrews2014what}
+J.~G. Andrews, S.~Buzzi, W.~Choi, S.~V. Hanly, A.~Lozano, A.~C.~K. Soong, and
+  J.~C. Zhang, ``What will {5G} be?,'' {\em IEEE Journal on Selected Areas in
+  Communications}, vol.~32, pp.~1065--1082, June 2014.
+
 \bibitem{haykin2005cognitive}
 S.~Haykin, ``Cognitive radio: brain-empowered wireless communications,'' {\em
   IEEE Journal on Selected Areas in Communications}, vol.~23, no.~2,
@@ -42,6 +47,11 @@ S.~Haykin, ``Cognitive radio: brain-empowered wireless communications,'' {\em
 A.~Goldsmith, S.~A. Jafar, I.~Maric, and S.~Srinivasa, ``Breaking spectrum
   gridlock with cognitive radios: An information theoretic perspective,'' {\em
   Proceedings of the IEEE}, vol.~97, no.~5, pp.~894--914, 2009.
+
+\bibitem{axell2012sensing}
+E.~Axell, G.~Leus, E.~G. Larsson, and H.~V. Poor, ``Spectrum sensing for
+  cognitive radio: State-of-the-{A}rt and recent advances,'' {\em IEEE Signal
+  Processing Magazine}, vol.~29, no.~3, pp.~101--116, 2012.
 
 \bibitem{oshea2017introduction}
 T.~J. O'Shea and J.~Hoydis, ``An introduction to deep learning for the physical
@@ -77,6 +87,45 @@ S.~Rajendran, W.~Meert, D.~Giustiniano, V.~Lenders, and S.~Pollin, ``Deep
 E.~Blossom, ``{GNU} radio: tools for exploring the radio frequency spectrum,''
   {\em Linux Journal}, vol.~2004, no.~122, p.~4, 2004.
 
+\bibitem{3gpp25102}
+{3GPP}, ``{UTRA} ({Universal Terrestrial Radio Access}) {UE} radio transmission
+  and reception ({FDD}) (release 15),'' Tech. Rep. TS 25.102 V15.0.0, 3rd
+  Generation Partnership Project, 2018.
+
+\bibitem{mennes2020sc2}
+R.~Mennes, J.~Struye, C.~Donato, M.~Camelo, I.~Jabandzi{\'c}, S.~Giannoulis,
+  I.~Moerman, and S.~Latr{\'e}, ``Collaborative flow control in the {DARPA}
+  spectrum collaboration challenge,'' {\em IEEE Transactions on Network and
+  Service Management}, vol.~17, no.~4, pp.~2024--2038, 2020.
+
+\bibitem{hershey2016deep}
+J.~R. Hershey, Z.~Chen, J.~Le~Roux, and S.~Watanabe, ``Deep clustering:
+  Discriminative embeddings for segmentation and separation,'' in {\em
+  Proceedings of the IEEE International Conference on Acoustics, Speech and
+  Signal Processing (ICASSP)}, pp.~31--35, 2016.
+
+\bibitem{kolbaek2017multitalker}
+M.~Kolb{\ae}k, D.~Yu, Z.-H. Tan, and J.~Jensen, ``Multitalker speech separation
+  with utterance-level permutation invariant training,'' {\em IEEE/ACM
+  Transactions on Audio, Speech, and Language Processing}, vol.~25, no.~10,
+  pp.~1901--1913, 2017.
+
+\bibitem{wichern2019wham}
+G.~Wichern, J.~Antognini, M.~Flynn, L.~R. Zhu, E.~McQuinn, D.~Crow, E.~Manilow,
+  and J.~Le~Roux, ``{WHAM!}: Extending speech separation to noisy
+  environments,'' in {\em Proceedings of Interspeech}, 2019.
+
+\bibitem{rafii2017musdb18}
+Z.~Rafii, A.~Liutkus, F.-R. St{\"o}ter, S.~I. Mimilakis, and R.~Bitteur,
+  ``{MUSDB18} -- a corpus for music separation,'' 2017.
+\newblock 10.5281/zenodo.1117372.
+
+\bibitem{subakan2021sepformer}
+C.~Subakan, M.~Ravanelli, S.~Cornell, M.~Bronzi, and J.~Zhong, ``Attention is
+  all you need in speech separation,'' in {\em Proceedings of the IEEE
+  International Conference on Acoustics, Speech and Signal Processing
+  (ICASSP)}, pp.~21--25, 2021.
+
 \bibitem{hyvarinen2000ica}
 A.~Hyv{\"a}rinen and E.~Oja, ``Independent component analysis: algorithms and
   applications,'' {\em Neural Networks}, vol.~13, no.~4--5, pp.~411--430, 2000.
@@ -102,6 +151,10 @@ A.~Lancho, A.~Weiss, G.~C.~F. Lee, T.~Jayashankar, B.~Kurien, Y.~Polyanskiy,
 {3GPP}, ``{3GPP TS 25.211}: Physical channels and mapping of transport channels
   onto physical channels ({FDD}) (release 15),'' tech. rep., 3rd Generation
   Partnership Project, 2018.
+
+\bibitem{3gpp25213}
+{3GPP}, ``{3GPP TS 25.213}: Spreading and modulation ({FDD}) (release 15),''
+  tech. rep., 3rd Generation Partnership Project, 2018.
 
 \bibitem{3gpp36211}
 {3GPP}, ``{3GPP TS 36.211}: Evolved universal terrestrial radio access
@@ -135,5 +188,23 @@ W.~C. Jakes, {\em Microwave Mobile Communications}.
 C.~Rapp, ``Effects of {HPA}-nonlinearity on a 4-{DPSK}/{OFDM}-signal for a
   digital sound broadcasting system,'' in {\em ESA Special Publication},
   vol.~332, pp.~179--184, 1991.
+
+\bibitem{hadani2017otfs}
+R.~Hadani, S.~Rakib, M.~Tsatsanis, A.~Monk, A.~J. Goldsmith, A.~F. Molisch, and
+  R.~Calderbank, ``Orthogonal time frequency space modulation,'' in {\em
+  Proceedings of the IEEE Wireless Communications and Networking Conference
+  (WCNC)}, pp.~1--6, 2017.
+
+\bibitem{abdoli2015fofdm}
+J.~Abdoli, M.~Jia, and J.~Ma, ``Filtered {OFDM}: A new waveform for future
+  wireless systems,'' in {\em Proceedings of the IEEE International Workshop on
+  Signal Processing Advances in Wireless Communications (SPAWC)}, pp.~66--70,
+  2015.
+
+\bibitem{jaeckel2014quadriga}
+S.~Jaeckel, L.~Raschkowski, K.~Borner, and L.~Thiele, ``{QuaDRiGa}: A 3-{D}
+  multi-cell channel model with time evolution for enabling virtual field
+  trials,'' {\em IEEE Transactions on Antennas and Propagation}, vol.~62,
+  pp.~3242--3256, 2014.
 
 \end{thebibliography}

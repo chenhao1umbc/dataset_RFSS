@@ -58,7 +58,7 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 | # | Task | Owner |
 |---|---|---|
 | B1 | Confirm whether `baseline_results.json` was regenerated after the SI-SINR zero-mean fix (reviewer_note.md B2). Record the commit hash and date of the run that produced the numbers in the paper. | B |
-| B2 | If A2 changes the adjacent-channel target: the DL models were trained on the old target for 60% of the data, so retraining is likely needed. Estimate cost (Mac mini M4 Pro hours per model) and tell the user before starting. | B -> U |
+| B2 | If A2 changes the adjacent-channel target: the DL models were trained on the old target for 60% of the data, so retraining is likely needed (approved, Mac mini). Estimate hours per model and post it in `from_local_claude.md` before starting. | B |
 | B3 | Evaluate baselines and DL models on the same test samples (paired), on far more than N=150/300 (full 15,000 test split if feasible), report mean with confidence interval. | B |
 | B4 | Report SI-SINR improvement over the mixture input as well as absolute output, so the headline number is not only "less negative than ICA". | B |
 | B5 | Keep the 3-source Conv-TasNet checkpoint issue out of the final table: retrain that config with the same recipe as the others. | B |
@@ -88,20 +88,24 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 | E2 | Add HF and GitHub links and a data-availability statement. | B |
 | E3 | Add a short, plain correction note: v1 results were not reproducible and are replaced. | R drafts |
 | E4 | Final audit: claims vs code vs data vs HF card. | R |
-| E5 | Venue: one format only (NeurIPS D&B or IEEE journal). `tasks.md` and `pp_review_report.md` currently disagree. | U |
+| E5 | Venue is IEEE journal (decided). Remove NeurIPS wording from `tasks.md`/`plan.md`. Update author list to Hao Chen and Dayuan Tan. | B |
 
 ### F. arXiv actions (user only, in this order)
-1. Co-author agreement from Rui Jin and Dayuan Tan on: replace 2508.12106 with v2, then withdraw 2604.00398.
+1. Author agreement. Dayuan Tan must agree to the plan (replace 2508.12106 with v2, then withdraw 2604.00398). Rui Jin is on both existing
+   arXiv entries; removing an author should be done with that person's knowledge and consent, and arXiv may ask about an author change
+   in a replacement. Suggested route: tell Rui Jin, get a written OK, and move the contribution to the acknowledgments if applicable.
 2. Ask arXiv help whether a substantially rewritten v2 is acceptable, and mention the duplicate 2604.00398.
 3. Submit v2 to 2508.12106. Comments field: "Substantially revised; v1 results were not reproducible and have been corrected. Supersedes arXiv:2604.00398."
 4. After v2 is live: withdraw 2604.00398 with the comment "Superseded by arXiv:2508.12106v2."
 5. Notify the author of the citing paper (the one citation) that the numbers changed.
 
-## 3. Decisions needed from the user
-1. Venue (E5): NeurIPS D&B or IEEE journal?
-2. Is it acceptable to retrain DL models if A2 changes the target (B2)? Time and cost to be estimated by Builder first.
-3. Release scope: ship data v1.0 with honest documentation, or hold the release for a corrected v1.1? (Reviewer leans to v1.0 plus documentation if A2 can be fixed on the evaluation side.)
-4. Co-author consent (F1).
+## 3. Decisions (made by the user, 2026-10-03)
+1. **Venue: IEEE journal.** `paper/revised_paper.tex` already uses IEEEtran. Drop the NeurIPS D&B references in `tasks.md` and `plan.md`.
+2. **Retraining: approved on the local Mac mini.** Builder still reports time estimates before each long run (B2).
+3. **Release scope: corrected release (v1.1), not v1.0 as is.** Data fixes from workstream A land before the paper goes to arXiv.
+   Note: v1.0 is already public on Hugging Face (32 downloads at last check). Plan: tag the current files as `v1.0`,
+   put corrected files on `main`, and say so on the card. Do not silently overwrite v1.0.
+4. **Authors: Hao Chen and Dayuan Tan only; Rui Jin removed.** See F1 for what this requires.
 
 ## 4. Order of work
 1. Now, in parallel: A1-A3 (Builder), C1 and D2/D3 drafts (Reviewer), B1 (Builder).

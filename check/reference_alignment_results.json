@@ -1,0 +1,5246 @@
+{
+ "summary": {
+  "co-channel": {
+   "n": 102,
+   "len_match_frac": 1.0,
+   "recon_residual_minus_expected_db": {
+    "median": -0.0019999999999988916,
+    "p5": -0.060649999999999954,
+    "p95": 0.03940000000000072
+   },
+   "extent_differs_from_nominal_frac": 0.8627450980392157,
+   "median_mixture_vs_ref_current_db": -8.218,
+   "median_mixture_vs_ref_linear_db": -5.401999999999999,
+   "median_mixture_vs_ref_aligned_db": -5.496,
+   "ica_n": 39,
+   "ica_mean_pi_si_sinr_current_db": -29.573641025641017,
+   "ica_mean_pi_si_sinr_aligned_db": -24.89092307692308
+  },
+  "adjacent-channel": {
+   "n": 102,
+   "len_match_frac": 1.0,
+   "recon_residual_minus_expected_db": {
+    "median": -0.002000000000000446,
+    "p5": -0.03799999999999974,
+    "p95": 0.0368000000000007
+   },
+   "extent_differs_from_nominal_frac": 0.8823529411764706,
+   "median_mixture_vs_ref_current_db": -39.6995,
+   "median_mixture_vs_ref_linear_db": -38.1785,
+   "median_mixture_vs_ref_aligned_db": -5.862,
+   "ica_n": 39,
+   "ica_mean_pi_si_sinr_current_db": -38.954461538461544,
+   "ica_mean_pi_si_sinr_aligned_db": -24.08958974358975
+  }
+ },
+ "samples": [
+  {
+   "idx": 85461,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 9.401287990348692,
+   "standards": [
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -9.412,
+   "expected_resid_db": -9.401,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.289,
+    "linear": -44.288,
+    "aligned": -11.1
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -53.596,
+    "aligned": -29.13
+   }
+  },
+  {
+   "idx": 85870,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 18.027403146821282,
+   "standards": [
+    "5G_NR",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -18.019,
+   "expected_resid_db": -18.027,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -22.029,
+    "linear": -21.117,
+    "aligned": -0.14
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -31.182,
+    "aligned": -21.22
+   }
+  },
+  {
+   "idx": 86329,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 15.814341480102188,
+   "standards": [
+    "GSM",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.84,
+   "expected_resid_db": -15.814,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -17.24,
+    "linear": -17.088,
+    "aligned": -0.306
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -35.104,
+    "aligned": -12.869
+   }
+  },
+  {
+   "idx": 86346,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 15.736209324002777,
+   "standards": [
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.718,
+   "expected_resid_db": -15.736,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -51.794,
+    "linear": -49.484,
+    "aligned": -10.171
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -53.543,
+    "aligned": -34.34
+   }
+  },
+  {
+   "idx": 86417,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 22.122562696559434,
+   "standards": [
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.103,
+   "expected_resid_db": -22.123,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -26.0,
+    "linear": -25.596,
+    "aligned": -0.043
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -29.243,
+    "aligned": -15.957
+   }
+  },
+  {
+   "idx": 86896,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 8.440424930183084,
+   "standards": [
+    "5G_NR",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -8.474,
+   "expected_resid_db": -8.44,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -27.951,
+    "linear": -26.998,
+    "aligned": -1.137
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -31.518,
+    "aligned": -18.772
+   }
+  },
+  {
+   "idx": 87335,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": -4.914074223250373,
+   "standards": [
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 4.864,
+   "expected_resid_db": 4.914,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.375,
+    "linear": -42.931,
+    "aligned": -16.921
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -39.122,
+    "aligned": -24.982
+   }
+  },
+  {
+   "idx": 87556,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 22.020758533078336,
+   "standards": [
+    "GSM",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.084,
+   "expected_resid_db": -22.021,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15316000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -59.674,
+    "linear": -35.106,
+    "aligned": -0.374
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -54.403,
+    "aligned": -27.311
+   }
+  },
+  {
+   "idx": 87965,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": -4.305516004789466,
+   "standards": [
+    "GSM",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 4.334,
+   "expected_resid_db": 4.306,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -26.083,
+    "linear": -25.86,
+    "aligned": -21.971
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -30.282,
+    "aligned": -25.195
+   }
+  },
+  {
+   "idx": 88192,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 17.708886794871127,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -17.67,
+   "expected_resid_db": -17.709,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -27.931,
+    "linear": -27.167,
+    "aligned": -0.138
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -26.082,
+    "aligned": -17.291
+   }
+  },
+  {
+   "idx": 88242,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 21.355704438749484,
+   "standards": [
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -21.373,
+   "expected_resid_db": -21.356,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -25.057,
+    "linear": -21.442,
+    "aligned": -0.131
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -36.746,
+    "aligned": -22.051
+   }
+  },
+  {
+   "idx": 88643,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 16.380918045444876,
+   "standards": [
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -16.41,
+   "expected_resid_db": -16.381,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -20.781,
+    "linear": -20.437,
+    "aligned": -0.19
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -35.627,
+    "aligned": -19.691
+   }
+  },
+  {
+   "idx": 89024,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 10.723574537202923,
+   "standards": [
+    "LTE",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -10.687,
+   "expected_resid_db": -10.724,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    2166000.0,
+    2166000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -14.766,
+    "linear": -14.331,
+    "aligned": -0.595
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -20.632,
+    "aligned": -11.478
+   }
+  },
+  {
+   "idx": 89049,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 2.210665871738083,
+   "standards": [
+    "5G_NR",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.23,
+   "expected_resid_db": -2.211,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -38.998,
+    "linear": -29.256,
+    "aligned": -12.395
+   }
+  },
+  {
+   "idx": 89370,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 15.041819616885904,
+   "standards": [
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -14.993,
+   "expected_resid_db": -15.042,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -23.436,
+    "linear": -23.436,
+    "aligned": -0.407
+   }
+  },
+  {
+   "idx": 89454,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 13.736734758429174,
+   "standards": [
+    "GSM",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.676,
+   "expected_resid_db": -13.737,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    3840000.0,
+    3840000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -16.782,
+    "linear": -16.403,
+    "aligned": -0.526
+   }
+  },
+  {
+   "idx": 90057,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": -8.968595825039436,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 8.963,
+   "expected_resid_db": 8.969,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.187,
+    "linear": -39.646,
+    "aligned": -12.269
+   }
+  },
+  {
+   "idx": 90271,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 4.038700232722897,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -4.035,
+   "expected_resid_db": -4.039,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -41.067,
+    "linear": -26.965,
+    "aligned": -2.569
+   }
+  },
+  {
+   "idx": 90348,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 11.043517679002008,
+   "standards": [
+    "5G_NR",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -11.038,
+   "expected_resid_db": -11.044,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -30.866,
+    "linear": -29.91,
+    "aligned": -0.649
+   }
+  },
+  {
+   "idx": 91054,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 21.76041788954211,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -21.755,
+   "expected_resid_db": -21.76,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -24.369,
+    "linear": -15.749,
+    "aligned": -13.618
+   }
+  },
+  {
+   "idx": 92171,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 15.373038397494046,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.371,
+   "expected_resid_db": -15.373,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122640000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -45.026,
+    "linear": -26.335,
+    "aligned": -0.275
+   }
+  },
+  {
+   "idx": 92679,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 21.841065644522285,
+   "standards": [
+    "UMTS",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -21.829,
+   "expected_resid_db": -21.841,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -29.285,
+    "linear": -27.25,
+    "aligned": -0.004
+   }
+  },
+  {
+   "idx": 93420,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 13.8100492628654,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.81,
+   "expected_resid_db": -13.81,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -59.076,
+    "linear": -58.928,
+    "aligned": -11.183
+   }
+  },
+  {
+   "idx": 94903,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 13.555810084375432,
+   "standards": [
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.546,
+   "expected_resid_db": -13.556,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -18.052,
+    "linear": -18.237,
+    "aligned": -0.593
+   }
+  },
+  {
+   "idx": 94998,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 22.80343732294358,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.796,
+   "expected_resid_db": -22.803,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -54.293,
+    "linear": -53.201,
+    "aligned": -9.445
+   }
+  },
+  {
+   "idx": 96162,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 1.4668831221197298,
+   "standards": [
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -1.496,
+   "expected_resid_db": -1.467,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -18.745,
+    "linear": -18.745,
+    "aligned": -18.543
+   }
+  },
+  {
+   "idx": 96205,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 12.559047586286411,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -12.541,
+   "expected_resid_db": -12.559,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61264000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.966,
+    "linear": -23.706,
+    "aligned": -0.444
+   }
+  },
+  {
+   "idx": 96377,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 1.05875115926368,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -1.052,
+   "expected_resid_db": -1.059,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -48.676,
+    "linear": -48.856,
+    "aligned": -22.682
+   }
+  },
+  {
+   "idx": 97252,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 4.485952340561675,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -4.495,
+   "expected_resid_db": -4.486,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -27.531,
+    "linear": -27.247,
+    "aligned": -2.414
+   }
+  },
+  {
+   "idx": 97279,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 6.628740426883986,
+   "standards": [
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -6.627,
+   "expected_resid_db": -6.629,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -24.872,
+    "linear": -25.071,
+    "aligned": -1.667
+   }
+  },
+  {
+   "idx": 97572,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 10.836997777476133,
+   "standards": [
+    "UMTS",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -10.839,
+   "expected_resid_db": -10.837,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -18.668,
+    "linear": -18.31,
+    "aligned": -0.935
+   }
+  },
+  {
+   "idx": 97763,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": 26.499687558398268,
+   "standards": [
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -26.477,
+   "expected_resid_db": -26.5,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -26.985,
+    "linear": -25.609,
+    "aligned": 0.022
+   }
+  },
+  {
+   "idx": 98561,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": -7.484035980257341,
+   "standards": [
+    "GSM",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 7.556,
+   "expected_resid_db": 7.484,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.633,
+    "linear": -47.913,
+    "aligned": -12.926
+   }
+  },
+  {
+   "idx": 99789,
+   "mode": "adjacent-channel",
+   "num_sources": 2,
+   "snr_db": -9.078201563581345,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 9.078,
+   "expected_resid_db": 9.078,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -38.168,
+    "linear": -37.47,
+    "aligned": -12.463
+   }
+  },
+  {
+   "idx": 86051,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 2.586430693091354,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.588,
+   "expected_resid_db": -2.586,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    23040000.0,
+    23040000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -53.427,
+    "linear": -45.914,
+    "aligned": -5.687
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -35.115,
+    "aligned": -20.772
+   }
+  },
+  {
+   "idx": 86218,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 3.381957000285236,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -3.41,
+   "expected_resid_db": -3.382,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -34.131,
+    "linear": -33.752,
+    "aligned": -5.444
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -35.378,
+    "aligned": -20.805
+   }
+  },
+  {
+   "idx": 87686,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 2.7173490680129264,
+   "standards": [
+    "LTE",
+    "GSM",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.74,
+   "expected_resid_db": -2.717,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -30.933,
+    "linear": -30.729,
+    "aligned": -9.518
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -26.625,
+    "aligned": -24.222
+   }
+  },
+  {
+   "idx": 87913,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 15.883915619939833,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.883,
+   "expected_resid_db": -15.884,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -52.191,
+    "linear": -47.954,
+    "aligned": -11.005
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -49.38,
+    "aligned": -29.165
+   }
+  },
+  {
+   "idx": 88330,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 18.300251741805898,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -18.291,
+   "expected_resid_db": -18.3,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61348000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -50.368,
+    "linear": -58.387,
+    "aligned": -38.089
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -49.176,
+    "aligned": -40.202
+   }
+  },
+  {
+   "idx": 89115,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 26.63023852496884,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -26.646,
+   "expected_resid_db": -26.63,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -35.251,
+    "linear": -35.257,
+    "aligned": -4.387
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -40.856,
+    "aligned": -24.137
+   }
+  },
+  {
+   "idx": 89563,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": -6.081170603595599,
+   "standards": [
+    "5G_NR",
+    "UMTS",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 6.06,
+   "expected_resid_db": 6.081,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -34.523,
+    "linear": -34.18,
+    "aligned": -13.458
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -35.216,
+    "aligned": -24.59
+   }
+  },
+  {
+   "idx": 89887,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 18.260792312600827,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -18.257,
+   "expected_resid_db": -18.261,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -32.984,
+    "linear": -32.493,
+    "aligned": -3.785
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -38.21,
+    "aligned": -20.487
+   }
+  },
+  {
+   "idx": 90404,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 12.419404767232482,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -12.439,
+   "expected_resid_db": -12.419,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -56.409,
+    "linear": -40.0,
+    "aligned": -12.531
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -54.268,
+    "aligned": -32.619
+   }
+  },
+  {
+   "idx": 91544,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 26.300029663678828,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -26.303,
+   "expected_resid_db": -26.3,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -33.959,
+    "linear": -33.99,
+    "aligned": -3.107
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -43.416,
+    "aligned": -22.374
+   }
+  },
+  {
+   "idx": 91713,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 11.054770731426792,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -11.022,
+   "expected_resid_db": -11.055,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -39.0,
+    "linear": -35.998,
+    "aligned": -3.553
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -34.587,
+    "aligned": -19.949
+   }
+  },
+  {
+   "idx": 92597,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": -2.966296890119801,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 2.951,
+   "expected_resid_db": 2.966,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -73.508,
+    "linear": -54.334,
+    "aligned": -45.989
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -48.507,
+    "aligned": -39.198
+   }
+  },
+  {
+   "idx": 92778,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 9.554208220396331,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -9.551,
+   "expected_resid_db": -9.554,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -38.351,
+    "linear": -37.351,
+    "aligned": -4.933
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -39.768,
+    "aligned": -19.845
+   }
+  },
+  {
+   "idx": 93676,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 9.395412345506763,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -9.416,
+   "expected_resid_db": -9.395,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -35.396,
+    "linear": -33.496,
+    "aligned": -3.815
+   }
+  },
+  {
+   "idx": 93840,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 23.986111876235977,
+   "standards": [
+    "UMTS",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -23.977,
+   "expected_resid_db": -23.986,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -39.681,
+    "linear": -40.076,
+    "aligned": -4.031
+   }
+  },
+  {
+   "idx": 94276,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 2.798161909797716,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.782,
+   "expected_resid_db": -2.798,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.616,
+    "linear": -39.47,
+    "aligned": -5.676
+   }
+  },
+  {
+   "idx": 94690,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 2.10087895563389,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.093,
+   "expected_resid_db": -2.101,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -36.336,
+    "linear": -36.116,
+    "aligned": -7.529
+   }
+  },
+  {
+   "idx": 94705,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": -2.8511756945300926,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 2.813,
+   "expected_resid_db": 2.851,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -35.73,
+    "linear": -35.487,
+    "aligned": -9.178
+   }
+  },
+  {
+   "idx": 95235,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": -5.351718138685493,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 5.34,
+   "expected_resid_db": 5.352,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -41.376,
+    "linear": -45.801,
+    "aligned": -14.287
+   }
+  },
+  {
+   "idx": 95320,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 1.5312492692128565,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -1.533,
+   "expected_resid_db": -1.531,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61348000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -52.058,
+    "linear": -51.796,
+    "aligned": -7.024
+   }
+  },
+  {
+   "idx": 95583,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 2.5898785269645366,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.574,
+   "expected_resid_db": -2.59,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -37.952,
+    "linear": -39.137,
+    "aligned": -5.919
+   }
+  },
+  {
+   "idx": 96029,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 28.717942642108486,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -28.722,
+   "expected_resid_db": -28.718,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -49.752,
+    "linear": -41.368,
+    "aligned": -11.941
+   }
+  },
+  {
+   "idx": 96119,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 14.334744596831019,
+   "standards": [
+    "UMTS",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -14.341,
+   "expected_resid_db": -14.335,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -34.734,
+    "linear": -42.358,
+    "aligned": -4.16
+   }
+  },
+  {
+   "idx": 96492,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 6.139927256804717,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -6.122,
+   "expected_resid_db": -6.14,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -38.943,
+    "linear": -39.146,
+    "aligned": -5.483
+   }
+  },
+  {
+   "idx": 97207,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 20.458101151905204,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -20.463,
+   "expected_resid_db": -20.458,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -64.046,
+    "linear": -38.209,
+    "aligned": -12.272
+   }
+  },
+  {
+   "idx": 97476,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 10.977542914635615,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -10.953,
+   "expected_resid_db": -10.978,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61348000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -51.168,
+    "linear": -36.757,
+    "aligned": -3.615
+   }
+  },
+  {
+   "idx": 98059,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 8.90437713373182,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -8.863,
+   "expected_resid_db": -8.904,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -33.855,
+    "linear": -33.85,
+    "aligned": -4.031
+   }
+  },
+  {
+   "idx": 98782,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 13.329213393357065,
+   "standards": [
+    "UMTS",
+    "GSM",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.324,
+   "expected_resid_db": -13.329,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -33.166,
+    "linear": -32.76,
+    "aligned": -3.364
+   }
+  },
+  {
+   "idx": 99299,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 19.94824889432006,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -19.953,
+   "expected_resid_db": -19.948,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -43.465,
+    "linear": -41.8,
+    "aligned": -3.088
+   }
+  },
+  {
+   "idx": 99458,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 19.593808667622113,
+   "standards": [
+    "GSM",
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -19.612,
+   "expected_resid_db": -19.594,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -34.513,
+    "linear": -37.608,
+    "aligned": -3.191
+   }
+  },
+  {
+   "idx": 99546,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 19.496514446732608,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -19.5,
+   "expected_resid_db": -19.497,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.982,
+    "linear": -47.669,
+    "aligned": -5.551
+   }
+  },
+  {
+   "idx": 99613,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 28.29710748129008,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -28.311,
+   "expected_resid_db": -28.297,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -48.838,
+    "linear": -33.158,
+    "aligned": -3.098
+   }
+  },
+  {
+   "idx": 99717,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 12.095701008434366,
+   "standards": [
+    "LTE",
+    "UMTS",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -12.111,
+   "expected_resid_db": -12.096,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.348,
+    "linear": -43.99,
+    "aligned": -5.678
+   }
+  },
+  {
+   "idx": 99794,
+   "mode": "adjacent-channel",
+   "num_sources": 3,
+   "snr_db": 13.833901894209312,
+   "standards": [
+    "5G_NR",
+    "UMTS",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.887,
+   "expected_resid_db": -13.834,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.292,
+    "linear": -44.327,
+    "aligned": -25.495
+   }
+  },
+  {
+   "idx": 85010,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 19.159184290577937,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -19.173,
+   "expected_resid_db": -19.159,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.893,
+    "linear": -38.148,
+    "aligned": -8.06
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -45.686,
+    "aligned": -31.577
+   }
+  },
+  {
+   "idx": 85043,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 22.869956294260763,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.863,
+   "expected_resid_db": -22.87,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -48.22,
+    "linear": -44.023,
+    "aligned": -15.383
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -45.048,
+    "aligned": -28.157
+   }
+  },
+  {
+   "idx": 85569,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 26.860921721779565,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -26.846,
+   "expected_resid_db": -26.861,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.066,
+    "linear": -36.191,
+    "aligned": -4.815
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -41.63,
+    "aligned": -22.407
+   }
+  },
+  {
+   "idx": 86196,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 10.512483931226788,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -10.511,
+   "expected_resid_db": -10.512,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -42.16,
+    "linear": -42.486,
+    "aligned": -17.727
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -38.012,
+    "aligned": -27.958
+   }
+  },
+  {
+   "idx": 86669,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 6.155230305878677,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -6.141,
+   "expected_resid_db": -6.155,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -41.03,
+    "linear": -39.829,
+    "aligned": -6.095
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -37.062,
+    "aligned": -21.9
+   }
+  },
+  {
+   "idx": 86817,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 5.204482221245406,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -5.179,
+   "expected_resid_db": -5.204,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.987,
+    "linear": -46.043,
+    "aligned": -11.486
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -36.862,
+    "aligned": -27.134
+   }
+  },
+  {
+   "idx": 86865,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 13.907919162506264,
+   "standards": [
+    "GSM",
+    "5G_NR",
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.928,
+   "expected_resid_db": -13.908,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.655,
+    "linear": -40.625,
+    "aligned": -5.081
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -45.529,
+    "aligned": -19.893
+   }
+  },
+  {
+   "idx": 86976,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 10.611419428764908,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -10.624,
+   "expected_resid_db": -10.611,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -42.66,
+    "linear": -44.088,
+    "aligned": -6.827
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -36.058,
+    "aligned": -24.114
+   }
+  },
+  {
+   "idx": 88692,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 17.751923047182686,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "GSM",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -17.789,
+   "expected_resid_db": -17.752,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -38.595,
+    "linear": -37.874,
+    "aligned": -5.109
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -28.092,
+    "aligned": -17.652
+   }
+  },
+  {
+   "idx": 89002,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 12.213544569099692,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -12.199,
+   "expected_resid_db": -12.214,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -46.56,
+    "linear": -46.25,
+    "aligned": -20.752
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -45.807,
+    "aligned": -35.907
+   }
+  },
+  {
+   "idx": 89793,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 22.8468571081605,
+   "standards": [
+    "LTE",
+    "GSM",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.92,
+   "expected_resid_db": -22.847,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -43.705,
+    "linear": -43.245,
+    "aligned": -5.594
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -35.358,
+    "aligned": -18.404
+   }
+  },
+  {
+   "idx": 89890,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 24.055137776847513,
+   "standards": [
+    "LTE",
+    "GSM",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -24.051,
+   "expected_resid_db": -24.055,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -38.313,
+    "linear": -36.727,
+    "aligned": -5.805
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -38.762,
+    "aligned": -21.094
+   }
+  },
+  {
+   "idx": 90097,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": -3.7577391458915486,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 3.714,
+   "expected_resid_db": 3.758,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -39.718,
+    "linear": -39.216,
+    "aligned": -11.288
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -37.736,
+    "aligned": -24.645
+   }
+  },
+  {
+   "idx": 91364,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": -8.231909550110952,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 8.243,
+   "expected_resid_db": 8.232,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -47.417,
+    "linear": -44.935,
+    "aligned": -15.103
+   }
+  },
+  {
+   "idx": 91370,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 18.48151004649111,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -18.495,
+   "expected_resid_db": -18.482,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -39.453,
+    "linear": -37.228,
+    "aligned": -7.865
+   }
+  },
+  {
+   "idx": 91686,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 15.040165192000838,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.051,
+   "expected_resid_db": -15.04,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -39.279,
+    "linear": -39.659,
+    "aligned": -6.481
+   }
+  },
+  {
+   "idx": 92195,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 1.1095191252770464,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -1.134,
+   "expected_resid_db": -1.11,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.241,
+    "linear": -40.277,
+    "aligned": -10.057
+   }
+  },
+  {
+   "idx": 92220,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 16.375235009347932,
+   "standards": [
+    "LTE",
+    "UMTS",
+    "GSM",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -16.407,
+   "expected_resid_db": -16.375,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.541,
+    "linear": -39.713,
+    "aligned": -8.849
+   }
+  },
+  {
+   "idx": 92810,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 7.654130219072726,
+   "standards": [
+    "5G_NR",
+    "GSM",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -7.668,
+   "expected_resid_db": -7.654,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -37.366,
+    "linear": -42.013,
+    "aligned": -5.653
+   }
+  },
+  {
+   "idx": 93352,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 2.042349396526393,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.058,
+   "expected_resid_db": -2.042,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -59.72,
+    "linear": -48.015,
+    "aligned": -20.995
+   }
+  },
+  {
+   "idx": 93393,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 21.225641976165285,
+   "standards": [
+    "5G_NR",
+    "GSM",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -21.23,
+   "expected_resid_db": -21.226,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -36.957,
+    "linear": -38.965,
+    "aligned": -5.205
+   }
+  },
+  {
+   "idx": 94270,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 13.69146299714428,
+   "standards": [
+    "5G_NR",
+    "GSM",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.696,
+   "expected_resid_db": -13.691,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.924,
+    "linear": -39.229,
+    "aligned": -8.678
+   }
+  },
+  {
+   "idx": 94425,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 23.15367845701158,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -23.152,
+   "expected_resid_db": -23.154,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -34.14,
+    "linear": -37.499,
+    "aligned": -10.785
+   }
+  },
+  {
+   "idx": 94555,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 14.820710426370235,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -14.812,
+   "expected_resid_db": -14.821,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    23040000.0,
+    23040000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -41.219,
+    "linear": -37.993,
+    "aligned": -4.968
+   }
+  },
+  {
+   "idx": 95256,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 8.629955617354588,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "GSM",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -8.668,
+   "expected_resid_db": -8.63,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -37.872,
+    "linear": -38.597,
+    "aligned": -11.903
+   }
+  },
+  {
+   "idx": 95284,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 20.744486090127015,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -20.756,
+   "expected_resid_db": -20.744,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.212,
+    "linear": -39.78,
+    "aligned": -14.664
+   }
+  },
+  {
+   "idx": 95418,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": -6.281020774728652,
+   "standards": [
+    "5G_NR",
+    "GSM",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 6.278,
+   "expected_resid_db": 6.281,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.103,
+    "linear": -41.854,
+    "aligned": -14.913
+   }
+  },
+  {
+   "idx": 95560,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 27.07144416196706,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -27.088,
+   "expected_resid_db": -27.071,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -47.51,
+    "linear": -49.92,
+    "aligned": -6.988
+   }
+  },
+  {
+   "idx": 96730,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 38.76698661730135,
+   "standards": [
+    "5G_NR",
+    "GSM",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -38.754,
+   "expected_resid_db": -38.767,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -46.589,
+    "linear": -40.526,
+    "aligned": -13.599
+   }
+  },
+  {
+   "idx": 96968,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 20.540212403757764,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "GSM",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -20.528,
+   "expected_resid_db": -20.54,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -56.962,
+    "linear": -54.102,
+    "aligned": -14.335
+   }
+  },
+  {
+   "idx": 97614,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 33.9065958671227,
+   "standards": [
+    "UMTS",
+    "UMTS",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -33.915,
+   "expected_resid_db": -33.907,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -39.449,
+    "linear": -41.346,
+    "aligned": -5.188
+   }
+  },
+  {
+   "idx": 98490,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": -0.8131116790817894,
+   "standards": [
+    "UMTS",
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 0.817,
+   "expected_resid_db": 0.813,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -38.793,
+    "linear": -37.415,
+    "aligned": -25.795
+   }
+  },
+  {
+   "idx": 98745,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 20.12164186895994,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -20.127,
+   "expected_resid_db": -20.122,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -41.879,
+    "linear": -40.748,
+    "aligned": -6.873
+   }
+  },
+  {
+   "idx": 99486,
+   "mode": "adjacent-channel",
+   "num_sources": 4,
+   "snr_db": 16.411840252455182,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "UMTS",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -16.398,
+   "expected_resid_db": -16.412,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -33.885,
+    "linear": -34.818,
+    "aligned": -4.871
+   }
+  },
+  {
+   "idx": 85067,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 22.08716182927115,
+   "standards": [
+    "GSM",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.223,
+   "expected_resid_db": -22.087,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -0.138,
+    "linear": 0.174,
+    "aligned": -0.121
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -14.506,
+    "aligned": -14.486
+   }
+  },
+  {
+   "idx": 85387,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": -3.7680296169952907,
+   "standards": [
+    "5G_NR",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 3.783,
+   "expected_resid_db": 3.768,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -21.146,
+    "linear": -20.09,
+    "aligned": -20.095
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -30.702,
+    "aligned": -30.163
+   }
+  },
+  {
+   "idx": 85523,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 11.109879423061162,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -11.106,
+   "expected_resid_db": -11.11,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -47.789,
+    "linear": -1.293,
+    "aligned": -1.294
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -46.777,
+    "aligned": -23.388
+   }
+  },
+  {
+   "idx": 85764,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 20.76377497492369,
+   "standards": [
+    "5G_NR",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -20.772,
+   "expected_resid_db": -20.764,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -0.821,
+    "linear": -0.17,
+    "aligned": -0.176
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -15.474,
+    "aligned": -14.826
+   }
+  },
+  {
+   "idx": 85765,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 9.652427031715,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -9.645,
+   "expected_resid_db": -9.652,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61348000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -50.251,
+    "linear": -2.564,
+    "aligned": -2.567
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -43.96,
+    "aligned": -25.32
+   }
+  },
+  {
+   "idx": 85906,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 29.20919147448372,
+   "standards": [
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -29.211,
+   "expected_resid_db": -29.209,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": 0.014,
+    "linear": 0.014,
+    "aligned": 0.014
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -17.104,
+    "aligned": -17.104
+   }
+  },
+  {
+   "idx": 86748,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 14.838385460001561,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -14.829,
+   "expected_resid_db": -14.838,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -49.411,
+    "linear": -0.331,
+    "aligned": -0.335
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -49.923,
+    "aligned": -20.367
+   }
+  },
+  {
+   "idx": 86935,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 28.502302502889417,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -28.505,
+   "expected_resid_db": -28.502,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -49.066,
+    "linear": -0.001,
+    "aligned": -0.001
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -42.936,
+    "aligned": -19.06
+   }
+  },
+  {
+   "idx": 86957,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 3.2553373695854027,
+   "standards": [
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -3.249,
+   "expected_resid_db": -3.255,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -17.029,
+    "linear": -14.756,
+    "aligned": -14.758
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -26.337,
+    "aligned": -25.425
+   }
+  },
+  {
+   "idx": 88774,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 5.525495066859549,
+   "standards": [
+    "GSM",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -5.502,
+   "expected_resid_db": -5.525,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -1.827,
+    "linear": -1.532,
+    "aligned": -1.82
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -13.723,
+    "aligned": -13.706
+   }
+  },
+  {
+   "idx": 88876,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 11.776561079178427,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -11.783,
+   "expected_resid_db": -11.777,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61348000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -41.444,
+    "linear": -0.595,
+    "aligned": -0.598
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -51.686,
+    "aligned": -22.034
+   }
+  },
+  {
+   "idx": 89526,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 17.623535551035918,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -17.605,
+   "expected_resid_db": -17.624,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -57.047,
+    "linear": -0.334,
+    "aligned": -0.335
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -53.223,
+    "aligned": -24.9
+   }
+  },
+  {
+   "idx": 89830,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 27.794359516454527,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -27.788,
+   "expected_resid_db": -27.794,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": 0.081,
+    "linear": 0.085,
+    "aligned": 0.081
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -16.432,
+    "aligned": -16.432
+   }
+  },
+  {
+   "idx": 90015,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 30.20854663485306,
+   "standards": [
+    "LTE",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -30.214,
+   "expected_resid_db": -30.209,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -0.455,
+    "linear": -0.012,
+    "aligned": -0.273
+   }
+  },
+  {
+   "idx": 91105,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 25.808891282396242,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -25.79,
+   "expected_resid_db": -25.809,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -7.223,
+    "linear": -0.26,
+    "aligned": -0.265
+   }
+  },
+  {
+   "idx": 91196,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 28.964699537846872,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -28.943,
+   "expected_resid_db": -28.965,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -41.834,
+    "linear": -0.02,
+    "aligned": -0.02
+   }
+  },
+  {
+   "idx": 93160,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 15.357309724804459,
+   "standards": [
+    "UMTS",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.369,
+   "expected_resid_db": -15.357,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -0.836,
+    "linear": -0.204,
+    "aligned": -0.208
+   }
+  },
+  {
+   "idx": 94770,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 16.268347803052887,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -16.261,
+   "expected_resid_db": -16.268,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -3.326,
+    "linear": -0.306,
+    "aligned": -0.323
+   }
+  },
+  {
+   "idx": 94880,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 12.879840693448799,
+   "standards": [
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -12.888,
+   "expected_resid_db": -12.88,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -0.447,
+    "linear": -0.447,
+    "aligned": -0.447
+   }
+  },
+  {
+   "idx": 95593,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 21.01091358310385,
+   "standards": [
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -21.015,
+   "expected_resid_db": -21.011,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -0.78,
+    "linear": -0.368,
+    "aligned": -0.368
+   }
+  },
+  {
+   "idx": 95606,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 5.411216610732032,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -5.419,
+   "expected_resid_db": -5.411,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61348000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -52.052,
+    "linear": -3.633,
+    "aligned": -3.633
+   }
+  },
+  {
+   "idx": 96529,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 11.302276821957618,
+   "standards": [
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -11.309,
+   "expected_resid_db": -11.302,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -1.182,
+    "linear": -0.542,
+    "aligned": -0.542
+   }
+  },
+  {
+   "idx": 97060,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 33.18575275039076,
+   "standards": [
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -33.164,
+   "expected_resid_db": -33.186,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -44.172,
+    "linear": 0.019,
+    "aligned": 0.018
+   }
+  },
+  {
+   "idx": 97580,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 4.473912754427992,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -4.463,
+   "expected_resid_db": -4.474,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -3.025,
+    "linear": -2.574,
+    "aligned": -2.578
+   }
+  },
+  {
+   "idx": 97640,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 26.182380026252048,
+   "standards": [
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -26.157,
+   "expected_resid_db": -26.182,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -1.708,
+    "linear": -0.091,
+    "aligned": -0.091
+   }
+  },
+  {
+   "idx": 97745,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 4.945236949519406,
+   "standards": [
+    "5G_NR",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -4.965,
+   "expected_resid_db": -4.945,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -4.658,
+    "linear": -3.627,
+    "aligned": -3.63
+   }
+  },
+  {
+   "idx": 97896,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 18.03763559598298,
+   "standards": [
+    "LTE",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -18.132,
+   "expected_resid_db": -18.038,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    3840000.0,
+    3840000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -0.293,
+    "linear": 0.004,
+    "aligned": -0.293
+   }
+  },
+  {
+   "idx": 98024,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 16.788801955944155,
+   "standards": [
+    "GSM",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -16.791,
+   "expected_resid_db": -16.789,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30660000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -22.529,
+    "linear": 0.072,
+    "aligned": -0.221
+   }
+  },
+  {
+   "idx": 98464,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 7.11913312855604,
+   "standards": [
+    "5G_NR",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -7.125,
+   "expected_resid_db": -7.119,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -29.425,
+    "linear": -1.268,
+    "aligned": -1.576
+   }
+  },
+  {
+   "idx": 98964,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": -5.59168301631643,
+   "standards": [
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 5.639,
+   "expected_resid_db": 5.592,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    23040000.0,
+    23040000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -10.491,
+    "linear": -10.418,
+    "aligned": -10.418
+   }
+  },
+  {
+   "idx": 99190,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 15.122262216040367,
+   "standards": [
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.155,
+   "expected_resid_db": -15.122,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -0.332,
+    "linear": -0.184,
+    "aligned": -0.184
+   }
+  },
+  {
+   "idx": 99267,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": -7.5192611567466585,
+   "standards": [
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 7.508,
+   "expected_resid_db": 7.519,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    23040000.0,
+    23040000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -11.602,
+    "linear": -11.383,
+    "aligned": -11.383
+   }
+  },
+  {
+   "idx": 99298,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 23.977244752843937,
+   "standards": [
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -23.979,
+   "expected_resid_db": -23.977,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -1.178,
+    "linear": -0.067,
+    "aligned": -0.068
+   }
+  },
+  {
+   "idx": 99700,
+   "mode": "co-channel",
+   "num_sources": 2,
+   "snr_db": 35.581248980904604,
+   "standards": [
+    "GSM",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -35.615,
+   "expected_resid_db": -35.581,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    3840000.0,
+    3840000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": 0.032,
+    "linear": 0.165,
+    "aligned": 0.032
+   }
+  },
+  {
+   "idx": 85026,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 21.582759180641983,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -21.585,
+   "expected_resid_db": -21.583,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61348000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -40.185,
+    "linear": -3.868,
+    "aligned": -3.868
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -40.893,
+    "aligned": -22.894
+   }
+  },
+  {
+   "idx": 85398,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 6.646014189535051,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -6.627,
+   "expected_resid_db": -6.646,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.394,
+    "linear": -5.326,
+    "aligned": -5.329
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -21.648,
+    "aligned": -21.693
+   }
+  },
+  {
+   "idx": 85419,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 22.922554482670833,
+   "standards": [
+    "LTE",
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.901,
+   "expected_resid_db": -22.923,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -3.229,
+    "linear": -3.116,
+    "aligned": -3.116
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -18.308,
+    "aligned": -18.142
+   }
+  },
+  {
+   "idx": 87365,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 2.9455423123181754,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.935,
+   "expected_resid_db": -2.946,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -6.575,
+    "linear": -6.57,
+    "aligned": -6.575
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -21.044,
+    "aligned": -21.044
+   }
+  },
+  {
+   "idx": 87472,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 5.903028142115049,
+   "standards": [
+    "GSM",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -5.875,
+   "expected_resid_db": -5.903,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    23040000.0,
+    23040000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.987,
+    "linear": -5.577,
+    "aligned": -5.787
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -17.535,
+    "aligned": -17.39
+   }
+  },
+  {
+   "idx": 88494,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 21.424550751435042,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -21.442,
+   "expected_resid_db": -21.425,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -4.789,
+    "linear": -3.97,
+    "aligned": -3.974
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -23.104,
+    "aligned": -22.64
+   }
+  },
+  {
+   "idx": 88859,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 18.900014766650397,
+   "standards": [
+    "5G_NR",
+    "UMTS",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -18.887,
+   "expected_resid_db": -18.9,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -13.32,
+    "linear": -12.746,
+    "aligned": -12.748
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -47.873,
+    "aligned": -44.498
+   }
+  },
+  {
+   "idx": 88902,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 11.874123237136619,
+   "standards": [
+    "LTE",
+    "GSM",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -11.862,
+   "expected_resid_db": -11.874,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -14.093,
+    "linear": -13.783,
+    "aligned": -14.001
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -21.586,
+    "aligned": -21.557
+   }
+  },
+  {
+   "idx": 89091,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 17.42958225615239,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -17.415,
+   "expected_resid_db": -17.43,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -10.075,
+    "linear": -7.144,
+    "aligned": -7.148
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -34.051,
+    "aligned": -33.197
+   }
+  },
+  {
+   "idx": 90705,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 3.2916340522114975,
+   "standards": [
+    "LTE",
+    "GSM",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -3.304,
+   "expected_resid_db": -3.292,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -6.312,
+    "linear": -5.511,
+    "aligned": -5.707
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -20.078,
+    "aligned": -19.862
+   }
+  },
+  {
+   "idx": 91083,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 18.21594494336695,
+   "standards": [
+    "5G_NR",
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -18.227,
+   "expected_resid_db": -18.216,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -21.893,
+    "linear": -18.369,
+    "aligned": -18.373
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -41.429,
+    "aligned": -40.786
+   }
+  },
+  {
+   "idx": 91465,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 6.84263385392894,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -6.855,
+   "expected_resid_db": -6.843,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -18.766,
+    "linear": -16.811,
+    "aligned": -16.817
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -38.891,
+    "aligned": -37.63
+   }
+  },
+  {
+   "idx": 91466,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 34.43872149143652,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -34.433,
+   "expected_resid_db": -34.439,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -24.099,
+    "linear": -22.743,
+    "aligned": -22.748
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -34.004,
+    "aligned": -33.468
+   }
+  },
+  {
+   "idx": 92553,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 13.856111294796396,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.865,
+   "expected_resid_db": -13.856,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -34.215,
+    "linear": -11.408,
+    "aligned": -11.618
+   }
+  },
+  {
+   "idx": 92923,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": -0.06010829314591959,
+   "standards": [
+    "LTE",
+    "LTE",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 0.062,
+   "expected_resid_db": 0.06,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -8.343,
+    "linear": -7.611,
+    "aligned": -7.795
+   }
+  },
+  {
+   "idx": 93598,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 17.086870089680904,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -17.092,
+   "expected_resid_db": -17.087,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -3.99,
+    "linear": -3.15,
+    "aligned": -3.152
+   }
+  },
+  {
+   "idx": 93958,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 22.143872857711468,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.151,
+   "expected_resid_db": -22.144,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -3.866,
+    "linear": -3.129,
+    "aligned": -3.131
+   }
+  },
+  {
+   "idx": 93987,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 3.603749063656916,
+   "standards": [
+    "5G_NR",
+    "GSM",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -3.579,
+   "expected_resid_db": -3.604,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -21.177,
+    "linear": -20.996,
+    "aligned": -21.197
+   }
+  },
+  {
+   "idx": 94453,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 2.906309640875059,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.916,
+   "expected_resid_db": -2.906,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -64.492,
+    "linear": -23.7,
+    "aligned": -23.703
+   }
+  },
+  {
+   "idx": 95141,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 12.940050523048455,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -12.928,
+   "expected_resid_db": -12.94,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61348000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -28.631,
+    "linear": -5.47,
+    "aligned": -5.654
+   }
+  },
+  {
+   "idx": 95146,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 17.217786612270437,
+   "standards": [
+    "GSM",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -17.221,
+   "expected_resid_db": -17.218,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -3.504,
+    "linear": -2.977,
+    "aligned": -3.191
+   }
+  },
+  {
+   "idx": 97098,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 11.181472266672207,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -11.153,
+   "expected_resid_db": -11.181,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.234,
+    "linear": -4.7,
+    "aligned": -4.702
+   }
+  },
+  {
+   "idx": 97314,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 3.6029523944737174,
+   "standards": [
+    "LTE",
+    "LTE",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -3.664,
+   "expected_resid_db": -3.603,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -19.615,
+    "linear": -17.943,
+    "aligned": -18.183
+   }
+  },
+  {
+   "idx": 97680,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 11.991477361174912,
+   "standards": [
+    "GSM",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -12.055,
+   "expected_resid_db": -11.991,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -3.695,
+    "linear": -3.362,
+    "aligned": -3.512
+   }
+  },
+  {
+   "idx": 97783,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 1.8980033666079776,
+   "standards": [
+    "GSM",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -1.901,
+   "expected_resid_db": -1.898,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -6.151,
+    "linear": -5.832,
+    "aligned": -6.021
+   }
+  },
+  {
+   "idx": 97877,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 8.002350000815245,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -7.992,
+   "expected_resid_db": -8.002,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -18.107,
+    "linear": -16.829,
+    "aligned": -16.833
+   }
+  },
+  {
+   "idx": 97907,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 13.974305114841533,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.966,
+   "expected_resid_db": -13.974,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -4.154,
+    "linear": -3.124,
+    "aligned": -3.323
+   }
+  },
+  {
+   "idx": 98251,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 0.6306784575240743,
+   "standards": [
+    "LTE",
+    "GSM",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -0.694,
+   "expected_resid_db": -0.631,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -11.564,
+    "linear": -11.288,
+    "aligned": -11.585
+   }
+  },
+  {
+   "idx": 98694,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 22.693583377514482,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.703,
+   "expected_resid_db": -22.694,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -4.651,
+    "linear": -3.663,
+    "aligned": -3.667
+   }
+  },
+  {
+   "idx": 99320,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 27.742331242745873,
+   "standards": [
+    "GSM",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -27.725,
+   "expected_resid_db": -27.742,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -14.609,
+    "linear": -13.946,
+    "aligned": -14.089
+   }
+  },
+  {
+   "idx": 99582,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 8.79200876396322,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -8.817,
+   "expected_resid_db": -8.792,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -6.498,
+    "linear": -6.495,
+    "aligned": -6.498
+   }
+  },
+  {
+   "idx": 99739,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 13.537542151594282,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.498,
+   "expected_resid_db": -13.538,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -10.276,
+    "linear": -9.936,
+    "aligned": -10.124
+   }
+  },
+  {
+   "idx": 99807,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 14.455532425077768,
+   "standards": [
+    "5G_NR",
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -14.465,
+   "expected_resid_db": -14.456,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -15.613,
+    "linear": -14.78,
+    "aligned": -14.784
+   }
+  },
+  {
+   "idx": 99945,
+   "mode": "co-channel",
+   "num_sources": 3,
+   "snr_db": 16.229067905294016,
+   "standards": [
+    "5G_NR",
+    "UMTS",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -16.221,
+   "expected_resid_db": -16.229,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -4.857,
+    "linear": -4.156,
+    "aligned": -4.16
+   }
+  },
+  {
+   "idx": 85801,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 5.649333129757332,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -5.663,
+   "expected_resid_db": -5.649,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -9.693,
+    "linear": -9.281,
+    "aligned": -9.286
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -28.026,
+    "aligned": -27.58
+   }
+  },
+  {
+   "idx": 86126,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 14.95203384733288,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -14.95,
+   "expected_resid_db": -14.952,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -10.324,
+    "linear": -9.325,
+    "aligned": -9.327
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -29.411,
+    "aligned": -28.688
+   }
+  },
+  {
+   "idx": 86679,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 14.63224814362356,
+   "standards": [
+    "LTE",
+    "UMTS",
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -14.582,
+   "expected_resid_db": -14.632,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -29.571,
+    "linear": -29.687,
+    "aligned": -29.687
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -34.93,
+    "aligned": -35.673
+   }
+  },
+  {
+   "idx": 86755,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 23.258612231982976,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -23.236,
+   "expected_resid_db": -23.259,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.065,
+    "linear": -4.757,
+    "aligned": -4.923
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -25.925,
+    "aligned": -25.782
+   }
+  },
+  {
+   "idx": 87043,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 25.7771355839116,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -25.799,
+   "expected_resid_db": -25.777,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.773,
+    "linear": -5.27,
+    "aligned": -5.273
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -22.293,
+    "aligned": -21.861
+   }
+  },
+  {
+   "idx": 87345,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 8.05204463218357,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -8.069,
+   "expected_resid_db": -8.052,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -12.124,
+    "linear": -11.801,
+    "aligned": -11.803
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -29.912,
+    "aligned": -31.719
+   }
+  },
+  {
+   "idx": 87752,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 12.303428393696404,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -12.319,
+   "expected_resid_db": -12.303,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.871,
+    "linear": -5.334,
+    "aligned": -5.338
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -23.338,
+    "aligned": -22.917
+   }
+  },
+  {
+   "idx": 87868,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": -3.79312605533791,
+   "standards": [
+    "5G_NR",
+    "GSM",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 3.842,
+   "expected_resid_db": 3.793,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -16.18,
+    "linear": -16.028,
+    "aligned": -16.172
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -24.699,
+    "aligned": -24.681
+   }
+  },
+  {
+   "idx": 87878,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 27.33386344584743,
+   "standards": [
+    "LTE",
+    "LTE",
+    "GSM",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -27.378,
+   "expected_resid_db": -27.334,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    23040000.0,
+    23040000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -15.708,
+    "linear": -15.245,
+    "aligned": -15.414
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -27.894,
+    "aligned": -27.949
+   }
+  },
+  {
+   "idx": 88995,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 13.085290622448433,
+   "standards": [
+    "GSM",
+    "LTE",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.078,
+   "expected_resid_db": -13.085,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -8.256,
+    "linear": -7.347,
+    "aligned": -7.479
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -23.916,
+    "aligned": -23.466
+   }
+  },
+  {
+   "idx": 88997,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 29.647565184666647,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -29.65,
+   "expected_resid_db": -29.648,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -6.061,
+    "linear": -5.086,
+    "aligned": -5.227
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -19.921,
+    "aligned": -19.191
+   }
+  },
+  {
+   "idx": 89479,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 17.464025414102633,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -17.412,
+   "expected_resid_db": -17.464,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -8.18,
+    "linear": -7.751,
+    "aligned": -7.759
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -22.087,
+    "aligned": -21.842
+   }
+  },
+  {
+   "idx": 89635,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 15.137019358722178,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.115,
+   "expected_resid_db": -15.137,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -17.106,
+    "linear": -16.183,
+    "aligned": -16.19
+   },
+   "ica_pi_si_sinr_db": {
+    "current": -37.793,
+    "aligned": -37.385
+   }
+  },
+  {
+   "idx": 89847,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 18.152195572693547,
+   "standards": [
+    "UMTS",
+    "LTE",
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -18.139,
+   "expected_resid_db": -18.152,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.673,
+    "linear": -5.198,
+    "aligned": -5.198
+   }
+  },
+  {
+   "idx": 90868,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 7.951373455035908,
+   "standards": [
+    "LTE",
+    "5G_NR",
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -8.021,
+   "expected_resid_db": -7.951,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -7.365,
+    "linear": -6.985,
+    "aligned": -6.988
+   }
+  },
+  {
+   "idx": 91117,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 18.7489576683833,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -18.763,
+   "expected_resid_db": -18.749,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122640000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -54.222,
+    "linear": -6.28,
+    "aligned": -6.281
+   }
+  },
+  {
+   "idx": 91611,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 24.57042213226667,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -24.579,
+   "expected_resid_db": -24.57,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.855,
+    "linear": -4.863,
+    "aligned": -4.864
+   }
+  },
+  {
+   "idx": 92035,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 15.802728956541223,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.801,
+   "expected_resid_db": -15.803,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.956,
+    "linear": -5.165,
+    "aligned": -5.166
+   }
+  },
+  {
+   "idx": 92509,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 28.455037765603883,
+   "standards": [
+    "LTE",
+    "LTE",
+    "UMTS",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -28.458,
+   "expected_resid_db": -28.455,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -9.493,
+    "linear": -7.713,
+    "aligned": -7.714
+   }
+  },
+  {
+   "idx": 92603,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": -6.224795458519611,
+   "standards": [
+    "GSM",
+    "LTE",
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 6.3,
+   "expected_resid_db": 6.225,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    7680000.0,
+    7680000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -13.372,
+    "linear": -12.917,
+    "aligned": -13.069
+   }
+  },
+  {
+   "idx": 92877,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 2.3146925706984858,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -2.314,
+   "expected_resid_db": -2.315,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -10.247,
+    "linear": -9.052,
+    "aligned": -9.052
+   }
+  },
+  {
+   "idx": 94003,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 22.96027221072729,
+   "standards": [
+    "LTE",
+    "UMTS",
+    "UMTS",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.944,
+   "expected_resid_db": -22.96,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -6.263,
+    "linear": -5.656,
+    "aligned": -5.811
+   }
+  },
+  {
+   "idx": 94084,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 1.9942045789664709,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "5G_NR",
+    "GSM"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -1.994,
+   "expected_resid_db": -1.994,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -9.844,
+    "linear": -9.095,
+    "aligned": -9.246
+   }
+  },
+  {
+   "idx": 94200,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 17.80954140568575,
+   "standards": [
+    "GSM",
+    "LTE",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -17.844,
+   "expected_resid_db": -17.81,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -5.408,
+    "linear": -4.982,
+    "aligned": -5.125
+   }
+  },
+  {
+   "idx": 94446,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 5.365957304143355,
+   "standards": [
+    "GSM",
+    "5G_NR",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -5.348,
+   "expected_resid_db": -5.366,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -7.275,
+    "linear": -6.837,
+    "aligned": -7.043
+   }
+  },
+  {
+   "idx": 94958,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 15.670248258039578,
+   "standards": [
+    "LTE",
+    "UMTS",
+    "UMTS",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -15.724,
+   "expected_resid_db": -15.67,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    15360000.0,
+    15360000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -27.866,
+    "linear": -24.928,
+    "aligned": -24.928
+   }
+  },
+  {
+   "idx": 95286,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 28.914273692606077,
+   "standards": [
+    "LTE",
+    "GSM",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -28.926,
+   "expected_resid_db": -28.914,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    61440000.0,
+    61440000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -14.087,
+    "linear": -13.521,
+    "aligned": -13.665
+   }
+  },
+  {
+   "idx": 95619,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 6.848951294998201,
+   "standards": [
+    "UMTS",
+    "GSM",
+    "LTE",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -6.838,
+   "expected_resid_db": -6.849,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    30720000.0,
+    30720000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -9.423,
+    "linear": -8.781,
+    "aligned": -8.988
+   }
+  },
+  {
+   "idx": 95864,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 6.988086110940697,
+   "standards": [
+    "LTE",
+    "LTE",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -7.02,
+   "expected_resid_db": -6.988,
+   "extent_differs_from_nominal": false,
+   "mix_rate_vs_len": [
+    23040000.0,
+    23040000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -6.454,
+    "linear": -6.074,
+    "aligned": -6.074
+   }
+  },
+  {
+   "idx": 96309,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": -1.8222129096423,
+   "standards": [
+    "5G_NR",
+    "GSM",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 1.814,
+   "expected_resid_db": 1.822,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122696000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -45.351,
+    "linear": -21.312,
+    "aligned": -21.462
+   }
+  },
+  {
+   "idx": 96841,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 13.369299413531877,
+   "standards": [
+    "5G_NR",
+    "5G_NR",
+    "LTE",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -13.379,
+   "expected_resid_db": -13.369,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -8.033,
+    "linear": -6.889,
+    "aligned": -6.893
+   }
+  },
+  {
+   "idx": 97011,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": -8.959833991560014,
+   "standards": [
+    "5G_NR",
+    "LTE",
+    "5G_NR",
+    "5G_NR"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": 8.955,
+   "expected_resid_db": 8.96,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -28.593,
+    "linear": -27.443,
+    "aligned": -27.449
+   }
+  },
+  {
+   "idx": 98842,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 22.664458653477116,
+   "standards": [
+    "LTE",
+    "LTE",
+    "5G_NR",
+    "LTE"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -22.668,
+   "expected_resid_db": -22.664,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -6.175,
+    "linear": -5.179,
+    "aligned": -5.181
+   }
+  },
+  {
+   "idx": 98918,
+   "mode": "co-channel",
+   "num_sources": 4,
+   "snr_db": 6.949981592830277,
+   "standards": [
+    "GSM",
+    "5G_NR",
+    "LTE",
+    "UMTS"
+   ],
+   "len_match": true,
+   "resid_to_signal_db": -6.95,
+   "expected_resid_db": -6.95,
+   "extent_differs_from_nominal": true,
+   "mix_rate_vs_len": [
+    122880000.0,
+    122880000.0
+   ],
+   "mixture_vs_ref_si_sinr_db": {
+    "current": -6.588,
+    "linear": -5.696,
+    "aligned": -5.842
+   }
+  }
+ ]
+}

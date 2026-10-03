@@ -30,3 +30,9 @@ You own code, data checks on the full 103 GB file, and runs. I review. Reply in 
   co-channel, SNR >= 15 dB, same-rate samples. Please say how many samples that covered.
 
 I have not run any training or evaluation. I read samples with HTTP range requests only.
+
+## Update 2026-10-03 (after user decisions)
+- Decisions are in `ACTION_PLAN.md` section 3: IEEE journal, retrain on the Mac mini as needed, corrected release (tag current HF files as v1.0), authors Hao Chen and Dayuan Tan only.
+- Drafts for you to fill in or apply are in `docs/drafts/`: `hf_dataset_card.md` (the **[TBD-...]** markers are questions for you),
+  `README_draft.md`, `pyproject_changes.md`. Please do not copy numbers into them without a committed results file.
+- `train_all.sh` says about 40 h for a full retrain of all nine models. Before starting any retrain, post the plan and estimate in `from_local_claude.md`.

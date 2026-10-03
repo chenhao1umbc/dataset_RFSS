@@ -36,3 +36,35 @@ I have not run any training or evaluation. I read samples with HTTP range reques
 - Drafts for you to fill in or apply are in `docs/drafts/`: `hf_dataset_card.md` (the **[TBD-...]** markers are questions for you),
   `README_draft.md`, `pyproject_changes.md`. Please do not copy numbers into them without a committed results file.
 - `train_all.sh` says about 40 h for a full retrain of all nine models. Before starting any retrain, post the plan and estimate in `from_local_claude.md`.
+
+## Review of Builder Round 1 (Reviewer, 2026-10-03, against dev 22b9ec7)
+
+**Verdict: accepted, with changes to my own drafts and some requirements for the next steps.**
+
+What I checked myself:
+- `src/generate_dataset.py:99-160`: channel and all impairments are applied before storage. You are right and my premise ("clean references") was wrong.
+  I have corrected `docs/drafts/hf_dataset_card.md` and added `docs/drafts/dataset_definition.md` (A4 draft).
+- `src/train.py:133`: `native_len = int(round(sample_rate * 0.001))` confirmed.
+- `check/reference_alignment_results.json` summary matches your report (co -8.218 -> -5.496 dB; adjacent -39.70 -> -5.86 dB).
+- Independent check on the public `rfss_single.h5` (20 samples): GSM true length 1,890, 5G NR 30,660 / 61,348 / 122,640 / 122,696, LTE and UMTS exact. Agrees with you.
+- I could not rerun your script (no 103 GB file here), so the 204-sample residual claim is verified only by reading the script and the JSON.
+
+Requirements for steps 1-3:
+1. **Shared reference builder.** Do not call `SignalMixer` inside the training dataloader if it is slow. Either precompute aligned references for the
+   train/val/test crops into a cache file under `data/` (not uploaded), or write a light re-implementation and prove it equals `SignalMixer` on 1,000 samples
+   with the forward-model residual test. If you crop, the frequency shift must use the absolute sample index (phase continuous with the stored mixture), not a restarted index.
+2. **Same segment for every method.** The April paper scores DL models on one 7,680-sample crop and the baselines on the full signal. Evaluate all five methods on the same
+   samples and the same segment, and state which. Use the full 15,000 test split for the classical baselines as you proposed; for DL, use the same 15,000 samples
+   (crop or full, but identical across methods).
+3. **Oracle row.** Add an oracle reference score per sample (aligned reference plus AWGN at `snr_db`) so readers see the ceiling set by noise.
+4. **Report absolute and improvement-over-input**, with mean, standard deviation and a 95% bootstrap interval, per source count and per mode.
+5. **Retrain plan, conditional approval.** The user approved retraining on the Mac mini. Order: (a) reference builder verified on 1,000 samples, (b) ICA/NMF on the full test split,
+   (c) a 1-epoch timing run per model and source count, post the table in `from_local_claude.md`, (d) then run the full retrain. Train all nine configs with the same recipe
+   (the old 3-source Conv-TasNet came from a different scheduler run; do not carry it over). Keep CNN-LSTM last so it can be dropped if time runs short; tell me before dropping anything.
+6. **Seeds.** One training seed is thin for a dataset paper. If time allows after the main run, repeat Conv-TasNet 2-source with two more seeds to show variance.
+7. **Apply drafts** after you read my corrected card: `docs/drafts/hf_dataset_card.md`, `README_draft.md`, `pyproject_changes.md`. Hold the card until the reference-builder
+   function exists so item 4 can link to it. `README_draft.md` and `pyproject_changes.md` can go in now.
+8. **Quality check.** Replace the invalid `power_consistency` test in `check/quality_check.py` with the forward-model test, or delete it.
+9. **Paper.** Do not edit numbers in `paper/revised_paper.tex` until results are committed. You may remove claims now that are known to be artefacts (adjacent-channel difficulty explanation).
+
+Things I am raising with the user: the invalidity of all current benchmark numbers (including the April arXiv paper), and the meaning of "v1.1".

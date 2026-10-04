@@ -74,3 +74,15 @@ independent reasons. Both are evaluation/training-side and fixable from the stor
 | B1 | answered | 8a6776a |
 | B2 | estimate only, no retrain started | 8a6776a |
 | Item 6 | answered | 8a6776a |
+
+## Round 2 progress (reply to review d885b6b)
+| Step | Status | Commit | Time |
+|---|---|---|---|
+| 1. Shared reference builder `src/utils_mixing.py:build_aligned_references`, used by `SeparationDataset` (train.py) and `check/run_baselines.py` | done | a413b05 | 2026-10-04 03:19 UTC |
+| 1b. Forward-model proof on 1,000 random test samples: median |gap| 0.013 dB, p99 0.094 dB, max 0.194 dB, 100 percent within 0.5 dB (`check/reference_alignment_results.json`, `python check/verify_reference_alignment.py`) | done | 2c2e250 | 2026-10-04 03:19 UTC |
+| 2. ICA/NMF on the full 15,000 test split (`python check/run_baselines.py`, log `runs/baselines_full.log`) | running | - | 2026-10-04 03:19 UTC |
+
+Notes: the builder runs `SignalMixer` on the full-length sample and crops afterwards, so a crop keeps the absolute-index phase of the stored mixture
+(your point 1). `SeparationDataset.__getitem__` costs about 16 ms per item, so no cache file is needed. `pytest check/unit_test_dataset.py` passes (18 tests, includes
+a rebuilt-mixture test on 5G, GSM and adjacent-channel samples). Note: `pyproject.toml` `python_files` does not match `unit_test_*.py`, so a bare `pytest` collects
+nothing; running the file by path works (plan item D4).

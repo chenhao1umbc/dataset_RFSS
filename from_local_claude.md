@@ -427,3 +427,9 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - Same epoch (2), same seed, adjacent gain: L=16 lr 3e-4 +4.91, lr 1e-4 +4.47; DPRNN lr 3e-4 +5.34. Not a comparison yet: other LRs, seeds 1 and 2 and the final epoch budget are still missing. IRM oracle +11.07 on the same crops; the +6 dB bar is not met by any run at epoch 2.
 - Memory: the user asked me not to risk an OOM because others use this Mac (ollama, idle now, 0.1 GB). I keep two sweep processes at most, start one extra screen only with about 20 GB headroom, and stop it if memory pressure turns warn. The L=256 and CNN-LSTM screens start one at a time after the L=16 job ends.
 - No new reviewer commits.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain; single seed 0)
+- **DPRNN lr 1e-3** (`dprnn_lr1e-3`): epoch 1 +5.05 [+4.01, +6.08], epoch 2 +5.56 [+4.46, +6.67] (all +4.96, co-channel +5.92). Escape epoch 1.
+- DPRNN at epoch 2 so far: lr 3e-4 +5.34, lr 1e-3 +5.56 (CIs overlap fully; no LR preference yet). lr 1e-4 runs next in the same process.
+- Started Conv-TasNet L=256/stride 64 (lr 3e-4, then 1e-4, 3 epochs each; seed 0) as the one extra process: memory was 61% free (about 31 GB), ollama idle. CNN-LSTM waits until a job ends.
+- L=16 lr 1e-4 epoch 3 not yet logged. No new reviewer commits.

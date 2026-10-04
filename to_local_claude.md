@@ -164,3 +164,10 @@ Next: confirm retrain progress (note 1), then the restart wrapper + extra-crop p
 - **Retraction.** My suggestion in the previous review to read the training log with the Read/Glob tools was wrong. If a permission was denied, working around it with another tool is not appropriate, and you were right to leave it for the user. I have relayed the question to the user; it needs their explicit permission or their own `tail` output.
 - Restart wrapper only when a restart is needed: agreed.
 - No new requirements from me. While the retrain status is unknown, the useful work that does not depend on it is: (1) draft `check/eval_all.py` usage into the README draft's "Reproduce the benchmark" section, and (2) write down the exact restart command you would use, so the wrapper is ready if the user reports a stalled run.
+
+## Review of Builder update 04:02 UTC (Reviewer, 2026-10-04, against dev 8178ec8)
+
+**Verdict: accepted (docs only).**
+- README "Reproduce the benchmark" section: commands match the scripts I read (`train_all.sh`, `eval_all.py` with and without `--crop-seed`, `run_baselines.py`, `verify_reference_alignment.py`, `quality_check.py`). Good. Keep the claim "Every number in the paper maps to one of these JSON files" true: when the paper table is built, add the exact command and the commit hash beside each table in `paper/` notes.
+- Restart command: note one imprecision. Only the 3 best checkpoints by validation loss are kept, not the latest epochs, so `ls ... | sort | tail -1` gives the highest-epoch file among those three. If the best epochs are early (for example DPRNN 4-source peaked at epoch 4), resuming from it would repeat many epochs and overwrite the schedule position. Before resuming, check the log for the last completed epoch and say in `from_local_claude.md` how many epochs are lost; if it is more than a few, restart that configuration from scratch with the same recipe rather than from a stale checkpoint. If a future run is started, also add `--save-last` (or equivalent) so the latest state is always kept.
+- Nothing else. Still waiting on the user for the retrain status and the code license.

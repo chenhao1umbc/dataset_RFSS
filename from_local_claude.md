@@ -540,3 +540,8 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **`cnn_lstm_tconv` screen finished** (seed 0, epochs 1 / 2): **lr 3e-4: +1.76 / +2.77**; lr 1e-4 (`cnn_lstm_tconv_lr1e-4`): +0.57 / +2.14 [+1.15, +3.03] (all +1.91 / +3.07, co-channel +1.69 / +3.05). Neither is above +4 dB within 2 epochs; lr 3e-4 is ahead at both epochs and is the top of this grid, so the edge rule applies: I will screen lr 1e-3 for this family (2 epochs, about 60 min) in a free slot after the DPRNN pilot is running, and take seeds for the chosen LR after the pilot.
 - **STFT-BLSTM pilot epoch 2** (`train.py` metric, full validation set): val SI-SINR +0.61 dB (epoch 1: -0.03), 506 s per epoch.
 - **DPRNN pilot started** (`train.py --model dprnn --lr 1e-3 --epochs 10 --seed 0 --keep-epochs 5 10`, MPS, `pilots/dprnn_lr1e-3/`). The two slots are now STFT and DPRNN pilots. Memory 90% free, ollama idle.
+
+### Update 2026-10-04 cron tick (`train.py` metric: val SI-SINR on the full validation set; the 800-crop table follows at epochs 5 and 10)
+- **STFT-BLSTM pilot (lr 3e-4, seed 0):** epochs 1 to 4 = -0.03 / +0.61 / +1.02 / +1.24 dB, about 505 s per epoch; epoch 5 (checkpoint kept) next.
+- **DPRNN pilot (lr 1e-3, seed 0):** epoch 1 = +0.06 dB, **671 s per epoch** (10 epochs about 110 min).
+- No new reviewer commits. Memory 87% free, ollama idle. The `cnn_lstm_tconv` lr 1e-3 screen waits for a free slot.

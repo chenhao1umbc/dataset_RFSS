@@ -19,6 +19,7 @@ Usage:
     uv run python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm   # also trained models
     uv run python check/eval_all.py --dl ... --crop-seed 0            # robustness pass, random window
     uv run python check/eval_all.py --dl conv_tasnet --sources 2      # only the finished source counts
+    uv run python check/eval_all.py --split val ...                   # validation split for recipe decisions
 
 Output: check/eval_all_results.json; a partial --sources run writes check/eval_all_src<list>_results.json and
 --crop-seed adds _crop<seed>, so only a full run produces the main-table file.
@@ -50,7 +51,7 @@ DATASET_PATH = ROOT / "data" / "rfss_dataset.h5"
 OUTPUT = ROOT / "check" / "eval_all_results.json"
 CHECKPOINT_ROOT = ROOT / "checkpoints"
 
-TEST_START, TEST_END = 85000, 100000
+SPLITS = {"val": (70000, 85000), "test": (85000, 100000)}
 SEGMENT_LEN = 7680
 IRM_NFFT = 2048
 SNR_BINS = [(-10, 0), (0, 10), (10, 20), (20, 30), (30, 40.001)]
@@ -179,10 +180,12 @@ def main():
     ap.add_argument("--n", type=int, default=0, help="random test samples per source count (0 = all)")
     ap.add_argument("--dl", nargs="*", default=[], choices=["conv_tasnet", "dprnn", "cnn_lstm"])
     ap.add_argument("--device", default="auto")
+    ap.add_argument("--split", choices=["val", "test"], default="test", help="use val for every recipe decision; test only for the final table")
     ap.add_argument("--sources", type=int, nargs="*", default=[2, 3, 4], choices=[2, 3, 4], help="source counts to evaluate")
     ap.add_argument("--crop-seed", type=int, default=None, help="random window per sample instead of the first SEGMENT_LEN samples")
     args = ap.parse_args()
-    suffix = ""
+    start, end = SPLITS[args.split]
+    suffix = "" if args.split == "test" else "_val"
     if sorted(args.sources) != [2, 3, 4]:
         suffix += "_src" + "".join(str(n) for n in sorted(args.sources))
     if args.crop_seed is not None:
@@ -199,7 +202,7 @@ def main():
     checkpoints = {}
     with h5py.File(DATASET_PATH, "r") as f:
         by_n: dict[int, list[int]] = {2: [], 3: [], 4: []}
-        for idx in range(TEST_START, TEST_END):
+        for idx in range(start, end):
             ns = json.loads(f["metadata"][idx])["num_sources"]
             if ns in by_n:
                 by_n[ns].append(idx)
@@ -235,7 +238,8 @@ def main():
     result = {
         "segment_len": SEGMENT_LEN,
         "crop_seed": args.crop_seed,
-        "test_range": [TEST_START, TEST_END],
+        "split": args.split,
+        "index_range": [start, end],
         "checkpoints": checkpoints,
         "summary": summarise(rows, methods),
         "samples": rows,

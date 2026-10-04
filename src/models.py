@@ -18,7 +18,7 @@ References:
 """
 
 from itertools import permutations
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import torch
 import torch.nn as nn
@@ -182,6 +182,7 @@ class ConvTasNet(nn.Module):
         X: TCN blocks per repeat (default 8).
         R: Number of TCN repeats (default 3).
         n_sources: Number of sources to separate (default 2).
+        stride: Encoder/decoder stride (default L // 2).
     """
 
     def __init__(
@@ -194,13 +195,15 @@ class ConvTasNet(nn.Module):
         X: int = 8,
         R: int = 3,
         n_sources: int = 2,
+        stride: Optional[int] = None,
     ):
         super().__init__()
         self.N = N
         self.L = L
         self.n_sources = n_sources
+        stride = L // 2 if stride is None else stride
 
-        self.encoder = nn.Conv1d(2, N, L, stride=L // 2, bias=False)
+        self.encoder = nn.Conv1d(2, N, L, stride=stride, bias=False)
         self.layer_norm = nn.GroupNorm(1, N)
         self.bottleneck = nn.Conv1d(N, B, 1)
 
@@ -211,7 +214,7 @@ class ConvTasNet(nn.Module):
         ])
 
         self.mask_conv = nn.Conv1d(B, N * n_sources, 1)
-        self.decoder = nn.ConvTranspose1d(N, 2, L, stride=L // 2, bias=False)
+        self.decoder = nn.ConvTranspose1d(N, 2, L, stride=stride, bias=False)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         B_batch, _, T = x.shape

@@ -457,3 +457,9 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **L=256/stride 64, lr 1e-4, epoch 1** (`l256_lr1e-4`): adjacent +1.29 [+0.33, +2.31], all +2.40, co-channel +2.44; same level as lr 3e-4 (+1.24 at epoch 1). Epochs 2 and 3 pending. No reason is claimed.
 - CNN-LSTM lr 3e-4 epoch 1 not yet logged. DPRNN seeds 1 and 2 (lr 1e-3, 3e-4) wait for a free slot (two sweep processes running; memory 80% free, ollama idle).
 - No new reviewer commits.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain; single seed 0)
+- **L=256/stride 64, lr 1e-4 finished** (`l256_lr1e-4`): adjacent +1.29 / +2.50 / +2.84 [+1.79, +3.88], all +2.40 / +3.33 / +3.59, co-channel +2.44 / +3.84 / +4.20; train loss 4.33 / 1.68 / 1.07. Not above +4 dB adjacent in 3 epochs, but still rising and training loss is falling (lr 3e-4 for the same model stayed at +1.5 with loss 2.1). So the LR matters for L=256 as well; the lower LR is the better of the two here. 3 epochs is too short to judge the family; I will extend this one run to the common epoch budget once the budget is set. No reason for the slow start is claimed.
+- **CNN-LSTM lr 3e-4, epoch 1** (`cnn_lstm_lr3e-4`): adjacent -7.81 [-9.30, -6.34], all gain -5.46, co-channel -5.71 (train loss 10.56, worse than the input). The model has not begun to separate; epoch 2 and the lr 1e-4 run follow. Not interpreted yet.
+- Started DPRNN seeds 1 and 2 at lr 3e-4 and lr 1e-3 (2 epochs each; runs in this order: 3e-4 s1, 1e-3 s1, 3e-4 s2, 1e-3 s2; estimate about 70 min plus the data load). Two sweep processes running; memory 86% free, ollama idle.
+- No new reviewer commits.

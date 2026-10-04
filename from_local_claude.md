@@ -485,3 +485,8 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **L=256/stride 64, lr 3e-5, epoch 1** (`l256_lr3e-5`): adjacent -1.02 [-1.83, -0.21], all +0.64, train loss 7.72 (lr 1e-4 at epoch 1: +1.29, loss 4.33). Slower than lr 1e-4, so the optimum at epoch 1 is not further down the grid; epochs 2 and 3 pending before any statement.
 - The `cnn_lstm_tconv` screen starts when the L=256 process ends.
 - No new reviewer commits. Memory 83% free, ollama idle.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain)
+- **DPRNN lr 3e-4, seed 2** (`dprnn_lr3e-4_seed2`): epoch 1 / 2 = +4.90 / +5.45 [+4.35, +6.55] (all +5.02). Escape epoch 1. Three seeds of lr 3e-4 at epoch 2: +5.34, +4.93, +5.45 (worst +4.93). lr 1e-3 seed 2 is running; its seeds 0 and 1 at epoch 2 are +5.56 and +5.09.
+- **L=256/stride 64, lr 3e-5, epoch 2** (`l256_lr3e-5`): adjacent +0.89 [-0.06, +1.86], all +2.14 (epoch 1: -1.02). Behind lr 1e-4 (+2.50 at epoch 2). Epoch 3 pending, then `cnn_lstm_tconv` starts.
+- No new reviewer commits. Memory 84% free, ollama idle.

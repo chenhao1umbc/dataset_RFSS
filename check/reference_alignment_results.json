@@ -31,6 +31,13 @@
    "ica_n": 39,
    "ica_mean_pi_si_sinr_current_db": -38.954461538461544,
    "ica_mean_pi_si_sinr_aligned_db": -24.08958974358975
+  },
+  "build_aligned_references_check": {
+   "n": 1000,
+   "abs_gap_db_median": 0.013432064275624711,
+   "abs_gap_db_p99": 0.09354443682092874,
+   "abs_gap_db_max": 0.19355460316345452,
+   "frac_within_0p5_db": 1.0
   }
  },
  "samples": [

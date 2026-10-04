@@ -32,7 +32,7 @@ from src.baseline_algorithms import (  # noqa: E402
     permutation_invariant_si_sinr,
     resample_to_length,
 )
-from src.utils_mixing import SignalMixer  # noqa: E402
+from src.utils_mixing import SignalMixer, build_aligned_references  # noqa: E402
 
 DATASET_PATH = ROOT / "data" / "rfss_dataset.h5"
 OUTPUT = ROOT / "check" / "reference_alignment_results.json"
@@ -125,8 +125,36 @@ def score_refs(rb: dict) -> dict:
     return out, cur
 
 
+def check_builder(f: h5py.File, n: int) -> dict:
+    """Forward-model proof of build_aligned_references on n random multi-source test samples."""
+    rng = np.random.RandomState(SEED + 1)
+    idxs = []
+    while len(idxs) < n:
+        idx = int(rng.randint(TEST_START, TEST_END))
+        if idx not in idxs and json.loads(f["metadata"][idx])["num_sources"] in (2, 3, 4):
+            idxs.append(idx)
+    gaps = []
+    for idx in idxs:
+        meta = json.loads(f["metadata"][idx])
+        length = int(f["signal_lengths"][idx])
+        refs = build_aligned_references(f["source_signals"][idx, : meta["num_sources"]], meta, length)
+        total = refs.sum(axis=0)
+        mixed = f["mixed_signals"][idx, :length].astype(np.complex128)
+        resid_db = 10 * np.log10(np.mean(np.abs(mixed - total) ** 2) / np.mean(np.abs(total) ** 2))
+        gaps.append(resid_db + meta["snr_db"])
+    gaps = np.array(gaps)
+    return {
+        "n": n,
+        "abs_gap_db_median": float(np.median(np.abs(gaps))),
+        "abs_gap_db_p99": float(np.percentile(np.abs(gaps), 99)),
+        "abs_gap_db_max": float(np.max(np.abs(gaps))),
+        "frac_within_0p5_db": float(np.mean(np.abs(gaps) < 0.5)),
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--builder-n", type=int, default=1000, help="samples for the build_aligned_references proof (0 = skip)")
     ap.add_argument("--n-per-cell", type=int, default=34, help="samples per (mode, num_sources) cell")
     ap.add_argument("--ica-n", type=int, default=13, help="ICA samples per (mode, num_sources) cell (0 = skip)")
     args = ap.parse_args()
@@ -191,6 +219,10 @@ def main():
                     np.mean([r["ica_pi_si_sinr_db"][v] for r in ica_rows])
                 )
         summary[mode] = s
+
+    if args.builder_n:
+        with h5py.File(DATASET_PATH, "r") as f:
+            summary["build_aligned_references_check"] = check_builder(f, args.builder_n)
 
     OUTPUT.write_text(json.dumps({"summary": summary, "samples": results}, indent=1))
     print(json.dumps(summary, indent=1))

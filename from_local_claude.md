@@ -382,3 +382,20 @@ Consequences I can state from this: (1) the original Conv-TasNet L=16 failure at
 Other results since my last update: `stft_h512_lr3e-4` (19.9M parameters): adjacent gain +4.66, +5.74, +6.22 for epochs 1 to 3 (all bin +4.60, +5.21, +5.41), i.e. no plateau at lr 3e-4. `stft_lr3e-4` (hidden 256) epoch 4: +6.79 adjacent.
 Open until the seeds and the rest of the L=16 runs finish: reliability of the escape across seeds, and where L=16 at lr 3e-4 ends up after 3 epochs.
 So the plan I proposed (STFT-BLSTM as the primary deep baseline, Conv-TasNet as a negative result) is no longer justified by the data. I suggest we re-plan after the L=16 runs finish: a fair comparison needs, per family, a small LR sweep (3e-4 and 1e-4 at least) and the same epoch budget. I have not started anything beyond the runs in progress.
+
+### Update 2026-10-04 18:12 UTC: new run results and the screening plan (commit 38cabc7; validation, 800 crops; gain over input; escape epoch = first epoch with adjacent SNR>20 gain above +4 dB)
+**Results since the last note**
+| run | epoch 1 | epoch 2 | epoch 3 | epoch 4 | escape |
+|---|---|---|---|---|---|
+| STFT-BLSTM hidden 256, lr 1e-3, **seed 1** (`stft_seed1`) | +2.39 [+1.35, +3.36] | +2.46 | +2.48 | running | not yet (3 epochs) |
+| STFT-BLSTM hidden 256, lr 1e-3, seed 0 (`stft_10ep`, earlier) | +4.31 | +5.10 | +5.78 | +6.19 | epoch 1 |
+| STFT-BLSTM hidden 512, lr 3e-4 (`stft_h512_lr3e-4`) | +4.66 | +5.74 | +6.22 | +6.80 [+5.59, +7.98] | epoch 1 |
+| Conv-TasNet L=16, lr 3e-4 (`l16_lr3e-4`) | +4.11 [+3.09, +5.10] | +4.91 [+3.81, +6.00] | running | | epoch 1 |
+The seed result is the important one: with hidden 256 at lr 1e-3, seed 0 left the +2.5 dB level in the first epoch and seed 1 has not left it after three. So escape at lr 1e-3 is seed-dependent; the earlier "STFT-BLSTM hidden 256 works at lr 1e-3" was one lucky seed, as you suspected. At lr 3e-4 all four runs that have reported (STFT 256, STFT 512, Conv-TasNet L=16 and, once it finishes, more) escape in epoch 1, but each is still one seed. Seed 2 and the two later epochs are running.
+**Screening plan, per your item 2 (not started; the MPS job is still busy with l16 lr 3e-4/1e-4, about 55 more minutes; the CPU job with seed 1/2 and stft_h512, about 35 more minutes).** `encoder_sweep.py` now also accepts `dprnn` and `cnn_lstm` (the `build_model` architectures, unchanged); parameter counts will be printed in the log. Command per family: `python check/encoder_sweep.py --runs <family>,<lr>,0,<epochs>,_lr<lr>`; time estimates from the earlier `--smoke-test` timing and from the L=256 run (MPS, single job, 34,912 train items per epoch; running several jobs at once slows each by 1.5 to 2x):
+| family | LRs | epochs | est. per epoch | est. total |
+|---|---|---|---|---|
+| Conv-TasNet L=256 / stride 64 | 3e-4, 1e-4 | 3 | about 390 s | about 40 min |
+| DPRNN | 1e-3, 3e-4, 1e-4 | 2 (extend one if no escape yet) | about 700 s | about 70 min |
+| CNN-LSTM | 3e-4, 1e-4 | 2 | about 1,270 s | about 85 min |
+Total about 3.3 hours of MPS time if run one after another, about 2 hours if the three families run as separate processes at the same time (they would contend; I expect 1.5x slowdown each). Each process also loads the 34,912 training crops (about 6 minutes, 6.4 GB; three processes use about 20 GB of the 48 GB). I will start them as soon as the MPS job is free unless you object to the order.

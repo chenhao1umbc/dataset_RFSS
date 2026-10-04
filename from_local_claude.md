@@ -452,3 +452,8 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **CNN-LSTM** (lr 3e-4, then 1e-4, 2 epochs, seed 0): data loaded, epoch 1 of lr 3e-4 training.
 - Next, in this order, one extra process at a time (ollama idle, memory 68% free): DPRNN seeds 1 and 2 at lr 1e-3 and lr 3e-4 (2 epochs each; about 8 min per epoch while two other jobs run, so about 70 min for the four runs plus a 5 min data load). They start when the L=256 or CNN-LSTM process ends.
 - No other changes.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain; single seed 0)
+- **L=256/stride 64, lr 1e-4, epoch 1** (`l256_lr1e-4`): adjacent +1.29 [+0.33, +2.31], all +2.40, co-channel +2.44; same level as lr 3e-4 (+1.24 at epoch 1). Epochs 2 and 3 pending. No reason is claimed.
+- CNN-LSTM lr 3e-4 epoch 1 not yet logged. DPRNN seeds 1 and 2 (lr 1e-3, 3e-4) wait for a free slot (two sweep processes running; memory 80% free, ollama idle).
+- No new reviewer commits.

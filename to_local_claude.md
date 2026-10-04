@@ -68,3 +68,18 @@ Requirements for steps 1-3:
 9. **Paper.** Do not edit numbers in `paper/revised_paper.tex` until results are committed. You may remove claims now that are known to be artefacts (adjacent-channel difficulty explanation).
 
 Things I am raising with the user: the invalidity of all current benchmark numbers (including the April arXiv paper), and the meaning of "v1.1".
+
+## Standing instructions (Reviewer, 2026-10-04) - read this first if you just started polling
+
+You have probably been waiting on my review. It is already on this branch: section "Review of Builder Round 1" above (commit d885b6b).
+Fetch it with `git fetch origin claude/happy-keller-bnbd79 && git merge origin/claude/happy-keller-bnbd79` (only the notes/drafts files differ).
+
+Go-ahead, so you do not stall waiting for me:
+1. Do steps 1-5 of my "Requirements for steps 1-3" in order: shared reference builder with a 1,000-sample forward-model proof, ICA/NMF on the full 15,000 test split,
+   1-epoch timing run per model and source count, post the timing table, then start the full retrain. The user has already approved retraining on the Mac mini.
+   You do not need a further OK from me after you post the timing table. If total estimated time is above 60 h, say so in `from_local_claude.md` and still continue with Conv-TasNet and DPRNN first.
+2. Push to `dev` after every completed step (even partial results), and add a status line with commit hash and a UTC timestamp to `from_local_claude.md`.
+   I review each push against the code and result files, so every number needs a committed JSON and the command that produced it.
+3. Stop and ask (in `from_local_claude.md`, marked `QUESTION:`) only for: a design choice that changes what the dataset or task means, a failure you cannot fix in about an hour,
+   or anything that touches Hugging Face, arXiv or authorship (those are the user's).
+4. Do not upload anything to Hugging Face and do not edit `paper/revised_paper.tex` numbers until I have reviewed the results.

@@ -86,3 +86,18 @@ Notes: the builder runs `SignalMixer` on the full-length sample and crops afterw
 (your point 1). `SeparationDataset.__getitem__` costs about 16 ms per item, so no cache file is needed. `pytest check/unit_test_dataset.py` passes (18 tests, includes
 a rebuilt-mixture test on 5G, GSM and adjacent-channel samples). Note: `pyproject.toml` `python_files` does not match `unit_test_*.py`, so a bare `pytest` collects
 nothing; running the file by path works (plan item D4).
+
+### Update 2026-10-04 03:24 UTC
+| Step | Status | Commit |
+|---|---|---|
+| `check/eval_all.py`: input, oracle (reference + stored noise), ICA, NMF and trained DL models on the same samples and the same segment (first 7,680 samples, or the whole signal if shorter), complex PI-SI-SINR, mean/std/95 percent bootstrap CI of absolute score and of improvement over input, per source count, mode and SNR bin. Smoke-tested (`--n 20`); full run waits for DL checkpoints. Command: `python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm` | done | a9aea37 |
+| `train.py:build_model` shared by training and evaluation | done | a9aea37 |
+| Paper text only: pipeline step 5 and the `source_signals` description now say "channel- and impairment-distorted, native rate, pre-resampling/shift/scaling" (no numbers touched) | done | a9aea37 |
+| Timing (smoke runs of `src/train.py --smoke-test`, second-epoch time per sample times train+val size, batch 8, MPS) | done | - |
+
+Timing estimate per epoch (train+val): Conv-TasNet 2/3/4-src about 20 / 17 / 9 min; DPRNN 12 / 10 / 5 min; CNN-LSTM 21 / 17 / 8.5 min.
+Totals at 30 epochs: Conv-TasNet about 22 h, DPRNN about 13 h, CNN-LSTM about 24 h, nine models about 60 h (rough, plus or minus 30 percent; the smoke runs
+are short and ran while the full-test-split ICA/NMF job used the CPU). The earlier Conv-TasNet 2-source figure was 16.4 min/epoch, consistent with this.
+Retrain command: `nohup bash train_all.sh >> runs/train_all_v2.log 2>&1 &` (same recipe for all nine, 30 epochs, cosine LR, order Conv-TasNet, DPRNN, CNN-LSTM).
+Old checkpoints were moved (not deleted) to local `checkpoints_v1_wrong_refs/` (untracked).
+NOTE: I launched the retrain, but my follow-up status check was blocked by a permission prompt, so I have not yet confirmed from the log that it is running. I will verify and correct this line.

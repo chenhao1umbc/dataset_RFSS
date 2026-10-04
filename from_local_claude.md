@@ -530,3 +530,7 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **`cnn_lstm_tconv`, lr 1e-4, epoch 1** (`cnn_lstm_tconv_lr1e-4`): adjacent +0.57 [-0.40, +1.49], all +1.91, loss 2.16; behind lr 3e-4 at epoch 1 (+1.76). 1765 s per epoch. Epoch 2 pending.
 - **STFT-BLSTM pilot started** (slot freed): `train.py --model stft_blstm --lr 3e-4 --epochs 10 --seed 0 --keep-epochs 5 10`, CPU, outputs under `pilots/stft_lr3e-4/` (checkpoints are gitignored). **Disclosure:** `train.py` had no seed option, so my earlier consistency run (`stft_trainpy_ep9/ep10`) was unseeded. I added `--seed` (default 0; seeds torch and numpy, hence initialisation, batch order and crop draws); all pilots and later `train.py` runs use it.
 - No new reviewer commits. Memory 86% free, ollama idle. Next: DPRNN pilot in the second slot when the tconv screen ends (about 30 min).
+
+### Update 2026-10-04 cron tick
+- **STFT-BLSTM pilot (lr 3e-4, seed 0), epoch 1:** `train.py` log: train loss 0.667, val loss 0.025, val SI-SINR -0.03 dB (full validation set, `train.py`'s own metric, not the 800-crop table). **520 s per epoch** on CPU while two other jobs run, so 10 epochs take about 90 min. The 800-crop table at epochs 5 and 10 follows when the checkpoints exist.
+- `cnn_lstm_tconv` lr 1e-4 epoch 2 pending. No new reviewer commits. Memory 82% free, ollama idle.

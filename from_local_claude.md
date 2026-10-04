@@ -433,3 +433,9 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - DPRNN at epoch 2 so far: lr 3e-4 +5.34, lr 1e-3 +5.56 (CIs overlap fully; no LR preference yet). lr 1e-4 runs next in the same process.
 - Started Conv-TasNet L=256/stride 64 (lr 3e-4, then 1e-4, 3 epochs each; seed 0) as the one extra process: memory was 61% free (about 31 GB), ollama idle. CNN-LSTM waits until a job ends.
 - L=16 lr 1e-4 epoch 3 not yet logged. No new reviewer commits.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain; single seed 0)
+- **Conv-TasNet L=16 lr 1e-4 finished** (`l16_lr1e-4`): epochs 1 / 2 / 3 = +3.87 / +4.47 / +4.92 [+3.82, +5.99] (all +4.65, co-channel +5.57). Escape epoch 2. Same family at lr 3e-4: +4.11 / +4.91 / +5.22, escape epoch 1. At epoch 3 the two LRs are within CI of each other; lr 3e-4 is ahead by 0.3 dB and escapes one epoch earlier. lr 1e-3 for L=16 stays at +2.4 for seed 0 (earlier result).
+- **DPRNN lr 1e-4, epoch 1:** +3.85 [+2.88, +4.82] (all +4.04, co-channel +4.72), not yet above +4 dB; epoch 2 pending.
+- L=256 screen has loaded its data (344 s) and is training its lr 3e-4 epoch 1. CNN-LSTM starts when DPRNN finishes (two sweep processes at most, memory 72% free, ollama idle).
+- No new reviewer commits.

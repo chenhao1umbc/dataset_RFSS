@@ -3,14 +3,18 @@ Training diagnostics for the plateau seen in the Conv-TasNet 2-source run.
 
   overfit : train a fresh Conv-TasNet on a handful of fixed training crops. A working data path and
             model drive the training SI-SINR far above 0 dB; a value near the plateau means a defect.
+  tensors : sum of the target sources against the mixture on the exact tensors that reach the loss
+            (after cropping, padding, RMS normalisation and the real/imag stacking); the residual
+            relative to the source sum should sit at minus the sample's SNR.
   crops   : fraction of random training crops in which a source's aligned reference carries under
             1 percent of its full-signal power (a nearly empty target makes the loss meaningless).
 
 Usage:
     uv run python check/diagnose_training.py overfit --n 32 --steps 400
     uv run python check/diagnose_training.py crops --n 500
+    uv run python check/diagnose_training.py tensors --n 64
 
-Output: check/diagnose_training_results.json (keys overfit, crops)
+Output: check/diagnose_training_results.json (keys overfit_n<n>_<device>, crops, tensors)
 """
 
 import argparse
@@ -65,8 +69,29 @@ def overfit(args):
                 train_sisinr = -float(pit_si_sinr_loss(model(mixed), sources))
             history.append({"step": step, "train_si_sinr_db": round(train_sisinr, 3)})
             print(f"step {step}: train SI-SINR {train_sisinr:.2f} dB", flush=True)
-    update_results("overfit", {"model": args.model, "n_sources": args.n_sources, "n_samples": args.n,
+    update_results(f"overfit_n{args.n}_{args.device}", {"model": args.model, "n_sources": args.n_sources, "n_samples": args.n,
                                "steps": args.steps, "lr": 1e-3, "history": history})
+
+
+def tensors(args):
+    ds = SeparationDataset(DATASET_PATH, split="train", n_sources=args.n_sources, train_length=TRAIN_LENGTH)
+    np.random.seed(SEED)
+    rel_db, gap_db = [], []
+    with h5py.File(DATASET_PATH, "r") as f:
+        for i in range(args.n):
+            item = ds[i]
+            snr = json.loads(f["metadata"][ds.indices[i]])["snr_db"]
+            total = item["sources"].sum(dim=0)
+            ratio = 10 * np.log10(float((item["mixed"] - total).pow(2).mean()) / float(total.pow(2).mean()))
+            rel_db.append(ratio)
+            gap_db.append(ratio + snr)
+    result = {
+        "n_samples": int(args.n),
+        "residual_to_source_sum_db": {"median": float(np.median(rel_db)), "max": float(np.max(rel_db))},
+        "gap_to_minus_snr_db": {"median_abs": float(np.median(np.abs(gap_db))), "max_abs": float(np.max(np.abs(gap_db)))},
+    }
+    print(json.dumps(result, indent=1))
+    update_results("tensors", result)
 
 
 def crops(args):
@@ -99,7 +124,7 @@ def crops(args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("task", choices=["overfit", "crops"])
+    ap.add_argument("task", choices=["overfit", "crops", "tensors"])
     ap.add_argument("--n", type=int, default=32)
     ap.add_argument("--steps", type=int, default=400)
     ap.add_argument("--batch-size", type=int, default=8)
@@ -107,7 +132,7 @@ def main():
     ap.add_argument("--model", default="conv_tasnet", choices=["conv_tasnet", "dprnn", "cnn_lstm"])
     ap.add_argument("--device", default="cpu", help="cpu by default so a running training job is not slowed")
     args = ap.parse_args()
-    overfit(args) if args.task == "overfit" else crops(args)
+    {"overfit": overfit, "crops": crops, "tensors": tensors}[args.task](args)
 
 
 if __name__ == "__main__":

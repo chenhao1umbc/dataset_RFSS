@@ -148,3 +148,12 @@ Reqs 2, 4, 5, 7: acknowledged. Req 2 (resilient restart wrapper, STATUS files) a
   ```
   Caveat: `load_checkpoint` restores the optimizer and scheduler, so the cosine schedule continues; the random train crops and shuffling will differ from an uninterrupted run.
 - No other open items on my side without the training status.
+
+### Update 2026-10-04 12:46 UTC (retrain status confirmed; supersedes the QUESTION (user) items above)
+- The user is not part of this loop and does not take tasks; the earlier "QUESTION (user)" items are withdrawn. Please do not route requests to them through this file. The user did grant a read-only check of the retrain log, which I did.
+- **Retrain is running** (`runs/train_all_v2.log`): Conv-TasNet 2-source was at epoch 28/30 at about 1,207 s/epoch (matches the 1,200 s estimate). Kept checkpoints: epoch 7 (val loss 1.5283), 20 (1.5363), 24 (1.5369).
+  Validation SI-SINR sits near -1.5 dB (loss about 1.55) from roughly epoch 7 on and does not improve with more epochs. The scale is not comparable with the old logs (old targets were wrong).
+  For context, my 20-sample smoke test of `eval_all.py` gave input about -3.4 dB, oracle about +7 dB, NMF about -5.4 dB on 2-source first-7,680-sample segments, so this model looks close to the input level. I will not interpret it until `eval_all.py` has run on the full test split.
+- Remaining time: 8 configurations, roughly 50 h more (Conv-TasNet 3/4-source, DPRNN x3, CNN-LSTM x3).
+- `check/eval_all.py --sources 2 --dl conv_tasnet` (310160c) lets me run the early look on Conv-TasNet 2-source as soon as its epoch 30 finishes (about 40 minutes), without waiting for 3 and 4 sources.
+- Reviewer note 1 (plateau): if the plateau holds for the other configs, tell me whether you want a diagnosis (for example checking that the 7,680-sample training crops contain enough signal for the zero-padded short samples, or the effect of the learning-rate schedule) before the remaining 50 h run on. I will not stop the run unless you ask.

@@ -233,3 +233,11 @@ A time-frequency mask on a 2048-point STFT reaches +7 to +12 dB over the input a
   Process A runs (a) and (b) on MPS, process B runs (c) on CPU (MPS has no istft backward), in parallel.
   After each epoch it reports val SI-SINR and the gain over the input for: all, adjacent with SNR above 20 dB, co-channel with SNR above 20 dB. Threshold as you set it: gain of at least +6 dB in the adjacent, SNR above 20 dB bin after 2 epochs.
 - Expected time: about 30 min per Conv-TasNet variant plus data loading; the STFT variant on CPU may take 1 to 2 hours. I will post each variant as it finishes. The one-paragraph collapse probe (estimate correlation, mask statistics) will follow after the sweep so it does not compete for compute.
+
+### Update 2026-10-04 14:23 UTC (reply to review 4baf13b; commit c7fdce1)
+Your points 1 and 3 were cheap to build in before any result existed, so I restarted the sweep (it had only been loading data for about 8 minutes, no result lost):
+- the binned gains now carry a 95 percent bootstrap interval and n, and the JSON stores the per-sample gains;
+- gradient-norm clipping at 1.0 is on for all variants, as in `train.py`, so a spike should not be an optimiser artefact;
+- LR stays constant at 1e-3 and crops are fixed per item (a like-for-like control, as you said).
+Point 2 (both processes write `encoder_sweep_results.json`): each process re-reads the file before writing; I will check that all three variants are present before quoting.
+Both processes were relaunched at 2026-10-04 14:23 UTC; data loading takes about 6 minutes, then epoch 1 of the Conv-TasNet variants takes about 12 to 15 minutes; the STFT variant on CPU is slower.

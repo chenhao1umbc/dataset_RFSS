@@ -68,10 +68,10 @@ comms = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/dataset_RFSS"
-Repository = "https://github.com/yourusername/dataset_RFSS"
+Homepage = "https://github.com/chenhao1umbc/dataset_RFSS"
+Repository = "https://github.com/chenhao1umbc/dataset_RFSS"
 Documentation = "https://dataset-rfss.readthedocs.io"
-"Bug Tracker" = "https://github.com/yourusername/dataset_RFSS/issues"
+"Bug Tracker" = "https://github.com/chenhao1umbc/dataset_RFSS/issues"
 
 [build-system]
 requires = ["hatchling"]

@@ -4,7 +4,8 @@ Dataset quality check and coverage analysis.
 Section 1: Signal quality — sample 100 each of 2/3/4-source mixtures from
   rfss_dataset.h5 and 100 each of 4 standards from rfss_single.h5.
   Checks: NaN/Inf, signal length, power, PAPR, source count, standard labels,
-  SNR range, power consistency (same-rate co-channel, SNR >= 15 dB).
+  SNR range, mixture reconstruction (build_aligned_references summed vs stored
+  mixture; residual must equal AWGN at snr_db within 0.5 dB).
 
 Section 2: Coverage analysis — scan every 5th record of rfss_dataset.h5
   (20k samples) and verify num_sources / standards / mixing_modes / MIMO
@@ -20,7 +21,11 @@ from collections import Counter
 from pathlib import Path
 
 import h5py
+import numpy as np
 import torch
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from src.utils_mixing import build_aligned_references  # noqa: E402
 
 MULTI_H5 = Path('data/rfss_dataset.h5')
 SINGLE_H5 = Path('data/rfss_single.h5')
@@ -37,6 +42,7 @@ INTENDED = {
     'mimo': {'1x1': 0.50, '2x2': 0.30, '4x4': 0.20},
 }
 TOLERANCE = 0.05  # 5% absolute deviation allowed
+RECON_TOLERANCE_DB = 0.5  # |residual-to-signal ratio + snr_db| allowed in the mixture reconstruction test
 
 
 # ---------------------------------------------------------------------------
@@ -123,28 +129,15 @@ def check_sample(h5, idx: int) -> dict:
     snr = meta.get('snr_db', None)
     c['snr_in_range'] = snr is not None and -10.0 <= snr <= 40.0
 
-    mixing_mode = meta.get('mixing_params', {}).get('mixing_mode', '')
-    source_rates = [s.get('signal_params', {}).get('sample_rate', 0)
-                    for s in meta.get('sources', [])]
-    same_rate = len(set(source_rates)) == 1
-    if mixing_mode == 'co-channel' and snr is not None and snr >= 15.0 and same_rate:
-        power_ratios = meta.get('mixing_params', {}).get('power_ratios_db', [])
-        reconstructed = torch.zeros(sig_len, dtype=torch.complex64)
-        for i, pr_db_val in enumerate(power_ratios):
-            if i < 4:
-                src = _to_tensor(src_block[i, :sig_len])
-                if src.any():
-                    reconstructed = reconstructed + (10 ** (pr_db_val / 20.0)) * src
-        mixed_pwr = mixed.abs().pow(2).mean().item()
-        recon_pwr = reconstructed.abs().pow(2).mean().item()
-        if recon_pwr > 0 and mixed_pwr > 0:
-            ratio_db = 10 * math.log10(mixed_pwr / recon_pwr)
-            c['power_consistency'] = abs(ratio_db) <= 5.0
-            result['power_ratio_db'] = round(ratio_db, 2)
-        else:
-            c['power_consistency'] = False
-    else:
-        c['power_consistency'] = None
+    # Forward-model test: aligned references must sum to the stored mixture up to AWGN at snr_db
+    num_src = meta.get('num_sources', 0)
+    refs = build_aligned_references(src_block[:num_src], meta, sig_len)
+    total = refs.sum(axis=0)
+    resid = mixed.numpy().astype(np.complex128) - total
+    resid_db = 10 * math.log10(np.mean(np.abs(resid) ** 2) / np.mean(np.abs(total) ** 2))
+    gap = resid_db + snr
+    c['mixture_reconstruction'] = abs(gap) <= RECON_TOLERANCE_DB
+    result['recon_residual_gap_db'] = round(gap, 3)
 
     return result
 
@@ -263,11 +256,8 @@ def summarize(group_results: list, group_name: str) -> bool:
     if snrs:
         print(f"  SNR (dB):          min={min(snrs):.1f}  max={max(snrs):.1f}"
               f"  mean={sum(snrs)/len(snrs):.1f}")
-    consistency = [r.get('power_ratio_db') for r in group_results
-                   if r.get('power_ratio_db') is not None]
-    if consistency:
-        print(f"  Power consistency: {len(consistency)} checked"
-              f"  mean ratio={sum(consistency)/len(consistency):.2f} dB")
+    gaps = [abs(r['recon_residual_gap_db']) for r in group_results]
+    print(f"  Mixture reconstruction |gap| (dB): median={sorted(gaps)[len(gaps)//2]:.3f}  max={max(gaps):.3f}")
 
     print(f"\n  Overall: {'ALL CHECKS PASSED' if all_pass else 'SOME CHECKS FAILED'}")
     return all_pass

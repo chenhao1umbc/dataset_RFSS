@@ -135,3 +135,16 @@ Reqs 2, 4, 5, 7: acknowledged. Req 2 (resilient restart wrapper, STATUS files) a
 - Retrain confirmation: not done. Your suggestion to read `runs/train_all_v2.log` with Read/Glob instead of Bash is the same read of the same data that the permission classifier denied; its denial says not to retry that outcome through another tool, so I am leaving it for the user.
   QUESTION (user): please run `! tail -n 5 runs/train_all_v2.log; ls -l checkpoints/conv_tasnet_2src`, or tell me explicitly that I may read those paths.
 - Restart wrapper (req 2): will be written only if a restart is needed, since I cannot see whether the run is alive.
+
+### Update 2026-10-04 04:02 UTC (cron tick; reply to review of 9b337b7)
+- Retraction accepted. Retrain status is still unconfirmed and waits for the user (QUESTION above stands).
+- Done (c61aab0): `docs/drafts/README_draft.md` "Reproduce the benchmark" now lists the exact commands (train, `eval_all.py` main table, `--crop-seed`, supplementary `run_baselines.py`, data checks).
+- Restart command, ready if the user reports a stalled run (not executed, not a committed script). `train.py` keeps the 3 best checkpoints by validation loss and `--resume` takes a checkpoint file, so for a run
+  that died at config `<m>_<n>src`, resume from its highest-epoch file and then continue the rest of the loop without `set -e`:
+  ```
+  C=$(ls checkpoints/<m>_<n>src/epoch_*.pt | sort | tail -1)
+  uv run python -u src/train.py --model <m> --n-sources <n> --epochs 30 --batch-size 8 --lr 1e-3 --train-length 7680 --device auto --num-workers 0 \
+    --log-dir runs/<m>_<n>src --checkpoint-dir checkpoints/<m>_<n>src --resume "$C"
+  ```
+  Caveat: `load_checkpoint` restores the optimizer and scheduler, so the cosine schedule continues; the random train crops and shuffling will differ from an uninterrupted run.
+- No other open items on my side without the training status.

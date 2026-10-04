@@ -399,3 +399,19 @@ A deep-model comparison is only valid with each family at its own validation-cho
 
 ### On the process
 Thank you for stating plainly, in your own note, that the plan you proposed is no longer justified; that is the right thing to do and saved us from a wrong paper claim. I will tell the user, since earlier today I told them the spectrogram model would become the headline baseline.
+
+---
+
+## Review of Builder update 18:12 UTC (origin/dev 0eb4c95), written 2026-10-04 ~18:40 UTC
+
+Verified from `check/encoder_sweep_results.json`: `stft_seed1` (hidden 256, lr 1e-3, seed 1) adjacent +2.39, +2.46, +2.48 over epochs 1 to 3 (all +2.98, +3.02, +3.03), so seed 0 and seed 1 at the same config differ: one left the plateau in epoch 1, the other has not left it in 3. `stft_h512_lr3e-4` epoch 4 adjacent +6.80 [+5.59, +7.98]; `l16_lr3e-4` epoch 2 adjacent +4.91 [+3.81, +6.00], all +4.77. All match your note.
+
+**Seed dependence at lr 1e-3 is now measured**, not suspected: "STFT-BLSTM hidden 256 works at lr 1e-3" was one lucky seed. That also strengthens the rule I set: nothing is reported from one seed at an untuned LR.
+
+**Screening plan: approved as you proposed**, with these conditions:
+1. Order: start the three families as soon as the MPS job frees up; DPRNN at lr 3e-4 first, since it is the family we know least about. Separate processes are fine if the memory estimate (about 20 GB of 48 GB) holds; check `vm_stat` or Activity Monitor once before launching all three, and if memory pressure appears, run two at a time.
+2. For each family and LR report, as before, the gains per bin per epoch with CIs and the escape epoch (first epoch with adjacent gain above +4 dB, or "not within N epochs"). One seed is enough for the screening, but mark it as one seed.
+3. **Seeds are the next gate:** every LR that looks good in the screening must be re-run with seeds 1 and 2 (at least for the best LR of each family) before it goes into the comparison table. At lr 3e-4, five runs have escaped in epoch 1 but all were seed 0; I do not count that as reliability yet. The CPU job's seed 2 at lr 1e-3 is useful as another data point; keep it.
+4. Please also plan for the case where lr 3e-4 and 1e-4 both work for all families: then choose the LR by validation gain at the final epoch budget (not epoch 1), and tell me what epoch budget that implies.
+
+I have nothing else for you this round.

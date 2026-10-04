@@ -454,3 +454,25 @@ Verified: `cnn_lstm_lr3e-4` epoch 2 adjacent -7.55, all -5.20, loss 10.00 (JSON)
 4. The ceiling number is on a different crop set than the 800 validation crops; if you want to quote it, recompute it on the same 800 crops first (it is cheap).
 
 This does not need the user: it changes the model description, not a claim about the data or the people. I will mention it in my next status message.
+
+---
+
+## Review of Builder update 20:55 UTC (origin/dev 6cea72b), written 2026-10-04 ~21:00 UTC. Decisions on the epoch budget and the next phase.
+
+Verified from `check/encoder_sweep_results.json`: DPRNN adjacent gain by epoch 2, lr 3e-4 seeds 0/1/2 = +5.34 / +4.93 / +5.45 and lr 1e-3 = +5.56 / +5.09 / +5.47 (so worst seeds +4.93 and +5.09, the rule picks lr 1e-3 and it is a tie in practice); `l256_lr3e-5` +(-1.02) / +0.89 / +1.50, behind lr 1e-4 at every epoch. Matches your notes. Your reading that L=256 is slow at every LR and that lr 1e-4 is now an interior optimum is right.
+
+### Decision 1: the common epoch budget and the pilot runs
+The screening (2 to 3 epochs, constant LR, fixed crops) is only for choosing an LR. For the comparison table I want every family trained under the actual recipe, once, at its chosen LR. Concretely, after the seed gate and the `cnn_lstm_tconv` screen finish:
+- **Pilot run per family, 2-source, `train.py` recipe (random crops redrawn each epoch, cosine LR, clipping 1.0), 10 epochs, seed 0, validation split, scored on the same 800 crops with `encoder_sweep.py --ckpt`:** STFT-BLSTM (lr 3e-4), DPRNN (lr 1e-3), Conv-TasNet L=16 (lr 3e-4, pending its seeds), Conv-TasNet L=256/stride 64 (lr 1e-4; this is your extension proposal, approved in this form), CNN-LSTM-tconv (best LR of its screen). 10 epochs is the budget that the STFT consistency run already used, so one budget covers all.
+- Per run report gain per bin with CIs at epochs 5 and 10 (and at the best-val checkpoint if different), train and validation loss, seconds per epoch, parameters. If a family is still rising steeply at epoch 10, say so; do not extend it silently.
+- Keep the two-process limit and the memory rule. Order by cost: STFT-BLSTM first (cheap), then DPRNN, then the Conv-TasNets, then CNN-LSTM-tconv.
+- Do not start 3- and 4-source runs and do not touch the test split. Those come after I have seen this table and agreed the seeds.
+
+### Decision 2: the seed gate for the other families
+Seeds 1 and 2 at the chosen LR are needed for every family that enters the table, not only DPRNN and L=16. For the pilot's chosen LRs: STFT-BLSTM at lr 3e-4 (seeds 1 and 2, 4 epochs, sweep protocol; seed 0 reached +6.79 at epoch 4), L=256 at lr 1e-4 and CNN-LSTM-tconv after their pilots. They can run in the cheap slots while the pilots proceed.
+
+### Your question on L=256
+Approved as above (pilot at lr 1e-4, 10 epochs). Do not write a reason for its slowness; if the pilot reaches a level comparable to the others, the finding is "slower to train", nothing more.
+
+### For the user
+I will tell the user that the next phase takes several hours of Mac time and that nothing else is needed from them except the licence choice.

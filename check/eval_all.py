@@ -16,6 +16,7 @@ Usage:
     uv run python check/eval_all.py                       # input, oracle, ICA, NMF
     uv run python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm   # also trained models
     uv run python check/eval_all.py --dl ... --crop-seed 0            # robustness pass, random window
+    uv run python check/eval_all.py --dl conv_tasnet --sources 2      # only the finished source counts
 
 Output: check/eval_all_results.json (check/eval_all_crop<seed>_results.json with --crop-seed)
 """
@@ -161,6 +162,7 @@ def main():
     ap.add_argument("--n", type=int, default=0, help="random test samples per source count (0 = all)")
     ap.add_argument("--dl", nargs="*", default=[], choices=["conv_tasnet", "dprnn", "cnn_lstm"])
     ap.add_argument("--device", default="auto")
+    ap.add_argument("--sources", type=int, nargs="*", default=[2, 3, 4], choices=[2, 3, 4], help="source counts to evaluate")
     ap.add_argument("--crop-seed", type=int, default=None, help="random window per sample instead of the first SEGMENT_LEN samples")
     args = ap.parse_args()
     output = OUTPUT if args.crop_seed is None else OUTPUT.with_name(f"eval_all_crop{args.crop_seed}_results.json")
@@ -181,6 +183,8 @@ def main():
                 by_n[ns].append(idx)
         rng = np.random.RandomState(42)
         for ns, idxs in by_n.items():
+            if ns not in args.sources:
+                continue
             if args.n:
                 idxs = sorted(rng.choice(idxs, size=min(args.n, len(idxs)), replace=False).tolist())
             print(f"{ns}-source: {len(idxs)} samples", flush=True)

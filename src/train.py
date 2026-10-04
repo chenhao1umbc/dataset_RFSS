@@ -38,6 +38,15 @@ def _checkpoint_loss(p: Path) -> float:
         return float('inf')
 
 
+def build_model(name: str, n_sources: int) -> nn.Module:
+    """Construct a separator with the hyperparameters used in the paper."""
+    if name == 'conv_tasnet':
+        return ConvTasNet(N=256, L=16, B=128, H=256, P=3, X=8, R=3, n_sources=n_sources)
+    if name == 'cnn_lstm':
+        return CNNLSTMSeparator(n_sources=n_sources)
+    return DualPathRNN(N=64, L=16, B=64, H=64, P=50, num_layers=6, n_sources=n_sources)
+
+
 class SeparationDataset(Dataset):
     """Dataset for source separation training/evaluation.
 
@@ -320,15 +329,7 @@ def main():
     if args.smoke_test:
         args.epochs = 2
 
-    # Build model
-    if args.model == 'conv_tasnet':
-        model = ConvTasNet(N=256, L=16, B=128, H=256, P=3, X=8, R=3, n_sources=args.n_sources)
-    elif args.model == 'cnn_lstm':
-        model = CNNLSTMSeparator(n_sources=args.n_sources)
-    else:
-        model = DualPathRNN(N=64, L=16, B=64, H=64, P=50, num_layers=6, n_sources=args.n_sources)
-
-    model = model.to(device)
+    model = build_model(args.model, args.n_sources).to(device)
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 
     # Build datasets

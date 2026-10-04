@@ -253,8 +253,11 @@ pipeline. Each sample is produced by: (1) selecting 2--4 source standards
 at random; (2) generating per-source baseband waveforms from 3GPP parameters;
 (3) passing each waveform through an independent TDL channel and hardware
 impairment chain; (4) mixing the impaired signals either co-channel or
-adjacent-channel; and (5) storing the pre-impairment source waveforms as
-separation targets alongside the mixture.
+adjacent-channel; and (5) storing each channel- and impairment-distorted source
+waveform, at its native rate and before resampling, frequency shift and power
+scaling, alongside the mixture. The exact per-source mixture terms used as
+separation targets are rebuilt from these stored waveforms and the metadata
+(Section~\ref{sec:access}).
 
 \begin{figure*}[t]
   \centering
@@ -526,8 +529,12 @@ four datasets:
   \item \texttt{mixed\_signals}, shape $(100000,\, 122880)$, complex64:
     the observed mixture waveform for each sample.
   \item \texttt{source\_signals}, shape $(100000,\, 4,\, 122880)$,
-    complex64: per-source ground-truth waveforms, zero-padded to a
-    maximum of four sources.
+    complex64: per-source waveforms after the channel and hardware
+    impairments, at their native sample rate, zero-padded in time to 122,880
+    samples and to a maximum of four sources. They are not the final mixture
+    terms: resampling to the mixture rate, the adjacent-channel frequency shift
+    and the power scaling are applied by the released
+    \texttt{build\_aligned\_references} function.
   \item \texttt{signal\_lengths}, shape $(100000,)$, int32: the length of
     the resampled mixture signal for each sample, supporting variable-length
     signals within the fixed array.

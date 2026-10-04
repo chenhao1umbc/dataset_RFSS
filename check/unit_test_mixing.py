@@ -391,3 +391,49 @@ def run_all_tests():
 
 if __name__ == '__main__':
     run_all_tests()
+
+
+def _synthetic_sample(mode):
+    """Three random sources with non-nominal native lengths, stored zero-padded as in the HDF5."""
+    import numpy as np
+    rng = np.random.RandomState(0)
+    rates = [1.92e6, 7.68e6, 3.84e6]
+    lengths = [1500, 7000, 3500]  # shorter than the nominal 1 ms count, like GSM and 5G NR
+    sources = [(rng.randn(n) + 1j * rng.randn(n)).astype(np.complex64) for n in lengths]
+    block = np.zeros((3, 8000), dtype=np.complex64)
+    for i, s in enumerate(sources):
+        block[i, : len(s)] = s
+    meta = {
+        "sources": [{"standard": f"S{i}", "signal_params": {"sample_rate": r}} for i, r in enumerate(rates)],
+        "mixing_params": {
+            "mixing_mode": mode,
+            "power_ratios_db": [1.5, -3.0, 0.0],
+            "frequency_offsets_hz": [-2.0e6, 0.0, 2.0e6] if mode == "adjacent-channel" else [0.0, 0.0, 0.0],
+        },
+    }
+    return sources, block, meta, rates
+
+
+def test_build_aligned_references_matches_mixer():
+    """build_aligned_references reproduces the SignalMixer terms from zero-padded storage (no data file needed)."""
+    import numpy as np
+    from src.utils_mixing import build_aligned_references
+
+    for mode in ("co-channel", "adjacent-channel"):
+        sources, block, meta, rates = _synthetic_sample(mode)
+        mix_rate = max(rates)
+        mixer = SignalMixer(sample_rate=mix_rate)
+        for i, (s, r) in enumerate(zip(sources, rates)):
+            mixer.add_source(
+                torch.from_numpy(s),
+                label=f"S{i}",
+                power_db=meta["mixing_params"]["power_ratios_db"][i],
+                freq_offset_hz=meta["mixing_params"]["frequency_offsets_hz"][i],
+                source_sample_rate=r if r != mix_rate else None,
+            )
+        result = mixer.mix(mode=mode)
+        expected = np.stack([a.numpy() for a in result["source_signals_aligned"]])
+        refs = build_aligned_references(block, meta, expected.shape[1])
+        assert refs.shape == expected.shape
+        assert np.allclose(refs, expected, atol=1e-4)
+        assert np.allclose(refs.sum(axis=0), result["mixed_signal"].numpy(), atol=1e-3)

@@ -5,7 +5,8 @@ every test-split sample for each source count (2, 3, 4 sources), or
 --n-per-group indices sampled uniformly at random (seed 42) per source count.
 References come from build_aligned_references (exact terms of the mixture).
 
-Results are saved to check/baseline_results.json.
+Results are saved to check/baseline_results.json. This is a supplementary full-signal run: the
+main comparison table comes from check/eval_all.py (first 7,680 samples, all methods).
 """
 
 import argparse

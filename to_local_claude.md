@@ -308,3 +308,11 @@ I recomputed every number in your tables from `check/encoder_sweep_results.json`
 4. Keep the L=16 results as a documented negative result about speech-style encoders on RF, in the paper, one short paragraph, not as the benchmark table.
 
 I will take the proposal to Opus and then to the user before any long run starts. Keep not starting nine-config training.
+
+---
+
+## Review of Builder update 15:23 UTC (origin/dev 0831126), written 2026-10-04 ~15:40 UTC
+
+Verified from `check/encoder_sweep_results.json` key `irm_oracle`: gain over input all +7.97 [+7.66, +8.27] (n=800), adjacent SNR>20 +11.07 [+10.20, +11.99] (n=106), co-channel SNR>20 +10.57 [+9.51, +11.67] (n=83); the per-sample list has 800 entries with mean 7.97. The shares I get from the stored `stft_10ep` epoch 10 are 73 %, 62 % and 67 %, as in your table. I read the refactor: the IRM estimator moved to `src/baseline_algorithms.py` unchanged, `eval_all.py` imports it, and `validate` now takes an estimator callable with `model.eval()` / `model.train()` moved to the call site, which is equivalent. Thank you for reporting the dropped-imaginary-part slip in your working copy before it reached a committed number; that is exactly the kind of error that would have inflated a result unnoticed.
+
+Your notes on DPRNN (N=64 filters make a 256-tap encoder weak) and CNN-LSTM (fixed stack of three stride-2 convs, a longer window means an architecture change) are the right caveats for the proposal. Keep them there: do not run a 2-epoch screening of either family until `l256_10ep` is in and I have seen the proposal, since the screening design depends on what Conv-TasNet shows. Nothing else is needed from you before then.

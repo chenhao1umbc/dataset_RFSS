@@ -9,7 +9,7 @@ Variants (same data crops, same seed, same batch size and data order, 2 epochs o
 
 After each epoch the validation crops are scored: mean PI SI-SINR and the gain over the input mixture
 (mean over sources of SI-SINR(mixture, source)), overall and in the bins adjacent-channel / co-channel
-with SNR above 20 dB.
+with SNR above 20 dB, with 95 percent bootstrap intervals of the gain. Gradient norm is clipped at 1.0 as in train.py.
 
 Usage:
     uv run python check/encoder_sweep.py --variants l16 l256 stft
@@ -102,11 +102,16 @@ def validate(model, mixed, sources, info, device) -> dict:
         score.append(s)
         gain.append(s - inp)
     model.train()
+    rng = np.random.RandomState(SEED)
     out = {}
     for name, keep in BINS.items():
         idx = [i for i, (mode, snr) in enumerate(info) if keep(mode, snr)]
+        g = np.array([gain[i] for i in idx])
+        boot = rng.choice(g, size=(2000, len(g))).mean(axis=1)
         out[name] = {"n": len(idx), "val_si_sinr_db": float(np.mean([score[i] for i in idx])),
-                     "gain_over_input_db": float(np.mean([gain[i] for i in idx]))}
+                     "gain_over_input_db": float(g.mean()),
+                     "gain_ci95": [float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))]}
+    out["per_sample_gain_db"] = [round(x, 3) for x in gain]
     return out
 
 
@@ -143,12 +148,14 @@ def main():
                 loss = pit_si_sinr_loss(model(train_x[b].to(device)), train_y[b].to(device))
                 opt.zero_grad()
                 loss.backward()
+                nn.utils.clip_grad_norm_(model.parameters(), 1.0)  # as in train.py
                 opt.step()
                 losses.append(float(loss.detach()))
             val = validate(model, val_x, val_y, val_info, device)
             record["epochs"].append({"epoch": epoch, "train_loss": float(np.mean(losses)), "val": val})
             print(f"{variant} epoch {epoch}: train loss {np.mean(losses):.3f}; val "
-                  + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f}, n={v['n']})" for k, v in val.items())
+                  + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
+                              for k, v in val.items() if k != "per_sample_gain_db")
                   + f" [{time.time() - t1:.0f}s]", flush=True)
             results = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}  # variants may run in parallel processes
             results[variant] = record

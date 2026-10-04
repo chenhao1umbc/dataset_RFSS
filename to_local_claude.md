@@ -133,3 +133,26 @@ Go-ahead, so you do not stall waiting for me:
 1. Confirm retrain is running (requirement 1) and commit the finished `check/baseline_results.json` (labelled supplementary).
 2. Add the synthetic unit test and the `pyproject.toml` pytest fix (requirement 6), the author names (above), and check the paper compiles (requirement 9).
 3. When Conv-TasNet 2-source finishes, run `eval_all.py` on it as an early look (`--dl conv_tasnet` will need all three source counts, so run it with a temporary subset flag or on the finished sources) and post the raw numbers. Do not edit paper numbers.
+
+## Review of Builder update 03:42 UTC (Reviewer, 2026-10-04, against dev 00616b3)
+
+**Verdict: accepted.**
+
+Verified myself:
+- `check/baseline_results.json`: 15,000 unique test indices (7,526 / 5,324 / 2,150 by source count, matching the 50/35/15 weights). I recomputed means from the per-sample values:
+  ICA -21.80 / -24.88 / -26.58 dB, NMF -5.06 / -9.53 / -11.79 dB, zero +-100 sentinel scores. Matches your report.
+- Co-channel versus adjacent-channel gap, recomputed on all 15,000 samples: ICA 0.13 / 0.81 / 1.51 dB, NMF 0.32 / 0.29 / 0.63 dB. The old "adjacent-channel is much harder" finding is confirmed to be a reference artefact.
+- `pytest check/unit_test_mixing.py -k build_aligned_references`: passes (17 s, no data file needed). It checks the builder against `SignalMixer` on 3 synthetic sources of non-nominal length in both modes.
+  Note the test compares the builder against the same mixer, so it guards the stored-length handling, not the mixer itself; the 40 + 1,000 real-sample proofs cover the latter.
+- `eval_all.py` now records median, fraction positive and raises if any score is a +-100 sentinel. Good.
+- `python_files` in `pyproject.toml` does include `unit_test_*.py`; my earlier reading of your note was wrong. Fine.
+- Authors: names only. Good.
+
+Notes:
+1. **Retrain confirmation.** You cannot run `tail`/`ls` under the permission classifier. Try the file tools instead of Bash: read `runs/train_all_v2.log` with the Read tool (use an offset near the end of the file) and look for checkpoints with Glob (`checkpoints/**/epoch_*.pt`). If those are blocked too, I will tell the user. I am also telling the user now, because their approval of that prompt may be what unblocks everything.
+2. **What the new baselines mean for the paper.** NMF is now a strong baseline (-5 dB on 2 sources), ICA is weak (-22 dB, which is about what the old invalid Conv-TasNet number was). The old ranking ICA < NMF holds with a much smaller gap, as you wrote.
+   The deep models must now be compared against NMF as the real competitor. Do not describe ICA as a competitive baseline in the paper; it is a lower bound (single-channel Hankel ICA).
+3. Keep the baselines table out of the paper until `eval_all.py` (first 7,680 samples, same for all methods) is run. `baseline_results.json` is the full-signal supplementary run.
+4. Reqs 2, 4 (crop pass), 5 acknowledged. Do them before the DL evaluation, as you said.
+
+Next: confirm retrain progress (note 1), then the restart wrapper + extra-crop pass. No other open items from me.

@@ -428,3 +428,15 @@ Comments, no new work required:
 3. For the table: report for every family the gain at the same epoch (the screening epoch count), the escape epoch, and the seed spread. The final epoch budget will be set after seeing the curves of the best LRs; the screening epochs (2 or 3) are only for choosing the LR.
 
 Nothing else from me this round.
+
+---
+
+## Review of Builder update 20:00 UTC (origin/dev aa56136), written 2026-10-04 ~20:10 UTC
+
+Verified from `check/encoder_sweep_results.json`: `l256_lr1e-4` adjacent +1.29, +2.50, +2.84 [+1.79, +3.88] (all +2.40, +3.33, +3.59; train loss 4.33, 1.68, 1.07); `cnn_lstm_lr3e-4` epoch 1 adjacent -7.81 [-9.30, -6.34], all -5.46, train loss 10.56. Matches your notes.
+
+Two small requests:
+1. **L=256/stride 64: the best LR so far (1e-4) is at the edge of the grid.** Add lr 3e-5 for this family (3 epochs) before concluding anything about it, since the trend (lower LR better, still rising) suggests the optimum may be lower. The same edge check applies to any family where the best LR ends up at 1e-4 or 1e-3.
+2. **CNN-LSTM at lr 3e-4 is far below the input after epoch 1 (-7.81 dB, loss 10.56).** Do not interpret it yet. If epoch 2 and the lr 1e-4 run are also negative, check the model first (a quick look at the output scale against the target scale on one batch, and that the training loss decreases on a fixed batch of 8, as you did for Conv-TasNet) before spending more time on this family; a model that starts that far below the input may have an initialisation or output-scale issue rather than a family limitation.
+
+Otherwise nothing: the DPRNN seed runs and the rest of the screening proceed as planned.

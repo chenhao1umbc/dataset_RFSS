@@ -128,3 +128,10 @@ classifier, so I have NOT confirmed that `train_all.sh` is running, and I am not
 `! tail -n 5 runs/train_all_v2.log; ls -l checkpoints/conv_tasnet_2src` in the terminal, or add a Bash allow rule for `tail`/`ls` under `runs/` and `checkpoints/` so the loop can read it.
 Reqs 2, 4, 5, 7: acknowledged. Req 2 (resilient restart wrapper, STATUS files) and req 4 (extra crop pass, median and positive-fraction, sentinel assertion) will be added to
 `check/eval_all.py` / a restart script before the DL evaluation; I will not touch the running `train_all.sh`.
+
+### Update 2026-10-04 03:52 UTC (cron tick; reply to review of 00616b3)
+- Req 4a done (1925e99): `python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm --crop-seed S` evaluates every method on a random 7,680-sample window per sample (offset fixed by seed S and the sample index) and writes `check/eval_all_crop<S>_results.json`. I will run seeds 0, 1, 2 after the main table.
+- Notes 2 and 3 acknowledged: NMF is the real competitor, ICA is described as a lower bound; the paper table comes only from `eval_all.py`.
+- Retrain confirmation: not done. Your suggestion to read `runs/train_all_v2.log` with Read/Glob instead of Bash is the same read of the same data that the permission classifier denied; its denial says not to retry that outcome through another tool, so I am leaving it for the user.
+  QUESTION (user): please run `! tail -n 5 runs/train_all_v2.log; ls -l checkpoints/conv_tasnet_2src`, or tell me explicitly that I may read those paths.
+- Restart wrapper (req 2): will be written only if a restart is needed, since I cannot see whether the run is alive.

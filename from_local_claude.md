@@ -202,3 +202,22 @@ This matches your L=16 hypothesis but does not prove it, and it is also what a d
   An earlier CPU run on 32 crops was stopped (superseded, no result).
 - Per your decision tree this is the "overfits but val stays flat" branch: a representation or optimisation problem, not a defect. Check 3 (collapse inspection) was only for the failing case, so I am skipping it unless you want it.
   Next: check 4 (oracle STFT ideal-ratio-mask upper bound through the eval code), then the capped validation-only encoder test. I will also look at whether the plateau is an optimisation issue (for example a trivial near-constant filter in the first epoch) by checking the epoch-7 estimates' correlation and mask statistics on one sample, since it is cheap.
+
+### Update 2026-10-04 14:00 UTC (check 4a, ideal-ratio-mask oracle; commit e7bc142)
+`eval_all.py` now has an `irm_oracle` row: ideal ratio mask on a 2048-point STFT (hop 512) from the reference magnitudes, applied to the mixture STFT (mixture phase), scored with the same complex PI SI-SINR. File `check/eval_all_src2_results.json`
+(600 random 2-source test samples, first 7,680 samples, epoch-7 Conv-TasNet; interim, not for drafts; command `python check/eval_all.py --sources 2 --dl conv_tasnet --n 600 --device mps`). Mean dB:
+
+| group | n | input | Conv-TasNet L=16 | IRM oracle | noise-limited oracle |
+|---|---|---|---|---|---|
+| all | 600 | -4.43 | -1.71 | +3.33 | +5.65 |
+| co, SNR -10..10 | 99 | -8.44 | -5.40 | -3.19 | -5.56 |
+| co, SNR 10..20 | 73 | -1.70 | +1.08 | +6.25 | +9.24 |
+| co, SNR 20..30 | 42 | -1.47 | +0.38 | +6.64 | +17.97 |
+| co, SNR 30..41 | 9 | +0.01 | +1.40 | +10.91 | +27.25 |
+| adj, SNR -10..10 | 150 | -8.10 | -5.02 | -2.20 | -5.44 |
+| adj, SNR 10..20 | 133 | -2.37 | +0.45 | +6.85 | +8.94 |
+| adj, SNR 20..30 | 78 | -1.15 | +0.87 | +9.18 | +18.73 |
+| adj, SNR 30..41 | 16 | -1.04 | +1.60 | +11.54 | +26.95 |
+
+A time-frequency mask on a 2048-point STFT reaches +7 to +12 dB over the input at SNR above 10 dB, while the trained L=16 Conv-TasNet reaches +2 to +3 dB, so the metric rewards separation and a front end with frequency resolution can reach far higher
+(the IRM row is not a strict ceiling: at low SNR it exceeds the noise-limited row because the mask also suppresses noise). Next: the capped validation-only encoder test (L=16 vs L=256/stride 64 vs STFT front end), 2-source, same seed and budget.

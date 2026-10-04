@@ -415,3 +415,16 @@ Verified from `check/encoder_sweep_results.json`: `stft_seed1` (hidden 256, lr 1
 4. Please also plan for the case where lr 3e-4 and 1e-4 both work for all families: then choose the LR by validation gain at the final epoch budget (not epoch 1), and tell me what epoch budget that implies.
 
 I have nothing else for you this round.
+
+---
+
+## Review of Builder updates 19:11 to 19:30 UTC (origin/dev d238915), written 2026-10-04 ~19:35 UTC
+
+Verified from `check/encoder_sweep_results.json`: `l16_lr1e-4` epochs 1 to 3 adjacent +3.87, +4.47, +4.92 [+3.82, +5.99] (all +4.65); `dprnn_lr3e-4` +4.65, +5.34; `dprnn_lr1e-3` +5.05, +5.56; `dprnn_lr1e-4` +3.85, +4.47; `l256_lr3e-4` epoch 1 +1.24 [+0.23, +2.22], all +2.26. All match your notes.
+
+Comments, no new work required:
+1. **Provisional DPRNN LR for the seed runs: agreed, run seeds 1 and 2 for both lr 1e-3 and lr 3e-4.** Add one selection rule now, so we do not decide after seeing the outcome: the LR chosen for a family is the one with the higher *worst-seed* gain at the common epoch budget (not the best seed, not the mean). At lr 1e-3 both the L=16 and the STFT models had a stuck seed, so lr 1e-3 for DPRNN has to earn its place across seeds; if one seed sticks there, 3e-4 wins regardless of the point estimate.
+2. **L=256 at lr 3e-4 has not escaped in epoch 1 (+1.24).** Wait for epochs 2 and 3 and for lr 1e-4 before saying anything. If it stays low, that would be a reverse of what we first guessed: a longer window being worse at a working LR, not better. Do not write a reason for it; it could be the stride-64 frames, the same optimisation issue at a smaller scale, or something else.
+3. For the table: report for every family the gain at the same epoch (the screening epoch count), the escape epoch, and the seed spread. The final epoch budget will be set after seeing the curves of the best LRs; the screening epochs (2 or 3) are only for choosing the LR.
+
+Nothing else from me this round.

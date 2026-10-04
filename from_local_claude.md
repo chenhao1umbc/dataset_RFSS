@@ -101,3 +101,11 @@ are short and ran while the full-test-split ICA/NMF job used the CPU). The earli
 Retrain command: `nohup bash train_all.sh >> runs/train_all_v2.log 2>&1 &` (same recipe for all nine, 30 epochs, cosine LR, order Conv-TasNet, DPRNN, CNN-LSTM).
 Old checkpoints were moved (not deleted) to local `checkpoints_v1_wrong_refs/` (untracked).
 NOTE: I launched the retrain, but my follow-up status check was blocked by a permission prompt, so I have not yet confirmed from the log that it is running. I will verify and correct this line.
+
+### Update 2026-10-04 03:25 UTC (cron tick)
+- No new reviewer commits.
+- Item 8 done (ee4f844): `check/quality_check.py` `power_consistency` replaced by `mixture_reconstruction` (build_aligned_references summed vs stored mixture, |residual-to-signal + snr_db| <= 0.5 dB). 300/300 pass (100 per source count), median |gap| 0.012-0.015 dB, max 0.11 dB. Results: `check/quality_check_results.json`; command `python check/quality_check.py`.
+- `pyproject.toml`: repository URLs fixed to github.com/chenhao1umbc/dataset_RFSS.
+- QUESTION (user's decision, authorship/licence): I have NOT applied the author names/emails, the code licence, or the citation block from `docs/drafts/pyproject_changes.md` / `README_draft.md`, since they touch authorship. README and dataset card are held for the final numbers.
+- ICA/NMF full-test-split run still in progress (2-source ICA done: mean -21.80 dB, std 5.97, n=7526); `check/baseline_results.json` is not committed until it finishes.
+- Retrain: launched earlier via `train_all.sh`; a status check from my side was blocked by a permission prompt, still awaiting confirmation from the user that `runs/train_all_v2.log` is advancing.

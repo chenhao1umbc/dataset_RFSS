@@ -384,5 +384,55 @@
     ]
    }
   }
+ },
+ "overfit_n8_cpu": {
+  "model": "cnn_lstm",
+  "n_sources": 2,
+  "n_samples": 8,
+  "steps": 200,
+  "lr": 0.001,
+  "history": [
+   {
+    "step": 1,
+    "train_si_sinr_db": -22.701
+   },
+   {
+    "step": 25,
+    "train_si_sinr_db": -9.157
+   },
+   {
+    "step": 50,
+    "train_si_sinr_db": -6.988
+   },
+   {
+    "step": 75,
+    "train_si_sinr_db": -5.67
+   },
+   {
+    "step": 100,
+    "train_si_sinr_db": -5.089
+   },
+   {
+    "step": 125,
+    "train_si_sinr_db": -4.218
+   },
+   {
+    "step": 150,
+    "train_si_sinr_db": -3.14
+   },
+   {
+    "step": 175,
+    "train_si_sinr_db": -2.288
+   },
+   {
+    "step": 200,
+    "train_si_sinr_db": -1.706
+   }
+  ]
+ },
+ "cnn_lstm_ceiling": {
+  "n_samples": 300,
+  "downsample": 8,
+  "mean_ceiling_si_sinr_db": 1.9789630271144354
  }
 }

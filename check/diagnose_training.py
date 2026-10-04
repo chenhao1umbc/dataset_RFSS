@@ -10,16 +10,20 @@ Training diagnostics for the plateau seen in the Conv-TasNet 2-source run.
             squares on training crops (mixture -> that slot's reference), then scored with the same
             permutation-invariant SI-SINR on the 800 validation crops of check/encoder_sweep.py. It shows how
             much of a plateau level can be reached without any separation of the content.
+  ceiling : best SI-SINR any output of the CNN-LSTM decoder can reach. Its output is a 1x1 convolution on features at 1/8 of
+            the sample rate, linearly interpolated back, so only piecewise-linear signals with 8-sample knots are
+            possible; the reference of each source is least-squares fitted inside that space and scored.
   crops   : fraction of random training crops in which a source's aligned reference carries under
             1 percent of its full-signal power (a nearly empty target makes the loss meaningless).
 
 Usage:
     uv run python check/diagnose_training.py overfit --n 32 --steps 400
+    uv run python check/diagnose_training.py ceiling --n 64
     uv run python check/diagnose_training.py crops --n 500
     uv run python check/diagnose_training.py tensors --n 64
     uv run python check/diagnose_training.py linear --n 1500 --taps 64
 
-Output: check/diagnose_training_results.json (keys overfit_n<n>_<device>, crops, tensors, linear_fir<taps>)
+Output: check/diagnose_training_results.json (keys overfit_n<n>_<device>, crops, tensors, linear_fir<taps>, cnn_lstm_ceiling)
 """
 
 import argparse
@@ -30,11 +34,12 @@ from pathlib import Path
 import h5py
 import numpy as np
 import torch
+import torch.nn.functional as F
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from src.models import pit_si_sinr_loss  # noqa: E402
+from src.models import pit_si_sinr_loss, si_sinr  # noqa: E402
 from src.train import SeparationDataset, build_model  # noqa: E402
 from src.utils_mixing import build_aligned_references  # noqa: E402
 
@@ -42,6 +47,7 @@ DATASET_PATH = ROOT / "data" / "rfss_dataset.h5"
 OUTPUT = ROOT / "check" / "diagnose_training_results.json"
 TRAIN_LENGTH = 7680
 SEED = 0
+CNN_LSTM_DOWNSAMPLE = 8  # three stride-2 convolutions in CNNLSTMSeparator
 
 
 def update_results(key: str, value: dict):
@@ -129,6 +135,21 @@ def linear(args):
     update_results(f"linear_fir{taps}", {"fit_crops": int(args.n), "taps": taps, "val": summary})
 
 
+def ceiling(args):
+    ds = SeparationDataset(DATASET_PATH, split="train", n_sources=args.n_sources, train_length=TRAIN_LENGTH)
+    np.random.seed(SEED)
+    sources = torch.stack([ds[i]["sources"] for i in range(args.n)]).double()  # (n, S, 2, T)
+    length = sources.shape[-1]
+    knots = length // CNN_LSTM_DOWNSAMPLE
+    basis = F.interpolate(torch.eye(knots, dtype=torch.double)[None], size=length, mode="linear", align_corners=False)[0].T
+    fitted = (basis @ torch.linalg.lstsq(basis, sources.reshape(-1, length).T).solution).T.reshape(sources.shape)
+    flat = (sources.shape[0] * sources.shape[1], 2 * length)
+    ceiling_db = float(si_sinr(fitted.reshape(flat), sources.reshape(flat)).mean())
+    result = {"n_samples": int(args.n), "downsample": CNN_LSTM_DOWNSAMPLE, "mean_ceiling_si_sinr_db": ceiling_db}
+    print(json.dumps(result, indent=1))
+    update_results("cnn_lstm_ceiling", result)
+
+
 def crops(args):
     rng = np.random.RandomState(SEED)
     with h5py.File(DATASET_PATH, "r") as f:
@@ -159,7 +180,7 @@ def crops(args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("task", choices=["overfit", "crops", "tensors", "linear"])
+    ap.add_argument("task", choices=["overfit", "crops", "tensors", "linear", "ceiling"])
     ap.add_argument("--n", type=int, default=32)
     ap.add_argument("--steps", type=int, default=400)
     ap.add_argument("--taps", type=int, default=64)
@@ -168,7 +189,7 @@ def main():
     ap.add_argument("--model", default="conv_tasnet", choices=["conv_tasnet", "dprnn", "cnn_lstm"])
     ap.add_argument("--device", default="cpu", help="cpu by default so a running training job is not slowed")
     args = ap.parse_args()
-    {"overfit": overfit, "crops": crops, "tensors": tensors, "linear": linear}[args.task](args)
+    {"overfit": overfit, "crops": crops, "tensors": tensors, "linear": linear, "ceiling": ceiling}[args.task](args)
 
 
 if __name__ == "__main__":

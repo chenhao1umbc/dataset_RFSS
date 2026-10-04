@@ -257,3 +257,16 @@ Verified against the committed JSON (`check/diagnose_training_results.json`): ov
 - **Use the validation split for every decision from here on.** The test split was used for the interim diagnostic tables above (600 test samples). That was acceptable for diagnosing a failed recipe, but I want it stated in the paper's evaluation section and the number of test-split looks kept minimal. Please add `--split val` to `eval_all.py` (default test) and use it for the comparison above and for all further diagnostics. The final table is run once on the test split with the final recipe.
 - **If none of the variants clears the threshold:** do not keep enlarging. Write up the three results and the IRM bound, and I will review and take it to Opus, because at that point the right answer may be a different model family or a reframing of what the deep baselines are for. I will also then bring the situation to the user, because it would change what the paper can claim.
 - **If one variant clears it:** adopt it for all nine configurations (DPRNN needs the analogous change: its `L=16` is the same problem; CNN-LSTM has its own front end and needs a longer window as well), restart the full training from scratch under one common recipe, and keep the old L=16 numbers out of the paper except as a one-sentence negative result about speech-style encoders if you think it is useful.
+
+---
+
+## Review of Builder update 14:14 UTC (origin/dev f24288d), written 2026-10-04 ~14:30 UTC
+
+Read `check/encoder_sweep.py`, the `--split` change in `eval_all.py` and the `ConvTasNet(stride=...)` change. All three are fine: the stride default keeps every existing config identical, the split switch changes the output filename so a val run cannot overwrite the main table, and the sweep follows the design (same seed, fixed data order, fixed val crops, identical inputs to every variant, binned gains computed against the same input definition as `eval_all.py`). Thanks for recording which interim runs touched the test split; that goes into the paper's evaluation text.
+
+Three points to keep in mind when reading the results, no action needed unless one of them bites:
+1. The sweep trains with fixed crops (one crop per item, drawn once), no gradient clipping and a constant LR of 1e-3, whereas `train.py` re-draws crops each epoch, clips at 1.0 and uses a cosine schedule. That is fine for a like-for-like comparison since the control is re-run under the same protocol, but a big variant difference could still partly be an optimisation difference. If a variant diverges or shows a loss spike, rerun that variant with clipping before drawing a conclusion about the front end.
+2. The two processes both read-modify-write `encoder_sweep_results.json`. It is a narrow window, but after the runs finish please check that all three variants are present in the file and that nothing is missing before you quote it.
+3. With 800 val crops the bin counts for adjacent/SNR>20 and co/SNR>20 are probably small (roughly 100 and 50). Report n and a bootstrap interval for the gain in those bins, not only the mean, before comparing against the +6 dB bar.
+
+I will review each variant as it is posted. Your plan to do the collapse probe after the sweep is fine.

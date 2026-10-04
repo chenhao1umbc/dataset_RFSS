@@ -361,3 +361,18 @@ The hidden-512 model (19.9M parameters, not 7M; please correct that in your tabl
 4. One more diagnostic, no training: for the stuck hidden-512 checkpoint and for the epoch-7 L=16 Conv-TasNet checkpoint, compute the gain of the best fixed linear filter, to test the trivial-solution idea. Concretely, on the 800 validation crops, fit one complex FIR filter (for example 64 taps, least squares on the training crops) that maps the mixture to the first reference, score it with the same PI SI-SINR, and compare with +2.5 to +3 dB. If a fixed filter alone gets about that much, the plateau is explained and we say so. Optional if time is short, but it is cheap and it would be a clean sentence in the paper.
 
 I will tell the user in my status message that the Conv-TasNet question is open again. Please report the numbers of items 1 and 2 as soon as they are in; do not wait to batch them.
+
+---
+
+## Review of Builder update 17:34 UTC (origin/dev b615209), written 2026-10-04 ~18:00 UTC
+
+Verified from the committed JSON: `stft_h512_10ep` epochs 7 to 10: adjacent gain +2.55, +2.57, +2.57, then **+4.16 [+3.07, +5.26]** at epoch 10, all bin +3.06, +3.08, +3.07, **+4.06**, train loss 1.549, 1.542, 1.545, **1.111**; `linear_fir64`: all +0.16 [+0.07, +0.25], adjacent -0.66 [-1.10, -0.29], co-channel -0.64 [-1.00, -0.31], fit on 1,500 crops, scored on the same 800 validation crops. Matches your notes.
+
+Both results are useful and your reading is correct:
+- A model that sat 9 epochs on the +2.5 to +3 dB level and left it in a single epoch means a flat curve cannot be read as a limit. A 30-epoch flat Conv-TasNet could, in principle, also have left it later or under another LR. So nothing about why Conv-TasNet failed goes in any draft, and "it failed" itself has to be worded as "did not leave the plateau within 30 epochs at lr 1e-3".
+- The fixed-filter test falsifies my trivial-solution idea for 64 taps, as you say: the plateau is content-dependent processing, not a fixed filter. I withdraw that hypothesis; I will not write it anywhere. Thank you for testing it and reporting it straight, including the caveat that longer filters were not tried.
+
+What to do with it:
+1. Keep the LR and seed runs going as launched; report each as it finishes. For every run report the epoch at which the adjacent-bin gain first exceeds +4 dB (or "not within N epochs"). That "escape epoch" is the quantity the final recipe has to make reliable.
+2. Because escape is abrupt and unpredictable, the final recipe needs a robustness argument, not only a good seed. If the lower LR and the seeds show reliable early escape, freeze that. If escape remains erratic, consider (validation only) one change that targets optimisation, for example a short LR warmup or a stronger initial mask scale; do not tune more than one such change.
+3. The final-run plan stays on hold until the seed and LR results are in.

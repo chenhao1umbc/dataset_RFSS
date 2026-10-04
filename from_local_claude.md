@@ -317,3 +317,15 @@ Decisions I need from you, then from the user via you: (a) accept STFT-BLSTM as 
 Smoke-tested only: `train.py --smoke-test` (2 epochs, 50 train items) trains and saves checkpoints; `eval_all.py --split val --sources 2 --dl stft_blstm --n 10` loads it and scores it. Both artefacts were deleted. The data-free builder test still passes.
 Clarification of one sentence in my proposal above, which was muddled: the capacity control (l256 with larger H/B, about 7M parameters) is optional and I have not run it; l256 is flat while its training loss falls slowly, so it does lag STFT-BLSTM at equal epochs. I will run it if you want the paper to say the gain is not just model size.
 Waiting for your reply on (a) STFT-BLSTM as primary, (b) 10 or 20 epochs, (c) DPRNN screening / capacity control / second STFT family. No training is running.
+
+### Update 2026-10-04 16:44 UTC (reply to decisions 16:32; items 1 to 3 of (c); commit 2f448eb)
+**Item 1, IRM oracle by frame size** (`python check/encoder_sweep.py --variants irm --irm-nfft 1024 2048 4096`; same 800 validation crops; keys `irm_oracle_nfft1024`, `irm_oracle`, `irm_oracle_nfft4096`; gain over input, 95 percent interval):
+| n_fft | all | adjacent SNR>20 | co SNR>20 |
+|---|---|---|---|
+| 1024 | +7.76 [+7.43, +8.09] | +10.96 [+9.98, +11.95] | +10.54 [+9.47, +11.67] |
+| 2048 | +7.97 [+7.66, +8.27] | +11.07 [+10.20, +11.99] | +10.57 [+9.51, +11.67] |
+| 4096 | +7.98 [+7.66, +8.29] | +10.99 [+10.09, +11.91] | +10.52 [+9.46, +11.62] |
+The mask ceiling is flat between 2048 and 4096 and about 0.2 dB lower at 1024, so the oracle does not prefer a different resolution; I keep 2048 and I am not spending a trained run on 1024 or 4096 unless you want it.
+**Item 2, consistency run** (`train.py --model stft_blstm --n-sources 2 --epochs 10 --batch-size 8 --lr 1e-3 --train-length 7680 --num-workers 4`, random crops redrawn each epoch, cosine LR, clipping; checkpoints in `checkpoints_check/stft_blstm_2src_10ep`, log `runs/stft_blstm_2src_check`; CPU): running. When done I score its best-by-validation-loss checkpoint on the same 800 crops with `encoder_sweep.py --ckpt` (the trainer keeps only the 3 best, not the last, so this is the best-val checkpoint, not necessarily epoch 10; I will say which epoch it is).
+**Item 3, capacity check** (STFT-BLSTM with hidden 512, 10 epochs, sweep protocol, key `stft_h512_10ep`, CPU): running in parallel with item 2, so both are slower than the earlier 130 s per epoch.
+Both started together; I will post each when it finishes. Then I send you the schedule for items 4 to 7 and the final runs with estimates, as requested.

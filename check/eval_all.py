@@ -32,7 +32,6 @@ from pathlib import Path
 
 import h5py
 import numpy as np
-import scipy.signal as sp_signal
 import torch
 
 ROOT = Path(__file__).parent.parent
@@ -42,6 +41,7 @@ from src.baseline_algorithms import (  # noqa: E402
     ICASourceSeparation,
     NMFSourceSeparation,
     compute_si_sinr,
+    irm_oracle_estimates,
     permutation_invariant_si_sinr,
 )
 from src.train import _checkpoint_loss, build_model  # noqa: E402
@@ -53,7 +53,6 @@ CHECKPOINT_ROOT = ROOT / "checkpoints"
 
 SPLITS = {"val": (70000, 85000), "test": (85000, 100000)}
 SEGMENT_LEN = 7680
-IRM_NFFT = 2048
 SNR_BINS = [(-10, 0), (0, 10), (10, 20), (20, 30), (30, 40.001)]
 N_BOOT = 2000
 BOOT_SEED = 0
@@ -84,16 +83,6 @@ def load_segment(f: h5py.File, idx: int, crop_seed: int | None) -> dict:
 
 def pi_score(estimates, refs) -> float:
     return float(permutation_invariant_si_sinr(list(estimates), list(refs))[0])
-
-
-def irm_oracle_estimates(mixed: np.ndarray, refs: np.ndarray) -> list[np.ndarray]:
-    """Ideal ratio mask separator: mask from the reference STFT magnitudes, mixture phase."""
-    nperseg = min(IRM_NFFT, len(mixed))
-    kw = dict(nperseg=nperseg, noverlap=nperseg - nperseg // 4)
-    _, _, x = sp_signal.stft(mixed, return_onesided=False, **kw)
-    mags = np.stack([np.abs(sp_signal.stft(r, return_onesided=False, **kw)[2]) for r in refs])
-    masks = mags / (mags.sum(axis=0, keepdims=True) + 1e-12)
-    return [sp_signal.istft(m * x, input_onesided=False, **kw)[1][: len(mixed)] for m in masks]
 
 
 def reference_scores(sample: dict) -> dict:

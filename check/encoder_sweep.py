@@ -4,6 +4,7 @@ Front-end comparison for 2-source separation, decided on the validation split on
 Variants (same data crops, same seed, same batch size and data order, 2 epochs of the 2-source train split):
   l16     : Conv-TasNet, encoder L=16, stride 8 (the control; the recipe of train_all.sh)
   l256    : Conv-TasNet, encoder L=256, stride 64, rest unchanged
+  irm     : (no training) ideal-ratio-mask oracle on the same validation crops, an upper bound for masking
   stft    : STFT front end (n_fft 2048, hop 512), BLSTM on log-magnitude features, learned complex ratio
             mask on the real/imag STFT, inverse STFT back to the waveform
 
@@ -31,6 +32,7 @@ import torch.nn as nn
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
+from src.baseline_algorithms import irm_oracle_estimates  # noqa: E402
 from src.models import ConvTasNet, pit_si_sinr_loss, si_sinr  # noqa: E402
 from src.train import SeparationDataset  # noqa: E402
 
@@ -89,19 +91,28 @@ def load_items(split: str, n: int, n_sources: int):
     return torch.stack([it["mixed"] for it in items]), torch.stack([it["sources"] for it in items]), info
 
 
+def irm_estimate(m: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
+    """Ideal ratio mask oracle on one crop: m (1, 2, T), t (1, S, 2, T) -> (1, S, 2, T)."""
+    mixed = torch.complex(m[0, 0].double(), m[0, 1].double()).numpy()
+    refs = torch.complex(t[0, :, 0].double(), t[0, :, 1].double()).numpy()
+    est = np.stack(irm_oracle_estimates(mixed, refs))
+    return torch.from_numpy(np.stack([est.real, est.imag], axis=1)).float().unsqueeze(0)
+
+
 @torch.no_grad()
-def validate(model, mixed, sources, info, device) -> dict:
-    """Per-sample PI SI-SINR and gain over the input, summarised overall and per bin."""
-    model.eval()
+def validate(estimator, mixed, sources, info, device) -> dict:
+    """Per-sample PI SI-SINR and gain over the input, summarised overall and per bin.
+
+    estimator(m, t) returns the (1, S, 2, T) estimates for one crop; a trained model ignores t.
+    """
     score, gain = [], []
     for i in range(len(mixed)):
         m, t = mixed[i:i + 1].to(device), sources[i:i + 1].to(device)
-        s = -float(pit_si_sinr_loss(model(m), t))
+        s = -float(pit_si_sinr_loss(estimator(m, t).to(device), t))
         flat_mix = m.reshape(1, -1).expand(t.shape[1], -1)
         inp = float(si_sinr(flat_mix, t[0].reshape(t.shape[1], -1)).mean())
         score.append(s)
         gain.append(s - inp)
-    model.train()
     rng = np.random.RandomState(SEED)
     out = {}
     for name, keep in BINS.items():
@@ -117,7 +128,7 @@ def validate(model, mixed, sources, info, device) -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--variants", nargs="+", default=["l16", "l256", "stft"], choices=["l16", "l256", "stft"])
+    ap.add_argument("--variants", nargs="+", default=["l16", "l256", "stft"], choices=["l16", "l256", "stft", "irm"])
     ap.add_argument("--epochs", type=int, default=2)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--n-train", type=int, default=0, help="training crops (0 = the whole 2-source train split)")
@@ -128,12 +139,23 @@ def main():
     args = ap.parse_args()
 
     t0 = time.time()
-    train_x, train_y, _ = load_items("train", args.n_train, args.n_sources)
+    if args.variants == ["irm"]:
+        train_x = train_y = torch.empty(0)
+    else:
+        train_x, train_y, _ = load_items("train", args.n_train, args.n_sources)
     val_x, val_y, val_info = load_items("val", args.n_val, args.n_sources)
     steps_per_epoch = len(train_x) // args.batch_size
     print(f"loaded {len(train_x)} train and {len(val_x)} val crops in {time.time() - t0:.0f}s; {steps_per_epoch} steps per epoch", flush=True)
 
     for variant in args.variants:
+        if variant == "irm":  # no training: oracle bound on the same validation crops
+            val = validate(irm_estimate, val_x, val_y, val_info, "cpu")
+            results = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
+            results["irm_oracle"] = {"variant": "irm_oracle", "n_val_crops": len(val_x), "val": val}
+            OUTPUT.write_text(json.dumps(results, indent=1))
+            print("irm oracle: " + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
+                                             for k, v in val.items() if k != "per_sample_gain_db"), flush=True)
+            continue
         torch.manual_seed(SEED)
         device = "cpu" if variant == "stft" else args.device  # MPS lacks the istft backward (unfold_backward)
         model = build(variant, args.n_sources).to(device)
@@ -152,7 +174,9 @@ def main():
                 nn.utils.clip_grad_norm_(model.parameters(), 1.0)  # as in train.py
                 opt.step()
                 losses.append(float(loss.detach()))
-            val = validate(model, val_x, val_y, val_info, device)
+            model.eval()
+            val = validate(lambda m, t: model(m), val_x, val_y, val_info, device)
+            model.train()
             record["epochs"].append({"epoch": epoch, "train_loss": float(np.mean(losses)), "val": val})
             print(f"{variant} epoch {epoch}: train loss {np.mean(losses):.3f}; val "
                   + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"

@@ -506,3 +506,8 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **Conv-TasNet L=16, lr 3e-4, seed 1, epoch 1** (`l16_lr3e-4_seed1`): adjacent +4.80 [+3.73, +5.84], all +4.54, co-channel +5.54 (seed 0: +4.11). Escape epoch 1. Epochs 2 and 3, then seed 2, pending.
 - `cnn_lstm_tconv` lr 3e-4: no epoch line yet (slower than the others per epoch; I will give its seconds per epoch with the first line).
 - No new reviewer commits. Memory 77% free, ollama idle. STFT-BLSTM pilot waits for a free slot.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain)
+- **`cnn_lstm_tconv`, lr 3e-4, seed 0, epoch 1:** adjacent +1.76 [+0.73, +2.74], all +2.96 [+2.66, +3.25], co-channel +3.06; train loss 1.87 (original `cnn_lstm`: loss 10.56, adjacent -7.81, all -5.46). The transposed decoder removes the structural defect: it now trains like the others, from a slower start; the plateau-escape level (+4) is not reached at epoch 1. **1807 s per epoch** while sharing the GPU with the L=16 job (about 3 times the DPRNN epoch time). Epoch 2 and the lr 1e-4 run (2 epochs) follow, about 90 min in total.
+- **Conv-TasNet L=16, lr 3e-4, seed 1, epoch 2:** adjacent +5.23 [+4.11, +6.31], all +4.90 (seed 0: +4.91 at epoch 2). Epoch 3 pending, then seed 2.
+- No new reviewer commits. Memory 80% free, ollama idle.

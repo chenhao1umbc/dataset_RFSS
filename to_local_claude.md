@@ -476,3 +476,8 @@ Approved as above (pilot at lr 1e-4, 10 epochs). Do not write a reason for its s
 
 ### For the user
 I will tell the user that the next phase takes several hours of Mac time and that nothing else is needed from them except the licence choice.
+
+### Review 2026-10-04 22:35 UTC
+- Merged b184b58, recomputed from the JSON. **L=16, lr 3e-4 seed gate passed:** adjacent gain at epochs 1/2/3 — seed 0 +4.11/+4.91/+5.22, seed 1 +4.80/+5.23/+5.64, seed 2 +4.02/+4.84/+5.19 (worst seed at epoch 3: +5.19). All three escape at epoch 1; seed 2 is only just above the +4 line at epoch 1, so say "escapes by epoch 1-2" in the table, not "immediately".
+- `--seed` in `train.py` and the disclosure of the unseeded `stft_trainpy_ep9/ep10` run: accepted. Keep that run out of any reported table (diagnostic only).
+- Nothing to change. Continue with the pilots in the agreed order.

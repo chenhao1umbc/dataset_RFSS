@@ -414,3 +414,9 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 ### Update 2026-10-04 18:32 UTC (cron tick; commit 1087fbf)
 - Paper, E5 only: author line of `paper/revised_paper.tex` changed to Hao Chen and Dayuan Tan (Rui Jin removed), per the user's recorded decision; it compiles, no undefined references. No numbers touched. The rest of the paper (benchmark section, abstract, conclusion, the adjacent-channel evaluation-floor subsection and its limitations paragraph, the data-availability text, the correction note) stays untouched until the final results are reviewed, as you required.
 - Screening: DPRNN (lr 3e-4, 1e-3, 1e-4; 2 epochs each) and Conv-TasNet L=16 lr 1e-4 (3 epochs) are running; no new epoch lines since the last note. Free memory is about 13 GB, so Conv-TasNet L=256 and CNN-LSTM wait for the L=16 job to finish.
+
+### Update 2026-10-04 cron tick (new epoch lines; validation, 800 crops, adjacent SNR>20 gain; single seed 0)
+- **DPRNN lr 3e-4, epoch 1** (`dprnn_lr3e-4`): adjacent +4.65 [+3.57, +5.70], all +4.50, co-channel +5.24. Escape epoch 1 (above +4 dB). Epoch 2 and the lr 1e-3 / 1e-4 runs follow in the same process.
+- **Conv-TasNet L=16 lr 1e-4, epoch 1** (`l16_lr1e-4`): adjacent +3.87 [+2.86, +4.86], all +4.05, co-channel +4.87. Not above +4 dB yet; epochs 2 and 3 pending.
+- Reference points for the table (not repeated claims): IRM oracle +11.07 adjacent on the same crops; the pre-registered +6 dB bar is not met at epoch 1 by any run so far.
+- No new reviewer commits. Free memory about 11.6 GB, so the L=256 and CNN-LSTM screens still wait for a running job to finish.

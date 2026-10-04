@@ -166,3 +166,28 @@ Reqs 2, 4, 5, 7: acknowledged. Req 2 (resilient restart wrapper, STATUS files) a
 - **Item 4, crop content:** 0 of 500 random training crops (2-source) have any source with under 1 percent of its full-signal power (per source slot 0.0 / 0.0). Empty targets are not the cause.
 - **Item 2, overfit test:** running (32 fixed training crops, fresh Conv-TasNet, 400 epochs over the 32 samples, lr 1e-3, CPU). Result follows in the next update; I will not touch the training job before reporting the number to you, as you asked.
 - **Item 3 (epoch-7 checkpoint on adjacent-channel, high SNR):** next, after item 2.
+
+### Update 2026-10-04 13:34 UTC (plateau diagnosis item 3; commit c6b78af)
+Conv-TasNet 2-source (L=16) finished its 30 epochs; val loss stayed 1.53-1.60 throughout; the job moved on to the 3-source config (I have not touched it).
+**Item 3, raw numbers** (`python check/eval_all.py --sources 2 --dl conv_tasnet --n 600 --device cpu`, file `check/eval_all_src2_results.json`; checkpoint chosen by val loss = `epoch_007_loss_1.5283.pt`;
+first 7,680 samples; 600 random 2-source test samples; mean PI SI-SINR in dB; 0 sentinel scores; interim, not for any draft):
+
+| group | n | input | Conv-TasNet | gain | NMF | ICA | oracle |
+|---|---|---|---|---|---|---|---|
+| all | 600 | -4.43 | -1.71 | +2.72 | -5.84 | -17.85 | +5.65 |
+| co-channel | 223 | -4.58 | -1.91 | +2.67 | -6.01 | -17.72 | +5.04 |
+| co, SNR -10..10 | 99 | -8.44 | -5.40 | +3.05 | -9.10 | -19.63 | -5.56 |
+| co, SNR 10..20 | 73 | -1.70 | +1.08 | +2.78 | -3.31 | -15.69 | +9.24 |
+| co, SNR 20..30 | 42 | -1.47 | +0.38 | +1.85 | -3.98 | -16.64 | +17.97 |
+| co, SNR 30..41 | 9 | +0.01 | +1.40 | +1.39 | -3.31 | -18.26 | +27.25 |
+| adjacent | 377 | -4.34 | -1.59 | +2.75 | -5.75 | -17.93 | +6.01 |
+| adj, SNR -10..10 | 150 | -8.10 | -5.02 | +3.08 | -8.34 | -19.20 | -5.44 |
+| adj, SNR 10..20 | 133 | -2.37 | +0.45 | +2.82 | -4.09 | -17.10 | +8.94 |
+| adj, SNR 20..30 | 78 | -1.15 | +0.87 | +2.02 | -3.99 | -17.16 | +18.73 |
+| adj, SNR 30..41 | 16 | -1.04 | +1.60 | +2.64 | -3.78 | -16.69 | +26.95 |
+
+Reading (facts, not yet interpretation): the gain over the input is about +2 to +3 dB in every bin and does not grow with SNR, while the oracle ceiling rises from -5 to +27 dB. In the adjacent-channel, SNR 30..41 bin, where the
+sources are spectrally separate and noise is negligible, the model gains +2.6 dB against a ceiling of +27 dB, i.e. essentially no separation. Also, NMF is below the input in every bin on this segment (mean -5.84 vs -4.43), so
+NMF does not separate either on the first 7,680 samples; the earlier full-signal NMF figure (-5.06 dB) was against full-length inputs, not comparable.
+This matches your L=16 hypothesis but does not prove it, and it is also what a defect would show. Item 2 (overfit test) is still running on CPU, slowed by the training job and the evaluation; I will report its number next.
+`eval_all.py` now also writes mode-by-SNR groups (`<n>src/<mode>/snr_<lo>_<hi>`) to the summary, so this table will come straight from the JSON in the final run.

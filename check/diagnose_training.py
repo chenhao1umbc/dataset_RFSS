@@ -6,6 +6,10 @@ Training diagnostics for the plateau seen in the Conv-TasNet 2-source run.
   tensors : sum of the target sources against the mixture on the exact tensors that reach the loss
             (after cropping, padding, RMS normalisation and the real/imag stacking); the residual
             relative to the source sum should sit at minus the sample's SNR.
+  linear  : gain of the best fixed linear filter. One complex FIR filter per source slot is fitted by least
+            squares on training crops (mixture -> that slot's reference), then scored with the same
+            permutation-invariant SI-SINR on the 800 validation crops of check/encoder_sweep.py. It shows how
+            much of a plateau level can be reached without any separation of the content.
   crops   : fraction of random training crops in which a source's aligned reference carries under
             1 percent of its full-signal power (a nearly empty target makes the loss meaningless).
 
@@ -13,8 +17,9 @@ Usage:
     uv run python check/diagnose_training.py overfit --n 32 --steps 400
     uv run python check/diagnose_training.py crops --n 500
     uv run python check/diagnose_training.py tensors --n 64
+    uv run python check/diagnose_training.py linear --n 1500 --taps 64
 
-Output: check/diagnose_training_results.json (keys overfit_n<n>_<device>, crops, tensors)
+Output: check/diagnose_training_results.json (keys overfit_n<n>_<device>, crops, tensors, linear_fir<taps>)
 """
 
 import argparse
@@ -94,6 +99,36 @@ def tensors(args):
     update_results("tensors", result)
 
 
+def linear(args):
+    from numpy.lib.stride_tricks import sliding_window_view
+    from encoder_sweep import load_items, validate
+
+    train_x, train_y, _ = load_items("train", args.n, args.n_sources)
+    val_x, val_y, val_info = load_items("val", 800, args.n_sources)
+    taps = args.taps
+    gram = np.zeros((taps, taps), dtype=np.complex128)
+    cross = np.zeros((args.n_sources, taps), dtype=np.complex128)
+    for i in range(len(train_x)):
+        x = torch.complex(train_x[i, 0].double(), train_x[i, 1].double()).numpy()
+        design = sliding_window_view(np.pad(x, (taps - 1, 0)), taps)[:, ::-1]  # row t: x[t], x[t-1], ..., x[t-taps+1]
+        gram += design.conj().T @ design
+        for k in range(args.n_sources):
+            target = torch.complex(train_y[i, k, 0].double(), train_y[i, k, 1].double()).numpy()
+            cross[k] += design.conj().T @ target
+    filters = np.linalg.solve(gram + 1e-6 * np.trace(gram).real / taps * np.eye(taps), cross.T).T  # (S, taps)
+
+    def estimator(m, t):
+        x = torch.complex(m[0, 0].double(), m[0, 1].double()).numpy()
+        design = sliding_window_view(np.pad(x, (taps - 1, 0)), taps)[:, ::-1]
+        est = np.stack([design @ filters[k] for k in range(args.n_sources)])
+        return torch.from_numpy(np.stack([est.real, est.imag], axis=1)).float().unsqueeze(0)
+
+    val = validate(estimator, val_x, val_y, val_info, "cpu")
+    summary = {k: v for k, v in val.items() if k != "per_sample_gain_db"}
+    print(json.dumps(summary, indent=1))
+    update_results(f"linear_fir{taps}", {"fit_crops": int(args.n), "taps": taps, "val": summary})
+
+
 def crops(args):
     rng = np.random.RandomState(SEED)
     with h5py.File(DATASET_PATH, "r") as f:
@@ -124,15 +159,16 @@ def crops(args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("task", choices=["overfit", "crops", "tensors"])
+    ap.add_argument("task", choices=["overfit", "crops", "tensors", "linear"])
     ap.add_argument("--n", type=int, default=32)
     ap.add_argument("--steps", type=int, default=400)
+    ap.add_argument("--taps", type=int, default=64)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--n-sources", type=int, default=2)
     ap.add_argument("--model", default="conv_tasnet", choices=["conv_tasnet", "dprnn", "cnn_lstm"])
     ap.add_argument("--device", default="cpu", help="cpu by default so a running training job is not slowed")
     args = ap.parse_args()
-    {"overfit": overfit, "crops": crops, "tensors": tensors}[args.task](args)
+    {"overfit": overfit, "crops": crops, "tensors": tensors, "linear": linear}[args.task](args)
 
 
 if __name__ == "__main__":

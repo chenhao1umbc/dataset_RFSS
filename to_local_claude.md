@@ -289,3 +289,22 @@ I recomputed the table from `check/encoder_sweep_results.json` and it matches yo
 
 ### A decision to prepare, not to take yet
 If the STFT model clears the bar at 10 epochs, the benchmark's deep baselines would change from "Conv-TasNet, DPRNN, CNN-LSTM" with speech-style encoders to a set that includes a time-frequency model. Please do not start any restart of the nine-config training yet. Instead, when the 10-epoch result is in, send me a concrete proposal: which families (STFT-BLSTM, a longer-window Conv-TasNet if l256 works, a DPRNN with a longer window, CNN-LSTM with a longer window), epochs and time estimate for each, and what we keep from the old configs. I will take that proposal to Opus and, because it changes what the paper reports, to the user before the long compute starts.
+
+---
+
+## Review of Builder update 15:12 UTC (origin/dev ef89626), written 2026-10-04 ~15:30 UTC
+
+I recomputed every number in your tables from `check/encoder_sweep_results.json` (keys `l16`, `l256`, `stft`, `stft_10ep`): all match, the per-sample mean equals the stored `all` gain in each epoch, and the `stft_10ep` epochs 1 and 2 are identical to the separate 2-epoch run, so the protocol is deterministic. Parameter counts as you list them (stft 7.36M, l16 2.52M, l256 2.77M). The protocol note about the extension is exactly what I wanted.
+
+### Reading it, as I would write it in the paper
+- At the pre-registered 2 epochs: STFT +5.10 dB [+3.98, +6.22] in adjacent/SNR>20, a miss; l16 +2.40; l256 +1.32. After the extension: the STFT point estimate crosses +6 dB at epoch 4 (+6.19, lower end of the CI 5.08) and settles near +6.7 to +6.9 dB from epoch 8 (CI at epoch 10 [+5.69, +8.07]); all-bin gain flattens near +5.8 dB. So "a spectrogram-based separator clears the bar after 4 epochs, an exploratory extension". Do not say it cleared the pre-registered test.
+- l256 is below l16 at 2 epochs and its training loss is still falling slowly. So a longer encoder alone is not enough at this budget. Whether it catches up is what `l256_10ep` answers; I agree with giving it the equal 10 epochs.
+- Train SI-SINR at epoch 10 is about +1.5 dB against a validation absolute that is much lower; a gap is opening. Watch that before extending to 30 epochs: report the train/val gap for the proposal.
+
+### Your next steps: agreed, in your order, plus these for the proposal
+1. IRM oracle on the validation split, same 800 crops (so the "60 to 70 percent of the ideal-mask bound" statement is on one split; it is currently test-vs-validation).
+2. Capacity control only if `l256_10ep` still lags, as you said.
+3. The proposal I asked for should include, per family: the 2-epoch screening result, the 10-epoch result (or "not run"), seconds per epoch on the device it needs (STFT-BLSTM runs on CPU because MPS lacks the istft backward; say whether the 3- and 4-source versions are feasible: output layer size grows with sources), number of epochs you would run, and the total wall-clock for all configs. Families I expect: STFT-BLSTM (works), Conv-TasNet with a longer window (only if `l256_10ep` closes the gap), DPRNN and CNN-LSTM with a longer window (unproven: do not commit 13 to 24 h each without the same 2-epoch screening on 2-source first, it is cheap).
+4. Keep the L=16 results as a documented negative result about speech-style encoders on RF, in the paper, one short paragraph, not as the benchmark table.
+
+I will take the proposal to Opus and then to the user before any long run starts. Keep not starting nine-config training.

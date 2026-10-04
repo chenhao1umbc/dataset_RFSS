@@ -252,3 +252,34 @@ Both processes were relaunched at 2026-10-04 14:23 UTC; data loading takes about
 - l16 epoch 2 and the whole l256 variant are still running on MPS (about 13 minutes per epoch); I will post them when done.
 - STFT front end (BLSTM + complex ratio mask, about 8M parameters, 137 s per epoch on CPU): the training loss is still falling (1.21 to -0.02, i.e. train SI-SINR now above 0 dB) and the validation gain rose from +4.2 to +4.9 dB between epochs 1 and 2, whereas the L=16 Conv-TasNet was flat from the first epoch. In the adjacent, SNR>20 bin it reached +5.10 dB (interval +3.98 to +6.22), i.e. just under the +6 dB bar you set, with the bar inside the interval. By your rule that is a miss at 2 epochs, but this variant is clearly not on a plateau, so two epochs may be too short for it. It is cheap (about 2 min per epoch), so I propose, unless you object, to run it for 10 epochs under the same protocol (about 25 min, validation only) to see where it saturates. Please tell me if you want something else first.
 - Absolute val SI-SINR for stft epoch 2: all +0.58 dB, adjacent SNR>20 +3.93 dB, co SNR>20 +5.26 dB (the IRM oracle on test reached +9 to +11 dB there).
+
+### Update 2026-10-04 15:12 UTC (front-end comparison, results; `check/encoder_sweep_results.json` at 7ca8d07; validation split, 800 fixed 2-source crops; gain over input in dB, 95 percent bootstrap interval; clipping on, constant LR 1e-3)
+**Protocol note (your condition 2):** the 10-epoch STFT run is an extension beyond the pre-registered 2-epoch protocol, decided after seeing epoch 2 of the 2-epoch STFT run (which was a miss: +5.10 [+3.98, +6.22] in the adjacent, SNR>20 bin). The 2-epoch miss stays on record.
+
+Parameters: stft 7.36M, l16 2.52M, l256 2.77M (so STFT is about 2.7x larger; capacity control still to do).
+
+2 epochs, pre-registered bar +6 dB in the adjacent, SNR>20 bin (n=106):
+| variant | train loss ep2 | all (n=800) | adjacent SNR>20 | co SNR>20 (n=83) |
+|---|---|---|---|---|
+| l16 (control) | 1.731 | +2.89 [+2.62, +3.16] | +2.40 [+1.33, +3.43] | +3.09 [+1.92, +4.24] |
+| l256 / stride 64 | 2.309 | +2.31 [+2.04, +2.56] | +1.32 [+0.29, +2.31] | +2.19 [+1.14, +3.26] |
+| stft | -0.023 | +4.89 [+4.54, +5.22] | +5.10 [+3.98, +6.22] | +6.09 [+4.76, +7.43] |
+Only STFT is within reach of the bar at 2 epochs; l256 is below l16 at 2 epochs, but its train loss is still falling (2.90 to 2.31), so by your rule it now gets the same 10 epochs (running, about 70 minutes including data loading; key `l256_10ep`).
+
+stft, 10 epochs (key `stft_10ep`; epoch 1 and 2 reproduce the separate 2-epoch run exactly, so the protocol is deterministic):
+| epoch | train loss | all | adjacent SNR>20 | co SNR>20 |
+|---|---|---|---|---|
+| 1 | 1.211 | +4.21 [+3.90, +4.52] | +4.31 [+3.13, +5.46] | +5.19 [+3.99, +6.40] |
+| 2 | -0.023 | +4.89 [+4.54, +5.22] | +5.10 [+3.98, +6.22] | +6.09 [+4.76, +7.43] |
+| 3 | -0.442 | +5.01 [+4.66, +5.34] | +5.78 [+4.65, +6.89] | +5.99 [+4.61, +7.35] |
+| 4 | -0.688 | +5.50 [+5.14, +5.83] | +6.19 [+5.08, +7.31] | +6.72 [+5.40, +8.09] |
+| 5 | -0.882 | +5.61 [+5.26, +5.95] | +6.36 [+5.22, +7.50] | +6.79 [+5.46, +8.17] |
+| 6 | -1.036 | +5.62 [+5.25, +5.96] | +6.58 [+5.46, +7.69] | +6.85 [+5.45, +8.31] |
+| 7 | -1.174 | +5.74 [+5.37, +6.09] | +6.60 [+5.46, +7.73] | +6.97 [+5.59, +8.39] |
+| 8 | -1.307 | +5.81 [+5.44, +6.17] | +6.91 [+5.73, +8.07] | +7.16 [+5.74, +8.59] |
+| 9 | -1.399 | +5.82 [+5.46, +6.18] | +6.73 [+5.56, +7.87] | +7.16 [+5.78, +8.62] |
+| 10 | -1.502 | +5.84 [+5.47, +6.20] | +6.87 [+5.69, +8.07] | +7.12 [+5.75, +8.53] |
+Reading: the gain crosses +6 dB in the adjacent, SNR>20 bin at epoch 4 and flattens around +6.7 to +6.9 dB from epoch 8 (the CI at epoch 10 is [+5.69, +8.07]); the all-bin gain flattens near +5.8 dB. The training loss keeps falling (train SI-SINR about +1.5 dB at epoch 10), so a gap between train and validation is opening slowly.
+For scale, the IRM oracle (on test, 600 samples, earlier note) was +9 to +12 dB gain in these SNR bins, so the STFT-BLSTM at 10 epochs recovers roughly 60 to 70 percent of that ideal-mask bound; I have not run the IRM on the validation split yet and will do so so the comparison is on the same split.
+
+**Next, in this order:** (1) wait for `l256_10ep` (equal budget); (2) IRM oracle on the validation split for the same crops; (3) the capacity control (l256 with larger H and B to about 7M parameters, same protocol, if l256_10ep still lags); (4) the restart proposal you asked for. I am not starting any nine-config training.

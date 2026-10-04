@@ -82,7 +82,7 @@ Updated 2026-10-03 after the Builder's forward-model check (`check/verify_refere
    `normalize_power( freq_shift( pad( resample( source ) ) ), power_ratios_db[i] )`, where `freq_shift` is applied only in adjacent-channel mode using
    `mixing_params.frequency_offsets_hz`. Rebuilding the noiseless mixture this way with `SignalMixer` matched the stored mixture
    to within the expected AWGN level in 204 of 204 checked test samples. Use the aligned reference for scoring separation methods.
-   **[TBD-A4]** Link the reference-builder function once it exists in the repo.
+   Reference implementation: `build_aligned_references(source_block, meta, signal_len)` in `src/utils_mixing.py` of the GitHub repo. Independently checked by the Reviewer on 40 random test samples read from this repository (median residual gap 0.017 dB, maximum 0.167 dB versus the stored SNR).
 5. **Do not score against the raw stored sources in adjacent-channel mixtures.** The unshifted reference scores a median of about -40 dB against the mixture,
    versus about -6 dB for the aligned reference (102 adjacent-channel test samples).
 6. **Power scaling.** Sources are scaled by `mixing_params.power_ratios_db` (examples reach +/-25 dB), so the mixture power can be far above the stored reference power.

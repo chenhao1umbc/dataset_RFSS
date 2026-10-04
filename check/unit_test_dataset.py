@@ -194,3 +194,26 @@ class TestSingleSourceDataLoader:
         batch = next(iter(loader))
         assert batch['mixed_signals'].dtype == torch.complex64
         assert batch['mixed_signals'].shape[0] == 4
+
+
+# ---------------------------------------------------------------------------
+# build_aligned_references
+# ---------------------------------------------------------------------------
+
+class TestAlignedReferences:
+    # 87752: co-channel 5G+LTE+LTE+UMTS; 98464: 5G+GSM co-channel; 99613: 3x 5G adjacent-channel
+    @pytest.mark.parametrize("idx", [87752, 98464, 99613])
+    def test_rebuilt_mixture_matches_stored(self, idx):
+        import h5py
+        import numpy as np
+        from src.utils_mixing import build_aligned_references
+        with h5py.File(MULTI_H5, 'r') as f:
+            meta = json.loads(f['metadata'][idx])
+            n = meta['num_sources']
+            length = int(f['signal_lengths'][idx])
+            refs = build_aligned_references(f['source_signals'][idx, :n], meta, length)
+            mixed = f['mixed_signals'][idx, :length].astype(np.complex128)
+        assert refs.shape == (n, length)
+        residual = mixed - refs.sum(axis=0)
+        ratio_db = 10 * np.log10(np.mean(np.abs(residual) ** 2) / np.mean(np.abs(refs.sum(axis=0)) ** 2))
+        assert abs(ratio_db + meta['snr_db']) < 0.5

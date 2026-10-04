@@ -17,6 +17,7 @@ References:
 - See paper/mixing_scenarios.md for detailed specifications
 """
 
+import numpy as np
 import torch
 from typing import List, Dict, Optional
 from datetime import datetime
@@ -527,3 +528,46 @@ class MIMOSignalMixer:
     def clear(self):
         """Clear all source signals."""
         self.sources = []
+
+
+def build_aligned_references(source_block: np.ndarray, meta: Dict, signal_len: int) -> np.ndarray:
+    """
+    Rebuild the exact per-source terms that were summed into a stored mixture.
+
+    The HDF5 stores each source at its native rate, zero-padded, before resampling,
+    frequency shift and power scaling. The generators do not output exactly 1 ms
+    (GSM stores 1890 samples, 5G NR slightly less than the nominal count), so the
+    native length is the index of the last non-zero sample. The sources are then
+    passed through SignalMixer exactly as in generate_sample().
+
+    Args:
+        source_block: Stored sources, shape (num_sources, padded_len), complex
+        meta: Sample metadata dict (as parsed from the HDF5 metadata entry)
+        signal_len: Stored mixture length for this sample
+
+    Returns:
+        Complex128 array of shape (num_sources, signal_len); summing the rows gives the
+        noiseless mixture (the stored mixture minus AWGN).
+    """
+    mixing = meta['mixing_params']
+    rates = [src['signal_params']['sample_rate'] for src in meta['sources']]
+    mix_rate = max(rates)
+    mixer = SignalMixer(sample_rate=mix_rate)
+    for i, (src, rate) in enumerate(zip(meta['sources'], rates)):
+        nonzero = np.nonzero(source_block[i])[0]
+        native_len = int(nonzero[-1]) + 1 if len(nonzero) else 1
+        mixer.add_source(
+            torch.from_numpy(np.ascontiguousarray(source_block[i, :native_len])),
+            label=src['standard'],
+            power_db=mixing['power_ratios_db'][i],
+            freq_offset_hz=mixing['frequency_offsets_hz'][i],
+            timing_offset_samples=0,
+            source_sample_rate=rate if rate != mix_rate else None,
+        )
+    aligned = mixer.mix(mode=mixing['mixing_mode'])['source_signals_aligned']
+    out = np.zeros((len(aligned), signal_len), dtype=np.complex128)
+    for i, sig in enumerate(aligned):
+        sig = sig.numpy()
+        n = min(len(sig), signal_len)
+        out[i, :n] = sig[:n]
+    return out

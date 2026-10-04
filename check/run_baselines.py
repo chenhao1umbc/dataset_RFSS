@@ -1,12 +1,14 @@
 """Baseline experiment runner for Phase 3/5 of the RFSS project.
 
-Evaluates ICA and NMF source separation baselines on the RFSS dataset.
-Samples N_PER_GROUP indices uniformly at random (seed 42) from the test
-split for each source count (2, 3, 4 sources).
+Evaluates ICA and NMF source separation baselines on the RFSS dataset:
+every test-split sample for each source count (2, 3, 4 sources), or
+--n-per-group indices sampled uniformly at random (seed 42) per source count.
+References come from build_aligned_references (exact terms of the mixture).
 
 Results are saved to check/baseline_results.json.
 """
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -20,14 +22,11 @@ from src.baseline_algorithms import (
     ICASourceSeparation,
     NMFSourceSeparation,
     permutation_invariant_si_sinr,
-    resample_to_length,
 )
+from src.utils_mixing import build_aligned_references
 
 DATASET_PATH = Path("data/rfss_dataset.h5")
 RESULTS_PATH = Path("check/baseline_results.json")
-
-# Match DL evaluation sample count for consistent comparison
-N_PER_GROUP = 150
 
 # Test split: 85% to 100% of 100k = samples 85000–99999
 TEST_START = 85000
@@ -37,12 +36,6 @@ TEST_END = 100000
 SAMPLE_SEED = 42
 
 
-def get_source_native_len(source_meta: dict) -> int:
-    """Return expected 1ms signal length at the source's native sample rate."""
-    rate = source_meta["signal_params"]["sample_rate"]
-    return int(round(rate * 0.001))
-
-
 def load_sample(h5file: h5py.File, idx: int) -> dict:
     """Load a single sample from the HDF5 file."""
     signal_len = int(h5file["signal_lengths"][idx])
@@ -50,12 +43,9 @@ def load_sample(h5file: h5py.File, idx: int) -> dict:
     metadata = json.loads(h5file["metadata"][idx])
     num_sources = metadata["num_sources"]
 
-    references = []
-    for s_idx in range(num_sources):
-        native_len = get_source_native_len(metadata["sources"][s_idx])
-        src_raw = h5file["source_signals"][idx, s_idx, :native_len].astype(np.complex128)
-        src_up = resample_to_length(src_raw, signal_len)
-        references.append(src_up)
+    references = list(
+        build_aligned_references(h5file["source_signals"][idx, :num_sources], metadata, signal_len)
+    )
 
     return {
         "mixed": mixed,
@@ -126,6 +116,10 @@ def evaluate_algorithm(
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--n-per-group", type=int, default=0, help="samples per source count (0 = all test samples)")
+    n_per_group = parser.parse_args().n_per_group or TEST_END - TEST_START
+
     if not DATASET_PATH.exists():
         print(f"Dataset not found: {DATASET_PATH}")
         sys.exit(1)
@@ -133,8 +127,8 @@ def main():
     print(f"Loading dataset: {DATASET_PATH}")
     h5file = h5py.File(DATASET_PATH, "r")
 
-    print(f"Collecting {N_PER_GROUP} test samples per source count (random seed {SAMPLE_SEED})...")
-    test_indices = collect_test_indices(h5file, N_PER_GROUP)
+    print(f"Collecting {n_per_group} test samples per source count (random seed {SAMPLE_SEED})...")
+    test_indices = collect_test_indices(h5file, n_per_group)
     for ns, idxs in sorted(test_indices.items()):
         print(f"  {ns}-source: {len(idxs)} samples")
 
@@ -162,6 +156,7 @@ def main():
                 "n_samples": len(results),
                 "mean_si_sinr_db": round(float(np.mean(si_sinrs)), 4),
                 "std_si_sinr_db": round(float(np.std(si_sinrs)), 4),
+                "ci95_si_sinr_db": round(float(1.96 * np.std(si_sinrs, ddof=1) / np.sqrt(len(si_sinrs))), 4),
                 "min_si_sinr_db": round(float(np.min(si_sinrs)), 4),
                 "max_si_sinr_db": round(float(np.max(si_sinrs)), 4),
                 "samples": results,

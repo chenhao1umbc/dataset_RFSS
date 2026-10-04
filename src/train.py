@@ -15,7 +15,6 @@ from typing import Optional
 
 import h5py
 import numpy as np
-import scipy.signal as sp_signal
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
@@ -28,6 +27,7 @@ except ImportError:
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.models import ConvTasNet, CNNLSTMSeparator, DualPathRNN, pit_si_sinr_loss, si_sinr
+from src.utils_mixing import build_aligned_references
 
 
 def _checkpoint_loss(p: Path) -> float:
@@ -38,20 +38,11 @@ def _checkpoint_loss(p: Path) -> float:
         return float('inf')
 
 
-def _resample_complex(signal: np.ndarray, target_len: int) -> np.ndarray:
-    """Resample a complex signal to target_len via Fourier resampling."""
-    if np.iscomplexobj(signal):
-        r = sp_signal.resample(signal.real, target_len)
-        i = sp_signal.resample(signal.imag, target_len)
-        return r + 1j * i
-    return sp_signal.resample(signal.real, target_len).astype(np.complex128)
-
-
 class SeparationDataset(Dataset):
     """Dataset for source separation training/evaluation.
 
-    Filters samples by num_sources, upsamples reference sources to the
-    mixed signal rate, and random-crops to train_length for training.
+    Filters samples by num_sources, rebuilds the aligned reference sources
+    (build_aligned_references), and random-crops to train_length for training.
 
     Args:
         h5_path: Path to rfss_dataset.h5.
@@ -125,30 +116,12 @@ class SeparationDataset(Dataset):
         if len(mixed_raw) < out_len:
             mixed_raw = np.pad(mixed_raw, (0, out_len - len(mixed_raw)))
 
-        # Load each source efficiently based on whether rate matches mixed signal rate
-        sources = []
-        for i in range(self.n_sources):
-            src_meta = meta['sources'][i]
-            sample_rate = src_meta['signal_params']['sample_rate']
-            native_len = int(round(sample_rate * 0.001))
-
-            if native_len == signal_len:
-                # Same rate as mixed signal: load the exact crop slice (no resampling)
-                src_end = min(crop_start + out_len, native_len)
-                src_slice = self._h5['source_signals'][global_idx, i, crop_start:src_end].astype(np.complex128)
-                if len(src_slice) < out_len:
-                    src_slice = np.pad(src_slice, (0, out_len - len(src_slice)))
-                sources.append(src_slice)
-            else:
-                # Different rate: compute corresponding native-rate slice, resample to out_len
-                ratio = native_len / signal_len
-                native_start = int(crop_start * ratio)
-                native_needed = int(out_len * ratio) + 2
-                native_end = min(native_start + native_needed, native_len)
-                src_slice = self._h5['source_signals'][global_idx, i, native_start:native_end].astype(np.complex128)
-                sources.append(_resample_complex(src_slice, out_len))
-
-        sources_arr = np.stack(sources, axis=0)  # (n_sources, out_len)
+        # Exact per-source terms of the stored mixture (true native length, frequency shift, power scaling)
+        source_block = self._h5['source_signals'][global_idx, :self.n_sources]
+        aligned = build_aligned_references(source_block, meta, signal_len)
+        sources_arr = aligned[:, crop_start:crop_end]
+        if sources_arr.shape[1] < out_len:
+            sources_arr = np.pad(sources_arr, ((0, 0), (0, out_len - sources_arr.shape[1])))
 
         # Normalize by mixed RMS
         rms = float(np.sqrt(np.mean(np.abs(mixed_raw) ** 2)))

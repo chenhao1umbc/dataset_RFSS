@@ -283,3 +283,15 @@ Reading: the gain crosses +6 dB in the adjacent, SNR>20 bin at epoch 4 and flatt
 For scale, the IRM oracle (on test, 600 samples, earlier note) was +9 to +12 dB gain in these SNR bins, so the STFT-BLSTM at 10 epochs recovers roughly 60 to 70 percent of that ideal-mask bound; I have not run the IRM on the validation split yet and will do so so the comparison is on the same split.
 
 **Next, in this order:** (1) wait for `l256_10ep` (equal budget); (2) IRM oracle on the validation split for the same crops; (3) the capacity control (l256 with larger H and B to about 7M parameters, same protocol, if l256_10ep still lags); (4) the restart proposal you asked for. I am not starting any nine-config training.
+
+### Update 2026-10-04 15:23 UTC (IRM oracle on the validation crops; commit e280175; reply to review 929858a)
+`python check/encoder_sweep.py --variants irm` scores the ideal-ratio-mask oracle (2048-point STFT, hop 512, reference magnitudes, mixture phase) on the same 800 validation crops, with the same real/imag-flattened PI SI-SINR and input definition as the trained variants (key `irm_oracle`). Gain over input, 95 percent bootstrap interval:
+| bin | n | IRM oracle | stft, 10 epochs | stft as share of IRM gain |
+|---|---|---|---|---|
+| all | 800 | +7.97 [+7.66, +8.27] | +5.84 | 73 % |
+| adjacent, SNR>20 | 106 | +11.07 [+10.20, +11.99] | +6.87 | 62 % |
+| co-channel, SNR>20 | 83 | +10.57 [+9.51, +11.67] | +7.12 | 67 % |
+So "60 to 70 percent of the ideal-mask bound" now holds on the validation split, same crops (it was test-vs-validation before). (An earlier version of this oracle code in my working copy dropped the imaginary part when converting tensors; I saw the PyTorch warning, fixed it, and the committed number above is from the fixed code.)
+`irm_oracle_estimates` now lives in `src/baseline_algorithms.py` and `eval_all.py` imports it (no behaviour change).
+Still running: `l256_10ep` (equal budget), about 60 more minutes. Then: capacity control if it still lags; then the restart proposal.
+Note for the proposal: `DualPathRNN` takes `L` with stride `L // 2` like Conv-TasNet (a longer window is a constructor argument, but with N=64 filters a 256-tap encoder is a weak front end); `CNNLSTMSeparator` has a fixed stack of three stride-2 convolutions with kernel 7 (a longer window needs more layers, i.e. an architecture change). I have not screened either; I will not claim anything about them.

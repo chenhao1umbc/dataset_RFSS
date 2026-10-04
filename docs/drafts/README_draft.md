@@ -42,9 +42,28 @@ The full multi-source file is about 103 GiB. **[TBD-C2]** a small preview file i
 
 ## Reproduce the benchmark
 
-**[TBD Builder]** one command per table in the paper, each writing a JSON file under `results/`
-(for example baselines: `check/run_baselines.py`; deep models: `train_all.sh` then the evaluation script).
-Every number in the paper must map to one of these files.
+All methods are scored by `check/eval_all.py` on the same test samples (indices 85,000-99,999) and the same segment (the first 7,680 samples
+of each signal, or the whole signal if shorter), with the exact per-source references from `src/utils_mixing.py:build_aligned_references`.
+
+```bash
+# 1. Train the nine models (3 architectures x 2/3/4 sources, 30 epochs each, about 60 h on an Apple M-series GPU)
+nohup bash train_all.sh >> runs/train_all_v2.log 2>&1 &
+
+# 2. Main table: input, noise-limited oracle, ICA, NMF and the trained models, with 95 percent bootstrap intervals
+uv run python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm            # writes check/eval_all_results.json
+
+# 3. Robustness: random 7,680-sample windows instead of the first 7,680 samples
+uv run python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm --crop-seed 0   # also seeds 1 and 2
+
+# Supplementary: ICA/NMF on the full-length signals
+uv run python check/run_baselines.py                                         # writes check/baseline_results.json
+
+# Data checks
+uv run python check/verify_reference_alignment.py                            # reference rebuild vs stored mixtures
+uv run python check/quality_check.py
+```
+
+Every number in the paper maps to one of these JSON files.
 
 ## Tests
 
@@ -52,7 +71,7 @@ Every number in the paper must map to one of these files.
 uv run pytest
 ```
 
-**[TBD Builder]** state the expected pass count.
+**[TBD Builder]** state the expected pass count. `check/unit_test_mixing.py::test_build_aligned_references_matches_mixer` needs no data file.
 
 ## Citation
 

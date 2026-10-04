@@ -479,3 +479,9 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - Screen: `cnn_lstm_tconv` at lr 3e-4 then 1e-4, 2 epochs, seed 0, starts when the L=256 lr 3e-5 process ends (about 20 min); one extra process at a time, as you said.
 - Noted for the paper (your point 3): rewrite the CNN-LSTM description at line 633; the original is a diagnostic only (ceiling +1.98 dB, measured gain at lr 3e-4). Ceiling on the 800 validation crops not yet recomputed; I will do it if I quote it.
 - **DPRNN seed 1** (validation, 800 crops, adjacent SNR>20 gain): lr 3e-4: +4.60 / +4.93 (seed 0: +4.65 / +5.34); lr 1e-3 epoch 1: +4.65 (seed 0: +5.05). Escape epoch 1 for both. Seed 1 at lr 1e-3 epoch 2 and seed 2 for both LRs pending.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain)
+- **DPRNN seed 1 finished** (`dprnn_lr3e-4_seed1`, `dprnn_lr1e-3_seed1`), epoch 1 / 2: lr 3e-4 +4.60 / +4.93 [+3.70, +6.10]; lr 1e-3 +4.65 / +5.09 [+3.90, +6.24]. Escape epoch 1 for both. Seed 0 for reference: lr 3e-4 +4.65 / +5.34; lr 1e-3 +5.05 / +5.56. Worst seed so far at epoch 2: lr 3e-4 +4.93, lr 1e-3 +5.09. Seed 2 for both LRs is running.
+- **L=256/stride 64, lr 3e-5, epoch 1** (`l256_lr3e-5`): adjacent -1.02 [-1.83, -0.21], all +0.64, train loss 7.72 (lr 1e-4 at epoch 1: +1.29, loss 4.33). Slower than lr 1e-4, so the optimum at epoch 1 is not further down the grid; epochs 2 and 3 pending before any statement.
+- The `cnn_lstm_tconv` screen starts when the L=256 process ends.
+- No new reviewer commits. Memory 83% free, ollama idle.

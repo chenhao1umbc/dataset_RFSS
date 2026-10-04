@@ -6,6 +6,7 @@ Variants (same data crops, same seed, same batch size and data order, 2 epochs o
   l256    : Conv-TasNet, encoder L=256, stride 64, rest unchanged
   irm     : (no training) ideal-ratio-mask oracle on the same validation crops, an upper bound for masking
   dprnn, cnn_lstm : the architectures of train_all.sh via build_model, for learning-rate screening
+  cnn_lstm_tconv : cnn_lstm with a transposed-convolution decoder instead of linear interpolation
   stft    : STFT front end (n_fft 2048, hop 512), BLSTM on log-magnitude features, learned complex ratio
             mask on the real/imag STFT, inverse STFT back to the waveform
 
@@ -53,7 +54,7 @@ def build(variant: str, n_sources: int) -> nn.Module:
         return ConvTasNet(N=256, L=256, B=128, H=256, P=3, X=8, R=3, n_sources=n_sources, stride=64)
     if variant == "stft_h512":
         return STFTMaskNet(n_sources=n_sources, hidden=512)
-    if variant in ("dprnn", "cnn_lstm"):
+    if variant in ("dprnn", "cnn_lstm", "cnn_lstm_tconv"):
         return build_model(variant, n_sources)
     return STFTMaskNet(n_sources=n_sources)
 
@@ -108,7 +109,7 @@ def validate(estimator, mixed, sources, info, device) -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--variants", nargs="+", default=["l16", "l256", "stft"], choices=["l16", "l256", "stft", "stft_h512", "dprnn", "cnn_lstm", "irm"])
+    ap.add_argument("--variants", nargs="+", default=["l16", "l256", "stft"], choices=["l16", "l256", "stft", "stft_h512", "dprnn", "cnn_lstm", "cnn_lstm_tconv", "irm"])
     ap.add_argument("--epochs", type=int, default=2)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--n-train", type=int, default=0, help="training crops (0 = the whole 2-source train split)")

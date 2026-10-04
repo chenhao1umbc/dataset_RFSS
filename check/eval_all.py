@@ -167,7 +167,7 @@ def summarise(rows: list[dict], methods: list[str]) -> dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=0, help="random test samples per source count (0 = all)")
-    ap.add_argument("--dl", nargs="*", default=[], choices=["conv_tasnet", "dprnn", "cnn_lstm", "stft_blstm"])
+    ap.add_argument("--dl", nargs="*", default=[], choices=["conv_tasnet", "dprnn", "cnn_lstm", "cnn_lstm_tconv", "stft_blstm"])
     ap.add_argument("--device", default="auto")
     ap.add_argument("--split", choices=["val", "test"], default="test", help="use val for every recipe decision; test only for the final table")
     ap.add_argument("--sources", type=int, nargs="*", default=[2, 3, 4], choices=[2, 3, 4], help="source counts to evaluate")

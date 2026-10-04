@@ -268,6 +268,10 @@ class CNNLSTMSeparator(nn.Module):
         lstm_hidden: LSTM hidden size (default 256).
         lstm_layers: LSTM layers (default 2).
         dropout: Dropout rate (default 0.1).
+        transposed_decoder: False (default) projects with a 1x1 convolution and linearly interpolates back to
+            the input length, so every output is piecewise linear between samples 1/8 of the rate apart.
+            True replaces it by one ConvTranspose1d (kernel 8, stride 2) per encoder stage, mirroring the encoder,
+            followed by the 1x1 projection.
     """
 
     def __init__(
@@ -277,6 +281,7 @@ class CNNLSTMSeparator(nn.Module):
         lstm_hidden: int = 256,
         lstm_layers: int = 2,
         dropout: float = 0.1,
+        transposed_decoder: bool = False,
     ):
         super().__init__()
         if cnn_channels is None:
@@ -304,8 +309,19 @@ class CNNLSTMSeparator(nn.Module):
             dropout=lstm_dropout,
         )
 
+        self.decoder = None
+        out_channels = lstm_hidden * 2
+        if transposed_decoder:
+            decoder_layers = []
+            for channels in reversed(cnn_channels[1:]):
+                decoder_layers.append(nn.ConvTranspose1d(out_channels, channels, 8, stride=2, padding=3))
+                decoder_layers.append(nn.BatchNorm1d(channels))
+                decoder_layers.append(nn.ReLU())
+                out_channels = channels
+            self.decoder = nn.Sequential(*decoder_layers)
+
         # Output head: 2 channels per source (real+imag)
-        self.output_conv = nn.Conv1d(lstm_hidden * 2, n_sources * 2, 1)
+        self.output_conv = nn.Conv1d(out_channels, n_sources * 2, 1)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         B_batch, _, T = x.shape
@@ -318,10 +334,11 @@ class CNNLSTMSeparator(nn.Module):
         h, _ = self.lstm(h)          # (B, T_down, 2*lstm_hidden)
         h = h.transpose(1, 2)        # (B, 2*lstm_hidden, T_down)
 
-        # Output projection
+        if self.decoder is not None:
+            h = self.decoder(h)[..., :T]  # each stage doubles the length; trim the surplus of odd lengths
         h = self.output_conv(h)      # (B, n_sources*2, T_down)
 
-        # Upsample to original length
+        # Upsample to original length (a no-op when the transposed decoder already restored it)
         h = F.interpolate(h, size=T, mode='linear', align_corners=False)
 
         # Reshape to (B, n_sources, 2, T)

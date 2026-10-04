@@ -193,3 +193,27 @@ Facts from your note: val loss ~1.53 (SI-SINR about -1.5 dB) from epoch 7 on, fl
 - Whatever you find, do not interpret or quote the Conv-TasNet number in any draft until the full-test `eval_all.py` run has been reviewed.
 
 Do not add anything to the model-selection logic that uses the test split.
+
+---
+
+## Review of Builder update 13:13 UTC (origin/dev f9489c2), written 2026-10-04 ~13:25 UTC
+
+Accepted: the suffixed output files in `eval_all.py` (f68ea97, checked the diff: the main-table file can now only come from a full `[2,3,4]` run), `check/diagnose_training.py` (read it: the overfit test draws the crops once and fixes them, uses the real `pit_si_sinr_loss` and `build_model`, runs on CPU; the crop test compares crop power with full-signal power per source; both are sound), and the item 1 and item 4 numbers.
+
+### What items 1 and 4 tell us
+- Train loss 1.82 -> 1.69 and val loss 1.65 -> 1.56 over 28 epochs: both essentially flat after epoch 1, no gap. That is underfitting, not a generalisation problem, and not a data-starvation problem (0 of 500 crops have an empty source). Note train is consistently about 0.13 dB worse than val; worth one line on why (different crop rule or different SNR mix in the split?), but it is not the main issue.
+- So the open question is whether the model can fit at all (item 2, running) and why it fits so little.
+
+### A concrete hypothesis to test next (I would not wait for it to be proved by the full 50 h)
+`build_model` uses Conv-TasNet with encoder kernel L=16 samples, stride 8 (`src/models.py` ConvTasNet encoder `Conv1d(2, N, 16, stride=8)`). At a mixing rate of tens of MHz (check the exact `mix_rate` for a few samples, it is `max(rates)` of the sources) a 16-sample window is under 1 microsecond. Narrowband sources (GSM, 200 kHz) are separated from wideband ones mostly by their spectral occupancy and symbol structure on time scales of tens to hundreds of samples. A 16-tap learned filterbank has frequency resolution of roughly fs/16 (about 2 MHz at 30.72 MHz), so it cannot represent a 200 kHz-wide channel selectively; the downstream TCN only sees the encoder's output. This is the standard failure of speech-style hyperparameters on RF waveforms, not a bug. It would also explain why adjacent-channel mode (separable by a narrow filter) gives little gain.
+Your item 3 (epoch-7 checkpoint, adjacent-channel, high SNR) is the right first probe of this. In addition, once item 2 is done and if it passes, please run a small, fair comparison on CPU or MPS with the same data and a fixed budget, for example 2000 optimiser steps each, same seed, 2-source only:
+  a) the current Conv-TasNet (L=16),
+  b) the same network with a longer encoder kernel (for example L=128, stride 64, and the TCN dilations unchanged),
+  c) the same as (b) with a larger window length if memory allows.
+Report val SI-SINR (on the same 200 validation samples) for each. This is a recipe question, so it must be decided on the validation split only, never on the test split. If (b) is clearly better, the recipe changes for all nine configs (DPRNN uses L=16 too, CNN-LSTM has its own front end, so each needs the analogous change), the old runs are discarded, and the paper describes the final recipe plus this finding as a property of the benchmark (speech-style encoders under-resolve narrowband RF sources). That is a legitimate and useful result for a dataset paper.
+
+### Order and decision rule (unchanged, with a time cap)
+1. Item 2 (overfit test) result and the number.
+2. Item 3.
+3. The L-sweep above, capped at about 2 hours total, but only if item 2 passes.
+Stopping the running job is your call after item 2: if item 2 fails it must be stopped immediately; if it passes and the sweep shows a clearly better encoder, stop it and restart under the new recipe, since the remaining configurations would be wasted. Tell me the numbers either way and I will review before the restart is final. Quick note for the paper track: nothing from Conv-TasNet at L=16 is to be quoted in any draft yet.

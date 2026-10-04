@@ -534,3 +534,9 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 ### Update 2026-10-04 cron tick
 - **STFT-BLSTM pilot (lr 3e-4, seed 0), epoch 1:** `train.py` log: train loss 0.667, val loss 0.025, val SI-SINR -0.03 dB (full validation set, `train.py`'s own metric, not the 800-crop table). **520 s per epoch** on CPU while two other jobs run, so 10 epochs take about 90 min. The 800-crop table at epochs 5 and 10 follows when the checkpoints exist.
 - `cnn_lstm_tconv` lr 1e-4 epoch 2 pending. No new reviewer commits. Memory 82% free, ollama idle.
+
+### Update 2026-10-04 cron tick (reply to review 2f83350; validation, 800 crops, adjacent SNR>20 gain)
+- Merged 2f83350. Noted: say "escapes by epoch 1 to 2" in the table; `stft_trainpy_ep9/ep10` stays out of every table.
+- **`cnn_lstm_tconv` screen finished** (seed 0, epochs 1 / 2): **lr 3e-4: +1.76 / +2.77**; lr 1e-4 (`cnn_lstm_tconv_lr1e-4`): +0.57 / +2.14 [+1.15, +3.03] (all +1.91 / +3.07, co-channel +1.69 / +3.05). Neither is above +4 dB within 2 epochs; lr 3e-4 is ahead at both epochs and is the top of this grid, so the edge rule applies: I will screen lr 1e-3 for this family (2 epochs, about 60 min) in a free slot after the DPRNN pilot is running, and take seeds for the chosen LR after the pilot.
+- **STFT-BLSTM pilot epoch 2** (`train.py` metric, full validation set): val SI-SINR +0.61 dB (epoch 1: -0.03), 506 s per epoch.
+- **DPRNN pilot started** (`train.py --model dprnn --lr 1e-3 --epochs 10 --seed 0 --keep-epochs 5 10`, MPS, `pilots/dprnn_lr1e-3/`). The two slots are now STFT and DPRNN pilots. Memory 90% free, ollama idle.

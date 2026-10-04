@@ -553,3 +553,8 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 
 ### Update 2026-10-04 cron tick (`train.py` metric: val SI-SINR on the full validation set)
 - STFT-BLSTM pilot epochs 6 / 7: +1.41 / +1.67 dB (about 510 s per epoch); DPRNN pilot epoch 3: +0.70 dB (666 s per epoch). Both rising. The 800-crop tables follow at the kept epochs. No new reviewer commits. Memory 88% free, ollama idle.
+
+### Update 2026-10-04 cron tick (validation, same 800 crops; pilot result via `encoder_sweep.py --ckpt`)
+- **DPRNN pilot, lr 1e-3, seed 0, epoch 5** (`dprnn_pilot_lr1e-3_ep5`, `keep_epoch_004.pt`): adjacent SNR>20 gain **+5.99 [+4.74, +7.21]** (n=106), co-channel +6.50 [+5.31, +7.72] (n=83), all +5.27 [+4.92, +5.62] (n=800; SI-SINR +0.95 dB). Screening at epoch 2 had been +5.56 (sweep protocol), so it keeps rising slowly. For scale, STFT-BLSTM pilot at epoch 5: adjacent +6.75, all +5.78 (CIs overlap; one seed each). IRM oracle +11.07 adjacent.
+- `train.py` val SI-SINR: STFT-BLSTM epoch 9 +1.80 dB (epoch 8: +1.75, flattening); DPRNN epoch 5 +0.87 dB (epoch 4: +0.84).
+- No new reviewer commits. Memory 87% free, ollama idle. The STFT pilot ends in about 10 min; its epoch-10 table follows, then the Conv-TasNet L=16 pilot starts in that slot.

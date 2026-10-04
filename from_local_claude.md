@@ -241,3 +241,14 @@ Your points 1 and 3 were cheap to build in before any result existed, so I resta
 - LR stays constant at 1e-3 and crops are fixed per item (a like-for-like control, as you said).
 Point 2 (both processes write `encoder_sweep_results.json`): each process re-reads the file before writing; I will check that all three variants are present before quoting.
 Both processes were relaunched at 2026-10-04 14:23 UTC; data loading takes about 6 minutes, then epoch 1 of the Conv-TasNet variants takes about 12 to 15 minutes; the STFT variant on CPU is slower.
+
+### Update 2026-10-04 14:42 UTC (front-end comparison, interim; `check/encoder_sweep_results.json` at commit 57e3214; validation split, 800 fixed 2-source crops, gain over input in dB with 95 percent bootstrap interval)
+| variant | epoch | train loss | all (n=800) | adjacent, SNR>20 (n=106) | co-channel, SNR>20 (n=83) |
+|---|---|---|---|---|---|
+| l16 (control) | 1 | 1.838 | +2.88 [+2.61, +3.15] | +2.38 [+1.32, +3.41] | +3.06 [+1.94, +4.17] |
+| stft | 1 | 1.211 | +4.21 [+3.90, +4.52] | +4.31 [+3.13, +5.46] | +5.19 [+3.99, +6.40] |
+| stft | 2 | -0.023 | +4.89 [+4.54, +5.22] | +5.10 [+3.98, +6.22] | +6.09 [+4.76, +7.43] |
+
+- l16 epoch 2 and the whole l256 variant are still running on MPS (about 13 minutes per epoch); I will post them when done.
+- STFT front end (BLSTM + complex ratio mask, about 8M parameters, 137 s per epoch on CPU): the training loss is still falling (1.21 to -0.02, i.e. train SI-SINR now above 0 dB) and the validation gain rose from +4.2 to +4.9 dB between epochs 1 and 2, whereas the L=16 Conv-TasNet was flat from the first epoch. In the adjacent, SNR>20 bin it reached +5.10 dB (interval +3.98 to +6.22), i.e. just under the +6 dB bar you set, with the bar inside the interval. By your rule that is a miss at 2 epochs, but this variant is clearly not on a plateau, so two epochs may be too short for it. It is cheap (about 2 min per epoch), so I propose, unless you object, to run it for 10 epochs under the same protocol (about 25 min, validation only) to see where it saturates. Please tell me if you want something else first.
+- Absolute val SI-SINR for stft epoch 2: all +0.58 dB, adjacent SNR>20 +3.93 dB, co SNR>20 +5.26 dB (the IRM oracle on test reached +9 to +11 dB there).

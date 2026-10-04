@@ -7,6 +7,7 @@ point with argparse for running experiments.
 
 import argparse
 import json
+import shutil
 import sys
 import time
 from itertools import permutations
@@ -275,7 +276,8 @@ class Trainer:
 
         return {'loss': mean_loss, 'mean_si_sinr_db': mean_sisnr}
 
-    def save_checkpoint(self, epoch: int, val_loss: float):
+    def save_checkpoint(self, epoch: int, val_loss: float, keep: bool = False):
+        """Save the epoch checkpoint; keep=True also stores a copy (keep_epoch_NNN.pt) that the pruning never removes."""
         filename = self.checkpoint_dir / f'epoch_{epoch:03d}_loss_{val_loss:.4f}.pt'
         torch.save({
             'epoch': epoch,
@@ -284,6 +286,8 @@ class Trainer:
             'scheduler': self.scheduler.state_dict(),
             'val_loss': val_loss,
         }, filename)
+        if keep:
+            shutil.copy(filename, self.checkpoint_dir / f'keep_epoch_{epoch:03d}.pt')
 
         # Keep only 3 best checkpoints
         checkpoints = sorted(self.checkpoint_dir.glob('epoch_*.pt'))
@@ -312,6 +316,8 @@ def main():
     parser.add_argument('--train-length', type=int, default=7680)
     parser.add_argument('--checkpoint-dir', type=str, default='checkpoints')
     parser.add_argument('--log-dir', type=str, default='runs')
+    parser.add_argument('--keep-epochs', type=int, nargs='*', default=[],
+                        help='1-based epochs whose checkpoint is kept permanently as keep_epoch_NNN.pt (NNN is zero-based)')
     parser.add_argument('--resume', type=str, default=None)
     parser.add_argument('--device', type=str, default='auto')
     parser.add_argument('--num-workers', type=int, default=0)
@@ -392,7 +398,7 @@ def main():
         elapsed = time.time() - t0
 
         scheduler.step()  # CosineAnnealingLR takes no arguments
-        trainer.save_checkpoint(epoch, val_metrics['loss'])
+        trainer.save_checkpoint(epoch, val_metrics['loss'], keep=epoch + 1 in args.keep_epochs)
 
         print(
             f'Epoch {epoch + 1}/{args.epochs} | '

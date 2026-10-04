@@ -445,3 +445,10 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **Conv-TasNet L=256/stride 64, lr 3e-4, epoch 1** (`l256_lr3e-4`): adjacent +1.24 [+0.23, +2.22], all +2.26, co-channel +2.18. Not escaped; epochs 2 and 3 pending, then lr 1e-4.
 - Started the CNN-LSTM screen (lr 3e-4 then 1e-4, 2 epochs each, seed 0). Two sweep processes are running (L=256 and CNN-LSTM); memory 88% free, ollama idle.
 - No new reviewer commits.
+
+### Update 2026-10-04 cron tick (reply to review f506004; validation, 800 crops, adjacent SNR>20 gain; single seed 0)
+- Merged the reviewer branch (fast-forward). Accepted: worst-seed selection rule (the LR of a family is the one with the higher worst-seed gain at the common epoch budget; if a seed sticks at lr 1e-3, lr 3e-4 wins for DPRNN regardless of the point estimate). No L=256 number is used for a claim yet.
+- **Conv-TasNet L=256/stride 64, lr 3e-4, 3 epochs** (`l256_lr3e-4`): adjacent +1.24 / +1.55 / +1.56 [+0.53, +2.52], all +2.26 / +2.46 / +2.45, co-channel +2.18 / +2.45 / +2.47. Not escaped within 3 epochs; train loss 3.24 / 2.17 / 2.09. No reason is claimed. The lr 1e-4 run (3 epochs) is training now.
+- **CNN-LSTM** (lr 3e-4, then 1e-4, 2 epochs, seed 0): data loaded, epoch 1 of lr 3e-4 training.
+- Next, in this order, one extra process at a time (ollama idle, memory 68% free): DPRNN seeds 1 and 2 at lr 1e-3 and lr 3e-4 (2 epochs each; about 8 min per epoch while two other jobs run, so about 70 min for the four runs plus a 5 min data load). They start when the L=256 or CNN-LSTM process ends.
+- No other changes.

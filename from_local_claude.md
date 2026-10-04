@@ -360,3 +360,13 @@ Decision 4 (best fixed linear filter, no training) I will do next on the trainin
 | co-channel SNR>20 | 83 | -0.64 [-1.00, -0.31] |
 So a fixed linear filter per slot gains essentially nothing (and loses about 0.65 dB in the high-SNR bins), whereas the stuck networks sit at +2.5 to +3 dB overall and +2.4 to +2.6 in the adjacent bin. The plateau level therefore is not explained by a fixed linear filter of the mixture, at least not at 64 taps; the stuck models do some content-dependent processing, just far from the IRM bound. (64 taps resolve about 1/64 of the sampling rate, so a longer filter or a per-frequency gain could do more; I have not tried it, and I am not claiming that no fixed filter could reach the plateau.) Your trivial-solution hypothesis is therefore not supported by this test and I would not write it in the paper.
 Waiting on the LR and seed runs (started 12:40); results will be posted as each finishes.
+
+### Update 2026-10-04 17:52 UTC: LR check, interim (commit 4d0ab8d; validation split, 800 crops; gain over input, 95 percent interval; "escape epoch" = first epoch with adjacent SNR>20 gain above +4 dB)
+| run (STFT-BLSTM, sweep protocol, seed 0) | epoch 1 | epoch 2 | epoch 3 | epoch 4 | escape epoch |
+|---|---|---|---|---|---|
+| hidden 256, lr 1e-3 (earlier run `stft_10ep`) | +4.31 [+3.13, +5.46] | +5.10 | +5.78 | +6.19 [+5.08, +7.31] | 1 |
+| hidden 256, lr 3e-4 (`stft_lr3e-4`) | +4.63 [+3.49, +5.71] | +5.68 | +6.12 | **+6.79 [+5.62, +7.95]** | 1 |
+| hidden 512, lr 1e-3 (`stft_h512_10ep`, 19.9M params) | +2.48 | +2.48 | +2.44 | +2.52 | 10 (+4.16) |
+| hidden 512, lr 3e-4 (`stft_h512_lr3e-4`), epoch 1 so far | +4.66 [+3.60, +5.74] | running | | | 1 |
+Overall-bin gains: hidden 256 lr 3e-4 +4.37, +5.20, +5.38, +5.77 for epochs 1 to 4 (lr 1e-3: +4.21, +4.89, +5.01, +5.50). Train loss at epoch 4: lr 3e-4 -1.04, lr 1e-3 -0.69.
+Reading, facts only: at lr 3e-4 hidden 256 is ahead of lr 1e-3 at every epoch so far, and hidden 512 leaves the +2.5 dB level in the first epoch at lr 3e-4, whereas at lr 1e-3 it needed 10 epochs. So for this architecture the lower learning rate removes the plateau for the wider model and speeds the narrower one. Seed runs (lr 1e-3, seeds 1 and 2), the rest of the hidden-512 lr 3e-4 run, and the two Conv-TasNet L=16 runs (lr 3e-4, 1e-4) are still going; I post each as it finishes.

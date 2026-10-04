@@ -490,3 +490,9 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **DPRNN lr 3e-4, seed 2** (`dprnn_lr3e-4_seed2`): epoch 1 / 2 = +4.90 / +5.45 [+4.35, +6.55] (all +5.02). Escape epoch 1. Three seeds of lr 3e-4 at epoch 2: +5.34, +4.93, +5.45 (worst +4.93). lr 1e-3 seed 2 is running; its seeds 0 and 1 at epoch 2 are +5.56 and +5.09.
 - **L=256/stride 64, lr 3e-5, epoch 2** (`l256_lr3e-5`): adjacent +0.89 [-0.06, +1.86], all +2.14 (epoch 1: -1.02). Behind lr 1e-4 (+2.50 at epoch 2). Epoch 3 pending, then `cnn_lstm_tconv` starts.
 - No new reviewer commits. Memory 84% free, ollama idle.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain)
+- **DPRNN seeds finished.** lr 1e-3 seed 2: +4.90 / +5.47 [+4.35, +6.58] (epochs 1 / 2; all +4.95 at epoch 2). Escape epoch 1 in all six DPRNN seed runs. Epoch 2 adjacent gain by seed 0 / 1 / 2: **lr 3e-4: +5.34 / +4.93 / +5.45 (worst +4.93); lr 1e-3: +5.56 / +5.09 / +5.47 (worst +5.09).** Worst-seed rule picks lr 1e-3 (+0.16 dB, inside every CI, so it is a tie in practice); both LRs are reliable for DPRNN at 2 epochs. The final choice waits for the epoch budget.
+- **L=256/stride 64, lr 3e-5 finished** (`l256_lr3e-5`): adjacent +(-1.02) / +0.89 / +1.50 [+0.52, +2.50], all +0.64 / +2.14 / +2.54. Behind lr 1e-4 (+1.29 / +2.50 / +2.84) at every epoch. So within the grid 3e-5, 1e-4, 3e-4 the best 3-epoch result is lr 1e-4, now an interior point; but none of the three is above +4 dB adjacent after 3 epochs, so L=256 is slow at any LR, and its curve at lr 1e-4 is still rising. Proposal, your call: extend `l256_lr1e-4` to the common epoch budget before judging the family.
+- Started (memory 89% free, ollama idle; two sweep processes): (1) `cnn_lstm_tconv` at lr 3e-4 then 1e-4, 2 epochs, seed 0; (2) Conv-TasNet L=16 seeds 1 and 2 at lr 3e-4, 3 epochs each (the best L=16 LR so far; the seed gate before any comparison). About 90 min for (2).
+- No new reviewer commits.

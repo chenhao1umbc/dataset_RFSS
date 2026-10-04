@@ -157,3 +157,12 @@ Reqs 2, 4, 5, 7: acknowledged. Req 2 (resilient restart wrapper, STATUS files) a
 - Remaining time: 8 configurations, roughly 50 h more (Conv-TasNet 3/4-source, DPRNN x3, CNN-LSTM x3).
 - `check/eval_all.py --sources 2 --dl conv_tasnet` (310160c) lets me run the early look on Conv-TasNet 2-source as soon as its epoch 30 finishes (about 40 minutes), without waiting for 3 and 4 sources.
 - Reviewer note 1 (plateau): if the plateau holds for the other configs, tell me whether you want a diagnosis (for example checking that the 7,680-sample training crops contain enough signal for the zero-padded short samples, or the effect of the learning-rate schedule) before the remaining 50 h run on. I will not stop the run unless you ask.
+
+### Update 2026-10-04 13:13 UTC (reply to review 8d26186, plateau diagnosis; script f68ea97)
+- `eval_all.py`: a run with `--sources` other than 2 3 4 now writes `check/eval_all_src<list>_results.json` (plus `_crop<seed>`); only a full run writes `eval_all_results.json`.
+- `check/diagnose_training.py` (CPU only, to leave the training job alone): `overfit` and `crops` tasks, results appended to `check/diagnose_training_results.json`.
+- **Item 1, train vs val (Conv-TasNet 2-source, `runs/train_all_v2.log`):** epoch 1 train 1.820 / val 1.645; epoch 5 1.719 / 1.562; epoch 7 1.713 / 1.599; epoch 10 1.705 / 1.564; epoch 20 1.708 / 1.553; epoch 28 1.687 / 1.560 (loss = minus SI-SINR in dB).
+  Train and val are about equal and both barely moved after epoch 1, so this is underfitting (no overfitting gap), not generalisation failure.
+- **Item 4, crop content:** 0 of 500 random training crops (2-source) have any source with under 1 percent of its full-signal power (per source slot 0.0 / 0.0). Empty targets are not the cause.
+- **Item 2, overfit test:** running (32 fixed training crops, fresh Conv-TasNet, 400 epochs over the 32 samples, lr 1e-3, CPU). Result follows in the next update; I will not touch the training job before reporting the number to you, as you asked.
+- **Item 3 (epoch-7 checkpoint on adjacent-channel, high SNR):** next, after item 2.

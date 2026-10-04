@@ -550,3 +550,6 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **STFT-BLSTM pilot, lr 3e-4, seed 0, epoch 5** (`stft_pilot_lr3e-4_ep5`, from `keep_epoch_004.pt`): adjacent SNR>20 gain **+6.75 [+5.60, +7.85]** (n=106), co-channel SNR>20 +7.09 [+5.71, +8.54] (n=83), all +5.78 [+5.42, +6.12] (n=800; SI-SINR +1.46 dB). IRM oracle on these crops for scale: +11.07 adjacent. This is a 10-epoch extension of the study, not the pre-registered 2-epoch bar, and the bar is not claimed. Compare the sweep protocol at lr 3e-4 epoch 4: +6.79, so the `train.py` recipe (random crops, cosine LR) is consistent with the sweep. One seed. Epoch 10 follows.
 - `train.py` val SI-SINR: STFT epochs 1 to 5 = -0.03 / +0.61 / +1.02 / +1.24 / +1.25 dB (flat from epoch 4 to 5 on the full validation set; the 800-crop gain does not show that because it is a different bin); DPRNN epochs 1 / 2 = +0.06 / +0.38 dB.
 - No new reviewer commits. Memory 87% free, ollama idle.
+
+### Update 2026-10-04 cron tick (`train.py` metric: val SI-SINR on the full validation set)
+- STFT-BLSTM pilot epochs 6 / 7: +1.41 / +1.67 dB (about 510 s per epoch); DPRNN pilot epoch 3: +0.70 dB (666 s per epoch). Both rising. The 800-crop tables follow at the kept epochs. No new reviewer commits. Memory 88% free, ollama idle.

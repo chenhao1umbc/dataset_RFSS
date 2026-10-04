@@ -167,7 +167,7 @@ def summarise(rows: list[dict], methods: list[str]) -> dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=0, help="random test samples per source count (0 = all)")
-    ap.add_argument("--dl", nargs="*", default=[], choices=["conv_tasnet", "dprnn", "cnn_lstm"])
+    ap.add_argument("--dl", nargs="*", default=[], choices=["conv_tasnet", "dprnn", "cnn_lstm", "stft_blstm"])
     ap.add_argument("--device", default="auto")
     ap.add_argument("--split", choices=["val", "test"], default="test", help="use val for every recipe decision; test only for the final table")
     ap.add_argument("--sources", type=int, nargs="*", default=[2, 3, 4], choices=[2, 3, 4], help="source counts to evaluate")
@@ -218,9 +218,10 @@ def main():
                     row[name] = pi_score(est, s["refs"])
                 part.append(row)
             for name in args.dl:
-                model, ckpt_name = load_dl_model(name, ns, device)
+                dl_device = "cpu" if name == "stft_blstm" else device  # MPS lacks the inverse-STFT backward
+                model, ckpt_name = load_dl_model(name, ns, dl_device)
                 checkpoints[f"{name}_{ns}src"] = ckpt_name
-                for row, score in zip(part, dl_scores(model, samples, device)):
+                for row, score in zip(part, dl_scores(model, samples, dl_device)):
                     row[name] = score
             rows += part
 

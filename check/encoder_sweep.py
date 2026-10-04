@@ -33,7 +33,7 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
 from src.baseline_algorithms import irm_oracle_estimates  # noqa: E402
-from src.models import ConvTasNet, pit_si_sinr_loss, si_sinr  # noqa: E402
+from src.models import ConvTasNet, STFTMaskNet, pit_si_sinr_loss, si_sinr  # noqa: E402
 from src.train import SeparationDataset  # noqa: E402
 
 DATASET_PATH = ROOT / "data" / "rfss_dataset.h5"
@@ -43,31 +43,6 @@ SEED = 0
 BINS = {"all": lambda mode, snr: True,
         "adjacent_snr_gt_20": lambda mode, snr: mode == "adjacent-channel" and snr > 20,
         "co_snr_gt_20": lambda mode, snr: mode == "co-channel" and snr > 20}
-
-
-class STFTMaskNet(nn.Module):
-    """STFT -> BLSTM on log-magnitude -> complex ratio masks (tanh on real and imaginary parts) -> inverse STFT."""
-
-    def __init__(self, n_sources: int = 2, n_fft: int = 2048, hop: int = 512, hidden: int = 256):
-        super().__init__()
-        self.n_sources, self.n_fft, self.hop = n_sources, n_fft, hop
-        self.register_buffer("window", torch.hann_window(n_fft))
-        self.inp = nn.Linear(n_fft, hidden)
-        self.rnn = nn.LSTM(hidden, hidden, num_layers=2, batch_first=True, bidirectional=True)
-        self.out = nn.Linear(2 * hidden, n_sources * n_fft * 2)
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        b, _, t = x.shape
-        z = torch.complex(x[:, 0], x[:, 1])
-        spec = torch.stft(z, self.n_fft, self.hop, window=self.window, return_complex=True, onesided=False)  # (B, F, T')
-        feat = torch.log1p(spec.abs()).transpose(1, 2)                                                       # (B, T', F)
-        h, _ = self.rnn(torch.relu(self.inp(feat)))
-        m = torch.tanh(self.out(h)).view(b, -1, self.n_sources, self.n_fft, 2)                               # (B, T', S, F, 2)
-        mask = torch.complex(m[..., 0], m[..., 1]).permute(0, 2, 3, 1)                                       # (B, S, F, T')
-        est = (mask * spec.unsqueeze(1)).reshape(b * self.n_sources, self.n_fft, -1)
-        wav = torch.istft(est, self.n_fft, self.hop, window=self.window, length=t, onesided=False, return_complex=True)
-        wav = wav.view(b, self.n_sources, t)
-        return torch.stack([wav.real, wav.imag], dim=2)                                                      # (B, S, 2, T)
 
 
 def build(variant: str, n_sources: int) -> nn.Module:

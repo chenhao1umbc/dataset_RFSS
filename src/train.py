@@ -26,7 +26,7 @@ except ImportError:
     _TENSORBOARD_AVAILABLE = False
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from src.models import ConvTasNet, CNNLSTMSeparator, DualPathRNN, pit_si_sinr_loss, si_sinr
+from src.models import ConvTasNet, CNNLSTMSeparator, DualPathRNN, STFTMaskNet, pit_si_sinr_loss, si_sinr
 from src.utils_mixing import build_aligned_references
 
 
@@ -44,6 +44,8 @@ def build_model(name: str, n_sources: int) -> nn.Module:
         return ConvTasNet(N=256, L=16, B=128, H=256, P=3, X=8, R=3, n_sources=n_sources)
     if name == 'cnn_lstm':
         return CNNLSTMSeparator(n_sources=n_sources)
+    if name == 'stft_blstm':
+        return STFTMaskNet(n_sources=n_sources)
     return DualPathRNN(N=64, L=16, B=64, H=64, P=50, num_layers=6, n_sources=n_sources)
 
 
@@ -299,7 +301,7 @@ class Trainer:
 
 def main():
     parser = argparse.ArgumentParser(description='Train RF source separation model')
-    parser.add_argument('--model', choices=['conv_tasnet', 'cnn_lstm', 'dprnn'],
+    parser.add_argument('--model', choices=['conv_tasnet', 'cnn_lstm', 'dprnn', 'stft_blstm'],
                         default='conv_tasnet')
     parser.add_argument('--n-sources', type=int, default=2)
     parser.add_argument('--epochs', type=int, default=30)
@@ -325,6 +327,9 @@ def main():
             device = 'cpu'
     else:
         device = args.device
+
+    if args.model == 'stft_blstm' and device == 'mps':
+        device = 'cpu'  # MPS has no inverse-STFT backward (unfold_backward)
 
     if args.smoke_test:
         args.epochs = 2

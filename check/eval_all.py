@@ -15,8 +15,9 @@ samples above zero, for the absolute score and for the improvement over the inpu
 Usage:
     uv run python check/eval_all.py                       # input, oracle, ICA, NMF
     uv run python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm   # also trained models
+    uv run python check/eval_all.py --dl ... --crop-seed 0            # robustness pass, random window
 
-Output: check/eval_all_results.json
+Output: check/eval_all_results.json (check/eval_all_crop<seed>_results.json with --crop-seed)
 """
 
 import argparse
@@ -51,19 +52,26 @@ N_BOOT = 2000
 BOOT_SEED = 0
 
 
-def load_segment(f: h5py.File, idx: int) -> dict:
-    """Mixture, exact references and stored noise for the evaluation segment of one sample."""
+def load_segment(f: h5py.File, idx: int, crop_seed: int | None) -> dict:
+    """Mixture and exact references for the evaluation segment of one sample.
+
+    The segment is the first SEGMENT_LEN samples, or with crop_seed a window starting at a
+    per-sample random offset (fixed by crop_seed and idx) to avoid start-of-signal transients.
+    """
     meta = json.loads(f["metadata"][idx])
     n_src = meta["num_sources"]
     length = int(f["signal_lengths"][idx])
     refs = build_aligned_references(f["source_signals"][idx, :n_src], meta, length)
     mixed = f["mixed_signals"][idx, :length].astype(np.complex128)
     seg = min(length, SEGMENT_LEN)
+    start = 0
+    if crop_seed is not None and length > SEGMENT_LEN:
+        start = int(np.random.RandomState([crop_seed, idx]).randint(0, length - SEGMENT_LEN + 1))
     return {
         "idx": idx,
         "meta": meta,
-        "mixed": mixed[:seg],
-        "refs": refs[:, :seg],
+        "mixed": mixed[start:start + seg],
+        "refs": refs[:, start:start + seg],
     }
 
 
@@ -153,7 +161,9 @@ def main():
     ap.add_argument("--n", type=int, default=0, help="random test samples per source count (0 = all)")
     ap.add_argument("--dl", nargs="*", default=[], choices=["conv_tasnet", "dprnn", "cnn_lstm"])
     ap.add_argument("--device", default="auto")
+    ap.add_argument("--crop-seed", type=int, default=None, help="random window per sample instead of the first SEGMENT_LEN samples")
     args = ap.parse_args()
+    output = OUTPUT if args.crop_seed is None else OUTPUT.with_name(f"eval_all_crop{args.crop_seed}_results.json")
 
     device = args.device
     if device == "auto":
@@ -174,7 +184,7 @@ def main():
             if args.n:
                 idxs = sorted(rng.choice(idxs, size=min(args.n, len(idxs)), replace=False).tolist())
             print(f"{ns}-source: {len(idxs)} samples", flush=True)
-            samples = [load_segment(f, i) for i in idxs]
+            samples = [load_segment(f, i, args.crop_seed) for i in idxs]
             part = []
             for s in samples:
                 row = {
@@ -198,6 +208,7 @@ def main():
 
     result = {
         "segment_len": SEGMENT_LEN,
+        "crop_seed": args.crop_seed,
         "test_range": [TEST_START, TEST_END],
         "checkpoints": checkpoints,
         "summary": summarise(rows, methods),
@@ -206,9 +217,9 @@ def main():
     # compute_si_sinr returns +-100 as sentinels for zero-power reference or residual; none are expected
     n_sentinel = sum(abs(abs(r[m]) - 100.0) < 1e-9 for r in rows for m in methods)
     result["n_sentinel_scores"] = int(n_sentinel)
-    OUTPUT.write_text(json.dumps(result))
+    output.write_text(json.dumps(result))
     if n_sentinel:
-        raise RuntimeError(f"{n_sentinel} sample scores equal the +-100 dB sentinel; inspect {OUTPUT}")
+        raise RuntimeError(f"{n_sentinel} sample scores equal the +-100 dB sentinel; inspect {output}")
     for key, entry in result["summary"].items():
         if "/" not in key:
             print(key, {m: round(entry[m]["mean"], 2) for m in methods})

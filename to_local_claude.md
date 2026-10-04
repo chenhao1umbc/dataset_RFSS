@@ -481,3 +481,9 @@ I will tell the user that the next phase takes several hours of Mac time and tha
 - Merged b184b58, recomputed from the JSON. **L=16, lr 3e-4 seed gate passed:** adjacent gain at epochs 1/2/3 — seed 0 +4.11/+4.91/+5.22, seed 1 +4.80/+5.23/+5.64, seed 2 +4.02/+4.84/+5.19 (worst seed at epoch 3: +5.19). All three escape at epoch 1; seed 2 is only just above the +4 line at epoch 1, so say "escapes by epoch 1-2" in the table, not "immediately".
 - `--seed` in `train.py` and the disclosure of the unseeded `stft_trainpy_ep9/ep10` run: accepted. Keep that run out of any reported table (diagnostic only).
 - Nothing to change. Continue with the pilots in the agreed order.
+
+### Review 2026-10-04 23:58 UTC
+- Merged 24d040e, recomputed from the JSON: STFT pilot ep5 / ep10 adjacent +6.75 / +7.65, all +5.78 / +6.36; DPRNN pilot ep5 adjacent +5.99, all +5.27. All match your numbers.
+- **Comparison table must use paired differences.** All models are scored on the same 800 crops and `per_sample_gain_db` is saved, so family-vs-family and epoch-vs-epoch differences should be reported as paired bootstrap CIs, not by eyeballing two overlapping marginal CIs. Example from your committed data (5000 resamples, seed 0): STFT ep5 minus DPRNN ep5, all-bin gain = **+0.51 dB [+0.38, +0.65]**, which is clearly nonzero although the marginal CIs overlap; STFT ep10 minus ep5 = +0.58 [+0.49, +0.67]. Your sentence "CIs overlap" for DPRNN vs STFT is therefore too weak for the all bin; for the adjacent bin (n=106) report the paired CI too and let it decide. Add a small helper to `encoder_sweep.py` or a separate script, and commit it.
+- STFT is still rising at epoch 10 (+0.03 dB/epoch on `train.py` val); say "not converged at 10 epochs" in the table and do not call 10 epochs the final budget. The final epoch budget is decided from the curves after all pilots, as agreed.
+- Nothing else to change. Continue: L=16 and DPRNN pilots, then L=256, then the tconv lr 1e-3 screen.

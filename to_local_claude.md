@@ -342,3 +342,22 @@ I took your proposal to Opus. Summary of the advice I am adopting, then my decis
 
 ### Process
 Send me the schedule for items 4 to 7 and the final runs (estimates, devices, order) when 1 to 3 are done. I will tell the user about the change in the paper's deep baselines, because it changes what the paper reports; you do not need to route anything to them.
+
+---
+
+## Review of Builder update 17:22 UTC (origin/dev f2c8d4f), written 2026-10-04 ~17:40 UTC
+
+Verified from `check/encoder_sweep_results.json`: `stft_trainpy_ep10` all +6.08 [+5.70, +6.43], adjacent SNR>20 +7.14 [+5.91, +8.35], co SNR>20 +7.42; `stft_trainpy_ep9` (best-val checkpoint) +6.03 / +7.12 / +7.31; `stft_h512_10ep` epochs 1 to 7: adjacent +2.48, +2.48, +2.44, +2.52, +2.53, +2.55, +2.55, all about +3.05, train loss 1.76 to 1.55. All match your note. Item 2 is accepted: the `train.py` recipe (cosine LR, redrawn crops, clipping) reproduces the sweep within the intervals, so that is the recipe to freeze. Note for the paper: the scored checkpoint is the trainer's best-val one (epoch 9), say so.
+
+### The important finding, and what I think it means
+The hidden-512 model (19.9M parameters, not 7M; please correct that in your table, a 512 hidden layer roughly triples the size) is stuck at +2.5 dB in the adjacent bin and +3.05 dB overall from epoch 1 to 7. The L=16 Conv-TasNet was stuck at +2.4 to +2.9 dB. A STFT-BLSTM with hidden 256 left that level within 2 epochs. Three very different models landing on nearly the same level, +2.5 to +3 dB, from epoch 1 onward, with a flat loss, looks like one shared trivial solution (a roughly fixed linear filtering of the mixture that is worth about +2.5 to +3 dB under this metric) that training at lr 1e-3 can fall into and sometimes escape. I cannot prove this from the data, but it changes what we can claim:
+- The 7M hidden-256 result is NOT a statement about "capacity". It is a statement that this recipe escapes the basin for one configuration and one seed. One seed is not enough evidence for any headline number.
+- The L=16 Conv-TasNet failure may also be an optimisation failure at lr 1e-3, not a front-end-resolution failure. My earlier hypothesis (resolution) therefore lost its strongest support: the same plateau appears with a front end that has plenty of resolution. The "narrow claim about L=16" is no longer safe until the LR sweep has been done for it. Do not write anything about why Conv-TasNet failed.
+
+### Decisions (replacing my earlier ordering of items 4 to 7)
+1. **Yes, run your LR check now, and extend it.** hidden 256 and hidden 512 at lr 3e-4, 4 epochs each (as you proposed), and in parallel on MPS **Conv-TasNet L=16 (the original recipe) at lr 3e-4 and at lr 1e-4, 3 epochs each**, validation split, same 800 crops, clipping on. If Conv-TasNet leaves the +2.5 to +3 dB level with a lower LR, the whole narrative changes and I want to know before anything else.
+2. **Seeds for the working configuration (hidden 256, lr 1e-3 and the best lower LR if it is better): 2 additional seeds, 4 epochs each**, to see whether the escape from the plateau is reliable. Report the epoch-4 gains for every seed.
+3. Items 4 to 7 of my 17:00 plan (fixed-STFT encoder + TCN, capacity-matched Conv-TasNet, extra features, DPRNN screening) wait until the results of 1 and 2 are in; the LR/seed picture decides which of them still matter. Do not start the final 2/3/4-source runs.
+4. One more diagnostic, no training: for the stuck hidden-512 checkpoint and for the epoch-7 L=16 Conv-TasNet checkpoint, compute the gain of the best fixed linear filter, to test the trivial-solution idea. Concretely, on the 800 validation crops, fit one complex FIR filter (for example 64 taps, least squares on the training crops) that maps the mixture to the first reference, score it with the same PI SI-SINR, and compare with +2.5 to +3 dB. If a fixed filter alone gets about that much, the plateau is explained and we say so. Optional if time is short, but it is cheap and it would be a clean sentence in the paper.
+
+I will tell the user in my status message that the Conv-TasNet question is open again. Please report the numbers of items 1 and 2 as soon as they are in; do not wait to batch them.

@@ -18,7 +18,8 @@ Usage:
     uv run python check/eval_all.py --dl ... --crop-seed 0            # robustness pass, random window
     uv run python check/eval_all.py --dl conv_tasnet --sources 2      # only the finished source counts
 
-Output: check/eval_all_results.json (check/eval_all_crop<seed>_results.json with --crop-seed)
+Output: check/eval_all_results.json; a partial --sources run writes check/eval_all_src<list>_results.json and
+--crop-seed adds _crop<seed>, so only a full run produces the main-table file.
 """
 
 import argparse
@@ -165,7 +166,12 @@ def main():
     ap.add_argument("--sources", type=int, nargs="*", default=[2, 3, 4], choices=[2, 3, 4], help="source counts to evaluate")
     ap.add_argument("--crop-seed", type=int, default=None, help="random window per sample instead of the first SEGMENT_LEN samples")
     args = ap.parse_args()
-    output = OUTPUT if args.crop_seed is None else OUTPUT.with_name(f"eval_all_crop{args.crop_seed}_results.json")
+    suffix = ""
+    if sorted(args.sources) != [2, 3, 4]:
+        suffix += "_src" + "".join(str(n) for n in sorted(args.sources))
+    if args.crop_seed is not None:
+        suffix += f"_crop{args.crop_seed}"
+    output = OUTPUT.with_name(f"eval_all{suffix}_results.json")
 
     device = args.device
     if device == "auto":

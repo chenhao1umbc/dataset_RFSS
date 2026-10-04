@@ -114,6 +114,8 @@ def main():
     ap.add_argument("--device", default="mps")
     ap.add_argument("--irm-nfft", type=int, nargs="+", default=[2048], help="frame sizes for the irm variant")
     ap.add_argument("--ckpt", default=None, help="score this train.py checkpoint on the validation crops instead of training (needs one variant)")
+    ap.add_argument("--runs", nargs="+", default=None,
+                    help="explicit runs as variant,lr,seed,epochs,tag (for example stft,3e-4,0,4,_lr3e-4); overrides --variants/--epochs/--tag")
     ap.add_argument("--tag", default="", help="suffix for the result key, e.g. _10ep for a longer run of the same variant")
     args = ap.parse_args()
 
@@ -126,7 +128,10 @@ def main():
     steps_per_epoch = len(train_x) // args.batch_size
     print(f"loaded {len(train_x)} train and {len(val_x)} val crops in {time.time() - t0:.0f}s; {steps_per_epoch} steps per epoch", flush=True)
 
-    for variant in args.variants:
+    runs = [(v, 1e-3, SEED, args.epochs, args.tag) for v in args.variants]
+    if args.runs:
+        runs = [(r[0], float(r[1]), int(r[2]), int(r[3]), r[4] if len(r) > 4 else "") for r in (x.split(",") for x in args.runs)]
+    for variant, lr, seed, epochs, tag in runs:
         if variant == "irm":  # no training: oracle bound on the same validation crops
             for n_fft in args.irm_nfft:
                 val = validate(lambda m, t: irm_estimate(m, t, n_fft), val_x, val_y, val_info, "cpu")
@@ -149,16 +154,16 @@ def main():
             print(f"{variant}{args.tag} ({Path(args.ckpt).name}): " + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
                                                                          for k, v in val.items() if k != "per_sample_gain_db"), flush=True)
             continue
-        torch.manual_seed(SEED)
+        torch.manual_seed(seed)
         device = "cpu" if variant.startswith("stft") else args.device  # MPS lacks the istft backward (unfold_backward)
         model = build(variant, args.n_sources).to(device)
         n_params = sum(p.numel() for p in model.parameters())
-        opt = torch.optim.Adam(model.parameters(), lr=1e-3)
-        gen = torch.Generator().manual_seed(SEED)
-        record = {"variant": variant, "params": n_params, "batch_size": args.batch_size, "seed": SEED,
+        opt = torch.optim.Adam(model.parameters(), lr=lr)
+        gen = torch.Generator().manual_seed(seed)
+        record = {"variant": variant, "params": n_params, "batch_size": args.batch_size, "seed": seed, "lr": lr,
                   "n_train_crops": len(train_x), "n_val_crops": len(val_x), "epochs": []}
         t1 = time.time()
-        for epoch in range(1, args.epochs + 1):
+        for epoch in range(1, epochs + 1):
             losses = []
             for b in torch.randperm(len(train_x), generator=gen)[: steps_per_epoch * args.batch_size].split(args.batch_size):
                 loss = pit_si_sinr_loss(model(train_x[b].to(device)), train_y[b].to(device))
@@ -171,12 +176,12 @@ def main():
             val = validate(lambda m, t: model(m), val_x, val_y, val_info, device)
             model.train()
             record["epochs"].append({"epoch": epoch, "train_loss": float(np.mean(losses)), "val": val})
-            print(f"{variant} epoch {epoch}: train loss {np.mean(losses):.3f}; val "
+            print(f"{variant}{tag} epoch {epoch}: train loss {np.mean(losses):.3f}; val "
                   + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
                               for k, v in val.items() if k != "per_sample_gain_db")
                   + f" [{time.time() - t1:.0f}s]", flush=True)
             results = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}  # variants may run in parallel processes
-            results[variant + args.tag] = record
+            results[variant + tag] = record
             OUTPUT.write_text(json.dumps(results, indent=1))
 
 

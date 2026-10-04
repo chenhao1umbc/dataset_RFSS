@@ -399,3 +399,14 @@ The seed result is the important one: with hidden 256 at lr 1e-3, seed 0 left th
 | DPRNN | 1e-3, 3e-4, 1e-4 | 2 (extend one if no escape yet) | about 700 s | about 70 min |
 | CNN-LSTM | 3e-4, 1e-4 | 2 | about 1,270 s | about 85 min |
 Total about 3.3 hours of MPS time if run one after another, about 2 hours if the three families run as separate processes at the same time (they would contend; I expect 1.5x slowdown each). Each process also loads the 34,912 training crops (about 6 minutes, 6.4 GB; three processes use about 20 GB of the 48 GB). I will start them as soon as the MPS job is free unless you object to the order.
+
+### Update 2026-10-04 18:22 UTC (reply to review 3126b8b; commit cd70e4f; validation, 800 crops, adjacent SNR>20 gain unless stated)
+**STFT-BLSTM hidden 256, lr 1e-3, three seeds (epoch 1 / 2 / 3 / 4):**
+| seed | 1 | 2 | 3 | 4 | escape epoch (adjacent gain above +4 dB) |
+|---|---|---|---|---|---|
+| 0 (`stft_10ep`) | +4.31 | +5.10 | +5.78 | +6.19 | 1 |
+| 1 (`stft_seed1`) | +2.39 | +2.46 | +2.48 | run finished, see JSON | not within 3 epochs; see the 4th epoch in the JSON (running summary below) |
+| 2 (`stft_seed2`) | +4.73 [+3.71, +5.74] | +5.61 | +6.06 | +5.98 [+4.86, +7.08] | 1 |
+So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 3 to 4 epochs show. (I will fill in seed 1's fourth epoch from the JSON in the next note rather than guess here.) hidden 256, lr 3e-4, seed 0 reached +6.79 at epoch 4; seeds 1 and 2 at lr 3e-4 are not run yet.
+**Conv-TasNet L=16, lr 3e-4, seed 0, epoch 3 (`l16_lr3e-4`):** adjacent +5.22 [+4.01, +6.39] (epochs 1 to 3: +4.11, +4.91, +5.22), all +4.87, co-channel +5.84. Still rising slowly. The lr 1e-4 run (3 epochs) is running.
+**Screening started (memory check first):** the running MPS process uses about 11.9 GB resident (not the 6.4 GB I estimated: crops plus MPS copies), so three more processes at once would not fit in 48 GB; I run at most two more concurrently. Started now: **DPRNN** at lr 3e-4, then 1e-3, then 1e-4, 2 epochs each, one seed (seed 0), in one process (log in the scratchpad, results under keys `dprnn_lr3e-4`, `dprnn_lr1e-3`, `dprnn_lr1e-4`). Conv-TasNet L=256/stride 64 (lr 3e-4, 1e-4, 3 epochs) and CNN-LSTM (lr 3e-4, 1e-4, 2 epochs) start when the l16 lr 1e-4 job frees its memory, in that order. All are marked single seed. Seeds 1 and 2 for the best LR of each family come after, as you require; the final LR will be chosen on validation gain at the final epoch budget, not on epoch 1 (your point 4).

@@ -439,3 +439,9 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **DPRNN lr 1e-4, epoch 1:** +3.85 [+2.88, +4.82] (all +4.04, co-channel +4.72), not yet above +4 dB; epoch 2 pending.
 - L=256 screen has loaded its data (344 s) and is training its lr 3e-4 epoch 1. CNN-LSTM starts when DPRNN finishes (two sweep processes at most, memory 72% free, ollama idle).
 - No new reviewer commits.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain; single seed 0)
+- **DPRNN screening finished** (`dprnn_lr3e-4`, `dprnn_lr1e-3`, `dprnn_lr1e-4`), epoch 1 / 2 adjacent gain: lr 3e-4 +4.65 / +5.34; lr 1e-3 +5.05 / +5.56; lr 1e-4 +3.85 / +4.47 [+3.45, +5.49]. Escape epoch 1, 1 and 2. At epoch 2 lr 3e-4 and 1e-3 are within CI; lr 1e-4 is about 1 dB behind. Provisional LR for the seed runs: lr 1e-3 (best point estimate), with lr 3e-4 as the alternative; seeds 1 and 2 will run for both before I name a winner.
+- **Conv-TasNet L=256/stride 64, lr 3e-4, epoch 1** (`l256_lr3e-4`): adjacent +1.24 [+0.23, +2.22], all +2.26, co-channel +2.18. Not escaped; epochs 2 and 3 pending, then lr 1e-4.
+- Started the CNN-LSTM screen (lr 3e-4 then 1e-4, 2 epochs each, seed 0). Two sweep processes are running (L=256 and CNN-LSTM); memory 88% free, ollama idle.
+- No new reviewer commits.

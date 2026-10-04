@@ -5,8 +5,8 @@ Every method (input mixture, ICA, NMF, trained DL models, noise-limited oracle) 
 first SEGMENT_LEN samples of each test-split sample (shorter signals are used in full), against the
 exact references from build_aligned_references, with the same complex-valued permutation-invariant
 SI-SINR. Reports per-sample results and, per source count and mixing mode (and per SNR bin), the mean,
-standard deviation and 95 percent bootstrap interval of the absolute score and of the improvement
-over the input mixture.
+median, standard deviation, 95 percent bootstrap interval and (for improvements) the fraction of
+samples above zero, for the absolute score and for the improvement over the input mixture.
 
   input  : mean over sources of SI-SINR(mixture, reference_i)
   oracle : estimate_i = reference_i + (stored mixture - sum of references), i.e. perfect separation
@@ -120,8 +120,10 @@ def stats(values: list[float], rng: np.random.RandomState) -> dict:
     return {
         "n": int(len(v)),
         "mean": float(v.mean()),
+        "median": float(np.median(v)),
         "std": float(v.std(ddof=1)) if len(v) > 1 else 0.0,
         "ci95": bootstrap_ci(v, rng),
+        "frac_positive": float(np.mean(v > 0)),
     }
 
 
@@ -201,7 +203,12 @@ def main():
         "summary": summarise(rows, methods),
         "samples": rows,
     }
+    # compute_si_sinr returns +-100 as sentinels for zero-power reference or residual; none are expected
+    n_sentinel = sum(abs(abs(r[m]) - 100.0) < 1e-9 for r in rows for m in methods)
+    result["n_sentinel_scores"] = int(n_sentinel)
     OUTPUT.write_text(json.dumps(result))
+    if n_sentinel:
+        raise RuntimeError(f"{n_sentinel} sample scores equal the +-100 dB sentinel; inspect {OUTPUT}")
     for key, entry in result["summary"].items():
         if "/" not in key:
             print(key, {m: round(entry[m]["mean"], 2) for m in methods})

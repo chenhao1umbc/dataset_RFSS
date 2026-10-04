@@ -520,3 +520,7 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **`cnn_lstm_tconv`, lr 3e-4, seed 0, epoch 2:** adjacent +2.77 [+1.68, +3.80], all +3.59 [+3.28, +3.89], co-channel +3.73; train loss 0.66 (epoch 1: +1.76). Rising, below +4 dB, not escaped by epoch 2. 1795 s per epoch while sharing the GPU. The lr 1e-4 run (2 epochs, about 60 min) follows.
 - **Conv-TasNet L=16, lr 3e-4, seed 2, epoch 1** (`l16_lr3e-4_seed2`): adjacent +4.02 [+3.01, +5.03], all +4.22. Escape epoch 1 (just above +4). Epochs 2 and 3 pending.
 - No new reviewer commits. Memory 81% free, ollama idle.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain)
+- **Conv-TasNet L=16, lr 3e-4, seed 2, epoch 2** (`l16_lr3e-4_seed2`): adjacent +4.84 [+3.76, +5.90], all +4.67 (epoch 1: +4.02). Epoch-2 values by seed 0 / 1 / 2: +4.91 / +5.23 / +4.84 (worst +4.84). Epoch 3 pending.
+- `cnn_lstm_tconv` lr 1e-4 is in its first epoch. No new reviewer commits. Memory 78% free, ollama idle.

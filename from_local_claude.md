@@ -420,3 +420,10 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **Conv-TasNet L=16 lr 1e-4, epoch 1** (`l16_lr1e-4`): adjacent +3.87 [+2.86, +4.86], all +4.05, co-channel +4.87. Not above +4 dB yet; epochs 2 and 3 pending.
 - Reference points for the table (not repeated claims): IRM oracle +11.07 adjacent on the same crops; the pre-registered +6 dB bar is not met at epoch 1 by any run so far.
 - No new reviewer commits. Free memory about 11.6 GB, so the L=256 and CNN-LSTM screens still wait for a running job to finish.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain; single seed 0)
+- **DPRNN lr 3e-4, epoch 2:** adjacent +5.34 [+4.21, +6.45], all +4.95, co-channel +6.01 (epoch 1: +4.65). Escape epoch 1. The lr 1e-3 and lr 1e-4 runs of DPRNN follow in the same process.
+- **Conv-TasNet L=16 lr 1e-4, epoch 2:** adjacent +4.47 [+3.45, +5.49], all +4.44, co-channel +5.44 (epoch 1: +3.87). Escape epoch 2. Epoch 3 pending.
+- Same epoch (2), same seed, adjacent gain: L=16 lr 3e-4 +4.91, lr 1e-4 +4.47; DPRNN lr 3e-4 +5.34. Not a comparison yet: other LRs, seeds 1 and 2 and the final epoch budget are still missing. IRM oracle +11.07 on the same crops; the +6 dB bar is not met by any run at epoch 2.
+- Memory: the user asked me not to risk an OOM because others use this Mac (ollama, idle now, 0.1 GB). I keep two sweep processes at most, start one extra screen only with about 20 GB headroom, and stop it if memory pressure turns warn. The L=256 and CNN-LSTM screens start one at a time after the L=16 job ends.
+- No new reviewer commits.

@@ -109,3 +109,22 @@ NOTE: I launched the retrain, but my follow-up status check was blocked by a per
 - QUESTION (user's decision, authorship/licence): I have NOT applied the author names/emails, the code licence, or the citation block from `docs/drafts/pyproject_changes.md` / `README_draft.md`, since they touch authorship. README and dataset card are held for the final numbers.
 - ICA/NMF full-test-split run still in progress (2-source ICA done: mean -21.80 dB, std 5.97, n=7526); `check/baseline_results.json` is not committed until it finishes.
 - Retrain: launched earlier via `train_all.sh`; a status check from my side was blocked by a permission prompt, still awaiting confirmation from the user that `runs/train_all_v2.log` is advancing.
+
+### Update 2026-10-04 03:42 UTC (cron tick; reply to Round 2 review)
+| Item | Status | Commit |
+|---|---|---|
+| ICA/NMF full-signal baselines on all 15,000 test samples, exact references (`python check/run_baselines.py`; labelled supplementary in its docstring; not for the main table) | done | 153aadc |
+| Req 6: data-free test `check/unit_test_mixing.py::test_build_aligned_references_matches_mixer` (3 sources with non-nominal lengths, co-channel and adjacent, equals SignalMixer output) | passes | 153aadc |
+| Req 6: `pyproject.toml` `python_files` already lists `unit_test_*.py` (my earlier "bare pytest collects nothing" was the output filter, not the config); no change needed | n/a | - |
+| Authors in `pyproject.toml`: Hao Chen, Dayuan Tan, no emails | done | 153aadc |
+| Req 9: `pdflatex` + `bibtex` x2 on `paper/revised_paper.tex`: 0 undefined references, 11 pages | done | - |
+
+Supplementary full-signal means (mean dB, std; n = 7526 / 5324 / 2150): ICA -21.80 (5.97), -24.88 (6.29), -26.58 (6.27); NMF -5.06 (6.85), -9.53 (7.39), -11.79 (7.50)
+for 2/3/4 sources. Per-sample values in `check/baseline_results.json`.
+(Old invalid numbers were ICA -34.9/-37.0/-35.8, NMF -26.1/-29.7/-27.5; the old ranking ICA < NMF is unchanged but the gap is now much smaller than reported.)
+
+QUESTION (user), requirement 1: my earlier command to read the retrain status (a `pgrep`, `tail` of `runs/train_all_v2.log` and `ls` of `checkpoints/`) was blocked by the permission
+classifier, so I have NOT confirmed that `train_all.sh` is running, and I am not retrying it. The user can run
+`! tail -n 5 runs/train_all_v2.log; ls -l checkpoints/conv_tasnet_2src` in the terminal, or add a Bash allow rule for `tail`/`ls` under `runs/` and `checkpoints/` so the loop can read it.
+Reqs 2, 4, 5, 7: acknowledged. Req 2 (resilient restart wrapper, STATUS files) and req 4 (extra crop pass, median and positive-fraction, sentinel assertion) will be added to
+`check/eval_all.py` / a restart script before the DL evaluation; I will not touch the running `train_all.sh`.

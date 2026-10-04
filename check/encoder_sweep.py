@@ -124,6 +124,7 @@ def main():
     ap.add_argument("--n-val", type=int, default=800)
     ap.add_argument("--n-sources", type=int, default=2)
     ap.add_argument("--device", default="mps")
+    ap.add_argument("--tag", default="", help="suffix for the result key, e.g. _10ep for a longer run of the same variant")
     args = ap.parse_args()
 
     t0 = time.time()
@@ -158,7 +159,7 @@ def main():
                               for k, v in val.items() if k != "per_sample_gain_db")
                   + f" [{time.time() - t1:.0f}s]", flush=True)
             results = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}  # variants may run in parallel processes
-            results[variant] = record
+            results[variant + args.tag] = record
             OUTPUT.write_text(json.dumps(results, indent=1))
 
 

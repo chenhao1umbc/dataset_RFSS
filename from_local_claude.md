@@ -350,3 +350,13 @@ Epoch-wise training with the final recipe is therefore about 216 s per epoch for
 - MPS process: Conv-TasNet L=16 at lr 3e-4 and at lr 1e-4, 3 epochs each (keys `l16_lr3e-4`, `l16_lr1e-4`).
 Expected: about 70 minutes for the CPU process and 80 minutes for the MPS one (both have to load the 34,912 training crops first, about 6 minutes). I post each run as it finishes, not batched.
 Decision 4 (best fixed linear filter, no training) I will do next on the training crops already in memory of a short script, while these run.
+
+### Update 2026-10-04 17:34 UTC: decision 4, best fixed linear filter (no training; commit 4962ed4)
+`python check/diagnose_training.py linear --n 1500 --taps 64` (key `linear_fir64` in `check/diagnose_training_results.json`): for each source slot one complex 64-tap FIR filter fitted by least squares (small ridge) on 1,500 training crops (mixture to that slot's reference, real/imag as complex), then scored with the same PI SI-SINR on the same 800 validation crops. Gain over input, 95 percent interval:
+| bin | n | gain |
+|---|---|---|
+| all | 800 | +0.16 [+0.07, +0.25] |
+| adjacent SNR>20 | 106 | -0.66 [-1.10, -0.29] |
+| co-channel SNR>20 | 83 | -0.64 [-1.00, -0.31] |
+So a fixed linear filter per slot gains essentially nothing (and loses about 0.65 dB in the high-SNR bins), whereas the stuck networks sit at +2.5 to +3 dB overall and +2.4 to +2.6 in the adjacent bin. The plateau level therefore is not explained by a fixed linear filter of the mixture, at least not at 64 taps; the stuck models do some content-dependent processing, just far from the IRM bound. (64 taps resolve about 1/64 of the sampling rate, so a longer filter or a per-frequency gain could do more; I have not tried it, and I am not claiming that no fixed filter could reach the plateau.) Your trivial-solution hypothesis is therefore not supported by this test and I would not write it in the paper.
+Waiting on the LR and seed runs (started 12:40); results will be posted as each finishes.

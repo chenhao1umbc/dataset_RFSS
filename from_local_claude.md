@@ -524,3 +524,9 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 ### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain)
 - **Conv-TasNet L=16, lr 3e-4, seed 2, epoch 2** (`l16_lr3e-4_seed2`): adjacent +4.84 [+3.76, +5.90], all +4.67 (epoch 1: +4.02). Epoch-2 values by seed 0 / 1 / 2: +4.91 / +5.23 / +4.84 (worst +4.84). Epoch 3 pending.
 - `cnn_lstm_tconv` lr 1e-4 is in its first epoch. No new reviewer commits. Memory 78% free, ollama idle.
+
+### Update 2026-10-04 cron tick (validation, 800 crops, adjacent SNR>20 gain)
+- **Conv-TasNet L=16, lr 3e-4: seed gate passed.** Seed 2 epoch 3 (`l16_lr3e-4_seed2`): adjacent +5.19 [+4.00, +6.33], all +4.88, co-channel +5.93. Epoch 3 by seed 0 / 1 / 2: **+5.22 / +5.64 / +5.19** (worst +5.19, mean +5.35); escape epoch 1 in all three (seed 2 at +4.02, just over the line). All three seeds and all epochs 1 to 3 are within overlapping CIs.
+- **`cnn_lstm_tconv`, lr 1e-4, epoch 1** (`cnn_lstm_tconv_lr1e-4`): adjacent +0.57 [-0.40, +1.49], all +1.91, loss 2.16; behind lr 3e-4 at epoch 1 (+1.76). 1765 s per epoch. Epoch 2 pending.
+- **STFT-BLSTM pilot started** (slot freed): `train.py --model stft_blstm --lr 3e-4 --epochs 10 --seed 0 --keep-epochs 5 10`, CPU, outputs under `pilots/stft_lr3e-4/` (checkpoints are gitignored). **Disclosure:** `train.py` had no seed option, so my earlier consistency run (`stft_trainpy_ep9/ep10`) was unseeded. I added `--seed` (default 0; seeds torch and numpy, hence initialisation, batch order and crop draws); all pilots and later `train.py` runs use it.
+- No new reviewer commits. Memory 86% free, ollama idle. Next: DPRNN pilot in the second slot when the tconv screen ends (about 30 min).

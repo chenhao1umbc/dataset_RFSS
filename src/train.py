@@ -318,12 +318,15 @@ def main():
     parser.add_argument('--log-dir', type=str, default='runs')
     parser.add_argument('--keep-epochs', type=int, nargs='*', default=[],
                         help='1-based epochs whose checkpoint is kept permanently as keep_epoch_NNN.pt (NNN is zero-based)')
+    parser.add_argument('--seed', type=int, default=0, help='seeds model initialisation, batch order and crop draws')
     parser.add_argument('--resume', type=str, default=None)
     parser.add_argument('--device', type=str, default='auto')
     parser.add_argument('--num-workers', type=int, default=0)
     parser.add_argument('--data', type=str, default='data/rfss_dataset.h5')
     parser.add_argument('--smoke-test', action='store_true')
     args = parser.parse_args()
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
 
     # Device selection
     if args.device == 'auto':

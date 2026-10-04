@@ -217,3 +217,26 @@ Report val SI-SINR (on the same 200 validation samples) for each. This is a reci
 2. Item 3.
 3. The L-sweep above, capped at about 2 hours total, but only if item 2 passes.
 Stopping the running job is your call after item 2: if item 2 fails it must be stopped immediately; if it passes and the sweep shows a clearly better encoder, stop it and restart under the new recipe, since the remaining configurations would be wasted. Tell me the numbers either way and I will review before the restart is final. Quick note for the paper track: nothing from Conv-TasNet at L=16 is to be quoted in any draft yet.
+
+---
+
+## Review of Builder update 13:34 UTC (origin/dev f8b60a7), written 2026-10-04 ~13:55 UTC
+
+Accepted: `eval_all.py` mode-by-SNR groups (c6b78af, one-line change, correct) and `check/eval_all_src2_results.json` (suffixed partial file, labelled interim). The table is clear and honest.
+
+### What the table says
+Gain over input is +2 to +3 dB in every SNR bin from -10 to 40 dB, while the oracle rises from -5 to +27 dB. In adjacent-channel mode at SNR above 30 dB the model gains +2.6 dB against a +27 dB ceiling. A model that merely lacked frequency resolution would still be expected to do much better than that on spectrally separate sources. A flat gain at every SNR looks like a model that applies roughly one fixed filter regardless of content (collapse), or a pipeline defect, rather than an under-resolved but working separator. Your L=16 hypothesis may still hold (it cannot isolate 200 kHz GSM) but I now rank it below the defect and collapse explanations. I asked Opus for a second opinion; its ranking agrees, and the cheap checks below come from it.
+
+Second correction, mine: I called NMF "a strong baseline" earlier. On this segment NMF is -5.84 dB against an input of -4.43 dB, i.e. below doing nothing, and ICA is far below. NMF is only strong relative to ICA. Neither classical baseline separates anything here. No text may call NMF strong; I have noted this for the user as well.
+
+### Stop the 3-source job now
+Reason: the 2-source run already shows this recipe does not separate; the 3-source run of the same recipe cannot tell us anything new, and it competes with the diagnostics for compute (your overfit test on CPU is slowed by it). Keep its config; kill it (`train_all.sh` and the python child), keep the 2-source checkpoints and log. I changed my earlier decision rule (stop only if item 2 fails) because of the flat table. Tell me when it is stopped.
+
+### Checks, in this order (all cheap; use MPS for the overfit test now that the job is stopped)
+1. **Assertion on the tensors that reach the loss.** In a one-off script, take 8 batches from `SeparationDataset` with the training settings and check `sum over sources of sources` against `mixed` per sample: relative residual (power of residual over power of mixture) should be near the noise level (-snr_db), not near 0 dB. You verified the sum on the file; this checks it on the tensors after cropping, padding, RMS normalisation and the real/imag stacking. Report the median and max.
+2. **Overfit one fixed batch.** 8 fixed crops, 2-source, fresh Conv-TasNet, 1,000 to 2,000 steps on MPS. Report the training SI-SINR at steps 1, 100, 500, 1000, 2000. A working pipeline gets well above +10 dB. If it stays near -1.6 dB, it is a defect or a collapse: go to 3. If it overfits but val stays flat, it is a representation or optimisation problem: go to 4.
+3. **Collapse and layout inspection (only if 2 fails).** On the trained epoch-7 checkpoint and on one test sample: (a) correlation between estimate 1 and estimate 2 (near 1 means identical outputs); (b) mean and std of the sigmoid masks over time and channels (saturated at about 0.5 or constant means no use of the input); (c) PSD of each estimate against its reference. The model output layout (B, S, 2, T) matches the targets, I checked that in `src/models.py`, so a layout mismatch is unlikely but item 1 would catch it anyway.
+4. **Metric and front-end upper bound.** Run an oracle STFT ideal-ratio-mask separator through your eval code (n_fft 2048, hop 512, mask from the reference spectra, mixture phase), so we know what a time-frequency front end achieves and that the metric rewards it. Then the capped (2 h, validation only) encoder test on 2-source: current L=16; learned encoder L=256 stride 64; and an STFT front end with a complex ratio mask, same budget and seed.
+
+### Rules (unchanged)
+Any recipe change applies to all nine configurations; the old runs are discarded; the paper describes the final recipe and the diagnosis. Nothing from this L=16 run goes into a draft. Choose by the validation split only.

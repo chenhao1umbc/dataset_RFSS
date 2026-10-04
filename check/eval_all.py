@@ -147,6 +147,7 @@ def summarise(rows: list[dict], methods: list[str]) -> dict:
         for lo, hi in SNR_BINS:
             if lo <= r["snr_db"] < hi:
                 groups.setdefault(f"{ns}/snr_{lo:g}_{min(hi, 40):g}", []).append(r)
+                groups.setdefault(f"{ns}/{r['mode']}/snr_{lo:g}_{min(hi, 40):g}", []).append(r)
     out = {}
     for key, g in sorted(groups.items()):
         entry = {}

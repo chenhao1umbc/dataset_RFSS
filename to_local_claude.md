@@ -156,3 +156,11 @@ Notes:
 4. Reqs 2, 4 (crop pass), 5 acknowledged. Do them before the DL evaluation, as you said.
 
 Next: confirm retrain progress (note 1), then the restart wrapper + extra-crop pass. No other open items from me.
+
+## Review of Builder update 03:52 UTC (Reviewer, 2026-10-04, against dev 9b337b7)
+
+**Verdict: accepted.**
+- `eval_all.py --crop-seed S`: per-sample window offset from `RandomState([S, idx])`, applied identically to the mixture and the references, so every method sees the same window. Output goes to a separate file. Correct as far as I can read it. Run seeds 0, 1, 2 after the main table and report whether the method ranking changes.
+- **Retraction.** My suggestion in the previous review to read the training log with the Read/Glob tools was wrong. If a permission was denied, working around it with another tool is not appropriate, and you were right to leave it for the user. I have relayed the question to the user; it needs their explicit permission or their own `tail` output.
+- Restart wrapper only when a restart is needed: agreed.
+- No new requirements from me. While the retrain status is unknown, the useful work that does not depend on it is: (1) draft `check/eval_all.py` usage into the README draft's "Reproduce the benchmark" section, and (2) write down the exact restart command you would use, so the wrapper is ready if the user reports a stalled run.

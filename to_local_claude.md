@@ -376,3 +376,26 @@ What to do with it:
 1. Keep the LR and seed runs going as launched; report each as it finishes. For every run report the epoch at which the adjacent-bin gain first exceeds +4 dB (or "not within N epochs"). That "escape epoch" is the quantity the final recipe has to make reliable.
 2. Because escape is abrupt and unpredictable, the final recipe needs a robustness argument, not only a good seed. If the lower LR and the seeds show reliable early escape, freeze that. If escape remains erratic, consider (validation only) one change that targets optimisation, for example a short LR warmup or a stronger initial mask scale; do not tune more than one such change.
 3. The final-run plan stays on hold until the seed and LR results are in.
+
+---
+
+## Review of Builder updates 17:52 and 18:02 UTC (origin/dev c027777), written 2026-10-04 ~18:20 UTC. I withdraw part of my 17:00 decisions.
+
+Verified from `check/encoder_sweep_results.json` (every number recomputed from the stored epochs): `l16_lr3e-4` epoch 1: train loss 1.247, all +4.26, adjacent SNR>20 +4.11 [+3.09, +5.10], co-channel +5.24, against the `l16` control at lr 1e-3 (+2.88 / +2.38 / +3.06). `stft_lr3e-4` epochs 1 to 4: adjacent +4.63, +5.68, +6.12, +6.79 [+5.62, +7.95], all +4.37, +5.20, +5.38, +5.77. `stft_h512_lr3e-4` (19.9M params) epochs 1 to 3: adjacent +4.66, +5.74, +6.22, all +4.60, +5.21, +5.41. All match your notes.
+
+### What this changes
+Same Conv-TasNet L=16, same data and order, same clipping, only the learning rate (1e-3 to 3e-4) differs, and it leaves the +2.5 dB level in one epoch. So the original failure of the 16-sample Conv-TasNet (28 flat epochs in the `train_all.sh` run, and the sweep control) was an optimisation problem at lr 1e-3, not a front-end resolution limit. That is the explanation I gave you earlier (and Opus agreed with it as plausible); it is not supported and I retract it, in the same way you retract it in your own note. Two consequences:
+1. **My decisions (a) and part of (c) from 16:32/17:00 are withdrawn:** STFT-BLSTM is not established as the primary baseline, and Conv-TasNet is not a negative result. At lr 3e-4 after one epoch Conv-TasNet L=16 (+4.11) and STFT-BLSTM (+4.63) are close, and nothing measured yet separates the families. The three original families (Conv-TasNet, DPRNN, CNN-LSTM) come back into scope; STFT-BLSTM becomes an additional deep baseline if we want one.
+2. **The "L=256 is not enough" result and the DPRNN/CNN-LSTM statements are likewise untested at a working LR.** Do not use any L=256 number for a claim until it has been run at lr 3e-4.
+
+### Principle for everything from here
+A deep-model comparison is only valid with each family at its own validation-chosen learning rate and the same epoch budget. The paper will carry the LR sweep as a table (an appendix is enough). Do not report any model at a single untuned LR.
+
+### What I want (in this order; nothing else starts)
+1. Let the running jobs finish: l16 lr 3e-4 (3 epochs), l16 lr 1e-4 (3 epochs), stft_h512_lr3e-4 (4 epochs), the two seeds at lr 1e-3. Report each as it lands, with the escape epoch.
+2. When the MPS job is free: LR screening on 2-source, validation, 3 epochs each, same 800 crops and protocol: l256/stride 64 at lr 3e-4 and 1e-4; DPRNN at lr 1e-3, 3e-4, 1e-4 (2 epochs is enough to see an escape; if an escape is not visible by epoch 2, extend that one); CNN-LSTM at lr 3e-4 and 1e-4. Use the existing `build_model` architectures unchanged. Give me the time estimates before starting the DPRNN and CNN-LSTM runs.
+3. After that I want one table: for each family, the validation-chosen LR, gain per bin at the same epoch budget, and the escape epoch, with seed spread for the best one or two families. Then, and only then, a concrete plan for the final runs (2/3/4 sources, final epoch budget, seeds, test split once). The 30-epoch, nine-config `train_all.sh` plan is dead as written (it used lr 1e-3); the budget will most likely be shorter, decide it from the curves.
+4. The old 30-epoch lr 1e-3 results stay out of every table; mention them in the paper only if at all as "at a higher LR the model did not leave a plateau within 30 epochs".
+
+### On the process
+Thank you for stating plainly, in your own note, that the plan you proposed is no longer justified; that is the right thing to do and saved us from a wrong paper claim. I will tell the user, since earlier today I told them the spectrogram model would become the headline baseline.

@@ -50,6 +50,8 @@ def build(variant: str, n_sources: int) -> nn.Module:
         return ConvTasNet(N=256, L=16, B=128, H=256, P=3, X=8, R=3, n_sources=n_sources)
     if variant == "l256":
         return ConvTasNet(N=256, L=256, B=128, H=256, P=3, X=8, R=3, n_sources=n_sources, stride=64)
+    if variant == "stft_h512":
+        return STFTMaskNet(n_sources=n_sources, hidden=512)
     return STFTMaskNet(n_sources=n_sources)
 
 
@@ -66,11 +68,11 @@ def load_items(split: str, n: int, n_sources: int):
     return torch.stack([it["mixed"] for it in items]), torch.stack([it["sources"] for it in items]), info
 
 
-def irm_estimate(m: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
+def irm_estimate(m: torch.Tensor, t: torch.Tensor, n_fft: int = 2048) -> torch.Tensor:
     """Ideal ratio mask oracle on one crop: m (1, 2, T), t (1, S, 2, T) -> (1, S, 2, T)."""
     mixed = torch.complex(m[0, 0].double(), m[0, 1].double()).numpy()
     refs = torch.complex(t[0, :, 0].double(), t[0, :, 1].double()).numpy()
-    est = np.stack(irm_oracle_estimates(mixed, refs))
+    est = np.stack(irm_oracle_estimates(mixed, refs, n_fft))
     return torch.from_numpy(np.stack([est.real, est.imag], axis=1)).float().unsqueeze(0)
 
 
@@ -103,18 +105,20 @@ def validate(estimator, mixed, sources, info, device) -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--variants", nargs="+", default=["l16", "l256", "stft"], choices=["l16", "l256", "stft", "irm"])
+    ap.add_argument("--variants", nargs="+", default=["l16", "l256", "stft"], choices=["l16", "l256", "stft", "stft_h512", "irm"])
     ap.add_argument("--epochs", type=int, default=2)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--n-train", type=int, default=0, help="training crops (0 = the whole 2-source train split)")
     ap.add_argument("--n-val", type=int, default=800)
     ap.add_argument("--n-sources", type=int, default=2)
     ap.add_argument("--device", default="mps")
+    ap.add_argument("--irm-nfft", type=int, nargs="+", default=[2048], help="frame sizes for the irm variant")
+    ap.add_argument("--ckpt", default=None, help="score this train.py checkpoint on the validation crops instead of training (needs one variant)")
     ap.add_argument("--tag", default="", help="suffix for the result key, e.g. _10ep for a longer run of the same variant")
     args = ap.parse_args()
 
     t0 = time.time()
-    if args.variants == ["irm"]:
+    if args.variants == ["irm"] or args.ckpt:
         train_x = train_y = torch.empty(0)
     else:
         train_x, train_y, _ = load_items("train", args.n_train, args.n_sources)
@@ -124,15 +128,29 @@ def main():
 
     for variant in args.variants:
         if variant == "irm":  # no training: oracle bound on the same validation crops
-            val = validate(irm_estimate, val_x, val_y, val_info, "cpu")
+            for n_fft in args.irm_nfft:
+                val = validate(lambda m, t: irm_estimate(m, t, n_fft), val_x, val_y, val_info, "cpu")
+                key = "irm_oracle" if n_fft == 2048 else f"irm_oracle_nfft{n_fft}"
+                results = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
+                results[key] = {"variant": key, "n_fft": n_fft, "n_val_crops": len(val_x), "val": val}
+                OUTPUT.write_text(json.dumps(results, indent=1))
+                print(f"irm oracle n_fft={n_fft}: " + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
+                                                                for k, v in val.items() if k != "per_sample_gain_db"), flush=True)
+            continue
+        if args.ckpt:  # score an existing checkpoint (for example from train.py) on the validation crops
+            device = "cpu" if variant.startswith("stft") else args.device
+            model = build(variant, args.n_sources).to(device)
+            model.load_state_dict(torch.load(args.ckpt, map_location=device)["model"])
+            model.eval()
+            val = validate(lambda m, t: model(m), val_x, val_y, val_info, device)
             results = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
-            results["irm_oracle"] = {"variant": "irm_oracle", "n_val_crops": len(val_x), "val": val}
+            results[variant + args.tag] = {"variant": variant, "checkpoint": Path(args.ckpt).name, "n_val_crops": len(val_x), "val": val}
             OUTPUT.write_text(json.dumps(results, indent=1))
-            print("irm oracle: " + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
-                                             for k, v in val.items() if k != "per_sample_gain_db"), flush=True)
+            print(f"{variant}{args.tag} ({Path(args.ckpt).name}): " + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
+                                                                         for k, v in val.items() if k != "per_sample_gain_db"), flush=True)
             continue
         torch.manual_seed(SEED)
-        device = "cpu" if variant == "stft" else args.device  # MPS lacks the istft backward (unfold_backward)
+        device = "cpu" if variant.startswith("stft") else args.device  # MPS lacks the istft backward (unfold_backward)
         model = build(variant, args.n_sources).to(device)
         n_params = sum(p.numel() for p in model.parameters())
         opt = torch.optim.Adam(model.parameters(), lr=1e-3)

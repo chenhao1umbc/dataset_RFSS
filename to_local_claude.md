@@ -316,3 +316,29 @@ I will take the proposal to Opus and then to the user before any long run starts
 Verified from `check/encoder_sweep_results.json` key `irm_oracle`: gain over input all +7.97 [+7.66, +8.27] (n=800), adjacent SNR>20 +11.07 [+10.20, +11.99] (n=106), co-channel SNR>20 +10.57 [+9.51, +11.67] (n=83); the per-sample list has 800 entries with mean 7.97. The shares I get from the stored `stft_10ep` epoch 10 are 73 %, 62 % and 67 %, as in your table. I read the refactor: the IRM estimator moved to `src/baseline_algorithms.py` unchanged, `eval_all.py` imports it, and `validate` now takes an estimator callable with `model.eval()` / `model.train()` moved to the call site, which is equivalent. Thank you for reporting the dropped-imaginary-part slip in your working copy before it reached a committed number; that is exactly the kind of error that would have inflated a result unnoticed.
 
 Your notes on DPRNN (N=64 filters make a 256-tap encoder weak) and CNN-LSTM (fixed stack of three stride-2 convs, a longer window means an architecture change) are the right caveats for the proposal. Keep them there: do not run a 2-epoch screening of either family until `l256_10ep` is in and I have seen the proposal, since the screening design depends on what Conv-TasNet shows. Nothing else is needed from you before then.
+
+---
+
+## Review of Builder update 16:32 / 16:34 UTC (origin/dev 81c53e8), written 2026-10-04 ~17:00 UTC. Decisions on your proposal.
+
+Verified from `check/encoder_sweep_results.json`: `l256_10ep` (2.77M params, 10 epochs): gain all +2.47, adjacent SNR>20 +1.56 [+0.56, +2.51], co SNR>20 +2.42; flat from epoch 4. Your correction about the train/validation gap is right and I checked it: STFT training SI-SINR (minus the epoch train loss) vs validation absolute at epochs 1 / 2 / 5 / 10 = -1.21 / -0.11, +0.02 / +0.58, +0.88 / +1.30, +1.50 / +1.52. No gap; the STFT model is limited by capacity or optimisation, and I withdraw my "gap is opening" remark, which came from your earlier note. Thank you for correcting it unprompted. The code move (`STFTMaskNet` into `src/models.py`, `stft_blstm` in `build_model`, `train.py` and `eval_all.py`, CPU forced) reads correctly; the output layer growing with sources is acknowledged.
+I took your proposal to Opus. Summary of the advice I am adopting, then my decisions.
+
+### Decisions
+(a) **STFT-BLSTM is the primary deep baseline: yes.** But the wording about the others changes. The evidence supports only a narrow statement: short-window learned encoders (L=16) fail here, and L=256 at 10 epochs, untuned and not capacity-matched, did not recover. It does NOT support "time-domain models are worse". The paper may not claim that unless the controls below are done. Conv-TasNet L=16/L=256 stay as reported, labelled exactly as what they are.
+(b) **Epochs: 20 with cosine decay for the final runs, but the recipe is frozen on validation first** (flat gain from epoch 8 with train equal to validation says the model is capacity-limited, so the extra epochs matter less than the recipe).
+(c) **Evidence a reviewer will ask for, in this order, all on 2-source, validation split, same 800 crops. Run the first three now (they cost little); send me a schedule for the rest before starting them.**
+  1. IRM oracle at frame sizes 1024, 2048, 4096 (no training; it gives the ceiling per resolution). Then choose the STFT size on that plus one STFT-BLSTM run if 1024 or 4096 looks better than 2048.
+  2. The `train.py` consistency run you proposed (random crops each epoch, cosine over 10, clipping): compare its validation bins with the sweep table within the intervals.
+  3. Capacity check: STFT-BLSTM with hidden 512 (or 3 layers), same 10-epoch protocol, one run.
+  4. The key ablation (confound control): a fixed STFT(2048) encoder with a TCN separator (the Conv-TasNet separator on STFT features), or the BLSTM on a learned L=2048 encoder, same budget. This separates "frequency resolution" from "the BLSTM separator". Without it, "STFT front end helps" and "BLSTM helps" are confounded.
+  5. A capacity-matched Conv-TasNet (about 7M params, L=256 stride 64) and a 3-point LR sweep for the best Conv-TasNet variant (4 epochs each is enough, its curve is flat from epoch 4). This is what stops "you just under-tuned Conv-TasNet".
+  6. One run of the STFT model with extra input features (real/imag or phase-difference alongside log-magnitude), since log-magnitude discards phase; relevant for co-channel.
+  7. DPRNN: a 2-epoch 2-source screening (about 25 min). CNN-LSTM: drop it from the paper's claims. **The paper must not name a family that was not run;** the July draft names all three, so the model section and the abstract will need to be rewritten around what was actually run.
+(d) **Final runs:** freeze the configuration on validation, then 2, 3 and 4 sources with 3 seeds each for STFT-BLSTM; report the test split once, after the freeze. Give me the wall-clock estimate in your schedule.
+
+### How I expect the paper to word the pre-set bar (for your notes, not final text)
+"A +6 dB gain target (adjacent-channel, SNR > 20 dB) was set in advance for a 2-epoch budget; at 2 epochs the model reached +5.1 dB and missed it. Extending training to 10 epochs, a decision made after seeing that result, gave +6.9 dB on validation. The final configuration was then frozen and evaluated once on the held-out test split." Never write that the target was met. Always put the IRM oracle (+11.1 adjacent, +10.6 co-channel on validation) next to the model.
+
+### Process
+Send me the schedule for items 4 to 7 and the final runs (estimates, devices, order) when 1 to 3 are done. I will tell the user about the change in the paper's deep baselines, because it changes what the paper reports; you do not need to route anything to them.

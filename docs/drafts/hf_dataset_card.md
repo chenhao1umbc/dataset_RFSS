@@ -65,19 +65,30 @@ or `fsspec`; each sample is one compressed chunk.
 
 ## Important properties of the data (read before using)
 
+Updated 2026-10-03 after the Builder's forward-model check (`check/verify_reference_alignment.py`,
+`check/reference_alignment_results.json`).
+
 1. **Sample rates and lengths vary.** Each source is generated at its native 3GPP rate
-   (GSM 2.166 MHz, UMTS 7.68 MHz, LTE 1.92-30.72 MHz, 5G NR 15.36-122.88 MHz) for 1 ms.
+   (GSM 2.166 MHz, UMTS 7.68 MHz, LTE 1.92-30.72 MHz, 5G NR 15.36-122.88 MHz) for about 1 ms.
    All sources of one sample are resampled to a common mixture rate equal to the highest source rate in that sample.
-   `signal_lengths` therefore ranges from 1,890 to 122,880. Sixteen distinct values appear in a 2,000-sample check.
-2. **References are stored at each source's native rate and zero-padded,** so a reference can be shorter than the mixture
-   (a GSM source has about 1,890 non-zero samples while the mixture may have 61,348). Resample the reference to the mixture length before scoring.
-   The benchmark code does this in `src/train.py` (`_resample_complex`).
-3. **What a reference is.** **[TBD-A1]** Reference = the clean transmitted waveform (before the TDL channel, hardware impairments and power scaling). Confirm.
-4. **Adjacent-channel mixtures** (60% of samples, `mixing_mode: "adjacent-channel"`): **[TBD-A2]** the reference is stored before the per-source frequency shift
-   given in `mixing_params.frequency_offsets_hz`. Describe the evaluation convention chosen in workstream A.
-5. **Power scaling.** Sources are scaled by `mixing_params.power_ratios_db` (examples reach +/-25 dB), so the mixture power can be far above the reference power.
+   `signal_lengths` therefore ranges from 1,890 to 122,880.
+2. **Native length is not exactly 1 ms for every standard.** GSM sources hold 1,890 samples (nominal 2,166). 5G NR sources are slightly shorter than
+   nominal (for example 122,696, 122,640, 61,348 and 30,660 samples; nominal 122,880, 61,440 and 30,720). LTE and UMTS are exact.
+   Find a source's true length as the index of its last non-zero sample plus one. Do not assume `round(sample_rate * 0.001)`.
+3. **What `source_signals` holds.** Each stored source is the waveform **after** its TDL channel and hardware impairments
+   (CFO, SFO, I/Q imbalance, DC offset, phase noise, PA nonlinearity), at its native rate and zero-padded. It is **before** resampling to the mixture rate,
+   before the adjacent-channel frequency shift, before power scaling, and before AWGN. It is not the clean transmitted waveform.
+4. **Aligned reference (what the mixture actually contains).** The term each source contributes to `mixed_signals` is
+   `normalize_power( freq_shift( pad( resample( source ) ) ), power_ratios_db[i] )`, where `freq_shift` is applied only in adjacent-channel mode using
+   `mixing_params.frequency_offsets_hz`. Rebuilding the noiseless mixture this way with `SignalMixer` matched the stored mixture
+   to within the expected AWGN level in 204 of 204 checked test samples. Use the aligned reference for scoring separation methods.
+   **[TBD-A4]** Link the reference-builder function once it exists in the repo.
+5. **Do not score against the raw stored sources in adjacent-channel mixtures.** The unshifted reference scores a median of about -40 dB against the mixture,
+   versus about -6 dB for the aligned reference (102 adjacent-channel test samples).
+6. **Power scaling.** Sources are scaled by `mixing_params.power_ratios_db` (examples reach +/-25 dB), so the mixture power can be far above the stored reference power.
    SI-SINR is scale invariant.
-6. **MIMO field.** **[TBD-A3]** `metadata.mimo_config` reports `1x1`, `2x2` or `4x4`, but the stored mixtures are single-stream. State whether it has any effect.
+7. **MIMO field is vestigial.** `metadata.mimo_config` reports `1x1`, `2x2` or `4x4`, but no MIMO processing is applied in the generator. All mixtures are single-stream (SISO).
+   Ignore this field.
 
 ## Metadata schema
 
@@ -109,7 +120,7 @@ Conv-TasNet, DPRNN and CNN-LSTM, with confidence intervals and sample counts. Do
 
 ## Known limitations
 
-- Single-antenna (SISO) mixtures only. **[TBD-A3]**
+- Single-antenna (SISO) mixtures only; `mimo_config` in the metadata is not used.
 - Downlink waveforms only; no uplink, NB-IoT, LTE-M or sidelink.
 - Synthetic TDL channels, no measured channel data.
 - Absolute separation scores of current methods are low; the dataset is hard for the baselines tested.

@@ -440,3 +440,17 @@ Two small requests:
 2. **CNN-LSTM at lr 3e-4 is far below the input after epoch 1 (-7.81 dB, loss 10.56).** Do not interpret it yet. If epoch 2 and the lr 1e-4 run are also negative, check the model first (a quick look at the output scale against the target scale on one batch, and that the training loss decreases on a fixed batch of 8, as you did for Conv-TasNet) before spending more time on this family; a model that starts that far below the input may have an initialisation or output-scale issue rather than a family limitation.
 
 Otherwise nothing: the DPRNN seed runs and the rest of the screening proceed as planned.
+
+---
+
+## Review of Builder update 20:25 UTC (origin/dev a8527f1), written 2026-10-04 ~20:30 UTC. Decision on CNN-LSTM.
+
+Verified: `cnn_lstm_lr3e-4` epoch 2 adjacent -7.55, all -5.20, loss 10.00 (JSON); `cnn_lstm_ceiling` in `check/diagnose_training_results.json`: mean ceiling +1.979 dB over 300 crops, downsample 8; `overfit_n8_cpu` history matches (-22.7 at step 1); and in `src/models.py` line 325 the CNN-LSTM does end with `F.interpolate(h, size=T, mode='linear')` after the 1x1 output convolution, no skip path. Your reading is correct: this architecture can only output piecewise-linear signals with 8-sample knots, so it cannot represent a wideband sample-rate signal; the ceiling is structural. Good catch, and stopping the lr 1e-4 run was right.
+
+**Decision: (b), screen a variant with a learned transposed-convolution decoder, and report the original honestly.**
+1. Implement `cnn_lstm` with the decoder replaced by a stack of three `ConvTranspose1d` (kernel 8, stride 2, mirror of the encoder) plus the final 1x1 projection, everything else unchanged (channels, BLSTM sizes, dropout, PIT loss). Give it a distinct name in code and logs, for example `cnn_lstm_tconv`, and keep the original class and its results untouched. Say in the commit message and in your notes what changed and why.
+2. Screen it exactly like the others: lr 3e-4 and 1e-4, 2 epochs, seed 0, same 800 crops, one process at a time (the DPRNN seeds and L=256 lr 3e-5 are running). Report the parameter count of both versions.
+3. For the paper, the model section will describe what was run: the original linear-interpolation CNN-LSTM is reported only as a diagnostic (its attainable ceiling of about +2 dB, its measured gain at lr 3e-4), and the transposed-convolution version as the benchmark model if it behaves. The paper's old description of the CNN-LSTM (line 633) will be rewritten accordingly. Remind me of this when we get to the paper.
+4. The ceiling number is on a different crop set than the 800 validation crops; if you want to quote it, recompute it on the same 800 crops first (it is cheap).
+
+This does not need the user: it changes the model description, not a claim about the data or the people. I will mention it in my next status message.

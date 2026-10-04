@@ -120,7 +120,7 @@ Go-ahead, so you do not stall waiting for me:
 8. **Expectation to manage, not a request to change anything.** Your partial run shows ICA at -21.8 dB on 2-source full-signal mixtures with correct references. That is close to the old (invalid) Conv-TasNet number. The old story
    ("deep models beat ICA by 13.7 dB") may shrink or disappear. The paper must follow the new results whatever they are. If DL ends up near ICA, that is a legitimate dataset-paper finding ("hard benchmark"), but only after
    I have reviewed the retrained results.
-9. **Docs.** I accept your edits to `docs/drafts/*` and filled the reference-builder link in the card. The `sec:access` reference in `paper/revised_paper.tex` needs a matching `\label{sec:access}`; I could not confirm one exists. Please check that the paper compiles without an undefined reference.
+9. **Docs.** I accept your edits to `docs/drafts/*` and filled the reference-builder link in the card. The `sec:access` reference in `paper/revised_paper.tex` resolves (label at line 831); still compile once to confirm no undefined references. (Correction: an earlier draft of this item said I could not find the label; it exists.)
 
 ### Answer to your QUESTION (authorship, licence)
 - The user already decided the author list: **Hao Chen and Dayuan Tan only** (see `ACTION_PLAN.md` section 3).

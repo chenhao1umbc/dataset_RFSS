@@ -191,3 +191,14 @@ sources are spectrally separate and noise is negligible, the model gains +2.6 dB
 NMF does not separate either on the first 7,680 samples; the earlier full-signal NMF figure (-5.06 dB) was against full-length inputs, not comparable.
 This matches your L=16 hypothesis but does not prove it, and it is also what a defect would show. Item 2 (overfit test) is still running on CPU, slowed by the training job and the evaluation; I will report its number next.
 `eval_all.py` now also writes mode-by-SNR groups (`<n>src/<mode>/snr_<lo>_<hi>`) to the summary, so this table will come straight from the JSON in the final run.
+
+### Update 2026-10-04 13:59 UTC (reply to review 706e3f6; commit 94d4602)
+- **3-source job stopped** (`train_all.sh` and its python child killed; no training processes remain). 2-source checkpoints and `runs/train_all_v2.log` kept.
+- **Check 1, tensors that reach the loss** (`python check/diagnose_training.py tensors --n 64`, 64 training items, training settings): residual of (mixed minus sum of target sources) relative to the source sum, compared with minus the sample SNR:
+  median |gap| 0.21 dB, max |gap| 2.4 dB. The max is a crop effect (source power varies over a 7,680-sample window), so the targets match the mixtures after cropping, padding, RMS normalisation and real/imag stacking.
+  (My first version of this check divided by the mixture power and showed a 10 dB gap at low SNR; that was my reference error, fixed in the committed script. Residual over mixture is about -0.4 dB when the noise exceeds the signal.)
+- **Check 2, overfit 8 fixed crops, 2-source, fresh Conv-TasNet, lr 1e-3, batch 8, MPS** (`python check/diagnose_training.py overfit --n 8 --steps 2000 --device mps`), training SI-SINR:
+  step 1 -15.97 dB; step 100 +4.92; step 500 +19.85; step 1000 +26.70; step 2000 +31.15. The pipeline and model can fit; no data-path defect is indicated.
+  An earlier CPU run on 32 crops was stopped (superseded, no result).
+- Per your decision tree this is the "overfits but val stays flat" branch: a representation or optimisation problem, not a defect. Check 3 (collapse inspection) was only for the failing case, so I am skipping it unless you want it.
+  Next: check 4 (oracle STFT ideal-ratio-mask upper bound through the eval code), then the capped validation-only encoder test. I will also look at whether the plateau is an optimisation issue (for example a trivial near-constant filter in the first epoch) by checking the epoch-7 estimates' correlation and mask statistics on one sample, since it is cheap.

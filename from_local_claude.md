@@ -370,3 +370,15 @@ Waiting on the LR and seed runs (started 12:40); results will be posted as each 
 | hidden 512, lr 3e-4 (`stft_h512_lr3e-4`), epoch 1 so far | +4.66 [+3.60, +5.74] | running | | | 1 |
 Overall-bin gains: hidden 256 lr 3e-4 +4.37, +5.20, +5.38, +5.77 for epochs 1 to 4 (lr 1e-3: +4.21, +4.89, +5.01, +5.50). Train loss at epoch 4: lr 3e-4 -1.04, lr 1e-3 -0.69.
 Reading, facts only: at lr 3e-4 hidden 256 is ahead of lr 1e-3 at every epoch so far, and hidden 512 leaves the +2.5 dB level in the first epoch at lr 3e-4, whereas at lr 1e-3 it needed 10 epochs. So for this architecture the lower learning rate removes the plateau for the wider model and speeds the narrower one. Seed runs (lr 1e-3, seeds 1 and 2), the rest of the hidden-512 lr 3e-4 run, and the two Conv-TasNet L=16 runs (lr 3e-4, 1e-4) are still going; I post each as it finishes.
+
+### Update 2026-10-04 18:02 UTC: **Conv-TasNet L=16 at lr 3e-4 leaves the plateau** (commit 967a524; validation, same 800 crops; clipping on; seed 0)
+| run | epoch | train loss | all | adjacent SNR>20 | co SNR>20 |
+|---|---|---|---|---|---|
+| l16, lr 1e-3 (control, `l16`) | 1 | 1.838 | +2.88 [+2.61, +3.15] | +2.38 [+1.32, +3.41] | +3.06 |
+| l16, lr 1e-3 (control) | 2 | 1.731 | +2.89 | +2.40 [+1.33, +3.43] | +3.09 |
+| **l16, lr 3e-4 (`l16_lr3e-4`)** | **1** | **1.247** | **+4.26 [+3.96, +4.55]** | **+4.11 [+3.09, +5.10]** | **+5.24 [+4.16, +6.40]** |
+Same architecture, same data and order, same clipping; only the learning rate differs (1e-3 vs 3e-4). The adjacent-bin gain goes from +2.38 to +4.11 after one epoch, and the overall gain from +2.88 to +4.26. Epochs 2 and 3 and the lr 1e-4 run are still running (about 14 minutes per epoch on MPS).
+Consequences I can state from this: (1) the original Conv-TasNet L=16 failure at lr 1e-3 (flat for 28 epochs in the `train_all.sh` run, and in the sweep control) was at least partly an optimisation problem, not a front-end-resolution limit; the earlier explanation "16 samples is too short" is not supported by this result and I will not use it; (2) the L=256 / stride 64 result (10 epochs, lr 1e-3, +1.56 adjacent) is not a clean statement about window length either, because it was run only at the lr that fails for L=16; (3) the STFT-BLSTM is no longer shown to be better than Conv-TasNet by anything I have measured: the comparison at equal (lr 3e-4) is missing for l256 and open for longer L=16 training.
+Other results since my last update: `stft_h512_lr3e-4` (19.9M parameters): adjacent gain +4.66, +5.74, +6.22 for epochs 1 to 3 (all bin +4.60, +5.21, +5.41), i.e. no plateau at lr 3e-4. `stft_lr3e-4` (hidden 256) epoch 4: +6.79 adjacent.
+Open until the seeds and the rest of the L=16 runs finish: reliability of the escape across seeds, and where L=16 at lr 3e-4 ends up after 3 epochs.
+So the plan I proposed (STFT-BLSTM as the primary deep baseline, Conv-TasNet as a negative result) is no longer justified by the data. I suggest we re-plan after the L=16 runs finish: a fair comparison needs, per family, a small LR sweep (3e-4 and 1e-4 at least) and the same epoch budget. I have not started anything beyond the runs in progress.

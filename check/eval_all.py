@@ -9,8 +9,10 @@ median, standard deviation, 95 percent bootstrap interval and (for improvements)
 samples above zero, for the absolute score and for the improvement over the input mixture.
 
   input  : mean over sources of SI-SINR(mixture, reference_i)
-  oracle : estimate_i = reference_i + (stored mixture - sum of references), i.e. perfect separation
-           that leaves all additive noise in every output
+  oracle : estimate_i = reference_i + (stored mixture - sum of references), i.e. a noise-limited ceiling:
+           perfect separation that leaves all additive noise in every output
+  irm_oracle : ideal ratio mask on a 2048-point STFT (hop 512) built from the reference magnitudes, applied to the
+           mixture STFT (mixture phase); an upper bound for time-frequency masking separators
 
 Usage:
     uv run python check/eval_all.py                       # input, oracle, ICA, NMF
@@ -29,6 +31,7 @@ from pathlib import Path
 
 import h5py
 import numpy as np
+import scipy.signal as sp_signal
 import torch
 
 ROOT = Path(__file__).parent.parent
@@ -49,6 +52,7 @@ CHECKPOINT_ROOT = ROOT / "checkpoints"
 
 TEST_START, TEST_END = 85000, 100000
 SEGMENT_LEN = 7680
+IRM_NFFT = 2048
 SNR_BINS = [(-10, 0), (0, 10), (10, 20), (20, 30), (30, 40.001)]
 N_BOOT = 2000
 BOOT_SEED = 0
@@ -81,13 +85,24 @@ def pi_score(estimates, refs) -> float:
     return float(permutation_invariant_si_sinr(list(estimates), list(refs))[0])
 
 
+def irm_oracle_estimates(mixed: np.ndarray, refs: np.ndarray) -> list[np.ndarray]:
+    """Ideal ratio mask separator: mask from the reference STFT magnitudes, mixture phase."""
+    nperseg = min(IRM_NFFT, len(mixed))
+    kw = dict(nperseg=nperseg, noverlap=nperseg - nperseg // 4)
+    _, _, x = sp_signal.stft(mixed, return_onesided=False, **kw)
+    mags = np.stack([np.abs(sp_signal.stft(r, return_onesided=False, **kw)[2]) for r in refs])
+    masks = mags / (mags.sum(axis=0, keepdims=True) + 1e-12)
+    return [sp_signal.istft(m * x, input_onesided=False, **kw)[1][: len(mixed)] for m in masks]
+
+
 def reference_scores(sample: dict) -> dict:
-    """Input and oracle rows."""
+    """Input, noise-limited oracle and ideal-ratio-mask oracle rows."""
     mixed, refs = sample["mixed"], sample["refs"]
     noise = mixed - refs.sum(axis=0)
     return {
         "input": float(np.mean([compute_si_sinr(mixed, r) for r in refs])),
         "oracle": float(np.mean([compute_si_sinr(r + noise, r) for r in refs])),
+        "irm_oracle": pi_score(irm_oracle_estimates(mixed, refs), refs),
     }
 
 
@@ -179,7 +194,7 @@ def main():
         device = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
 
     classical = {"ica": ICASourceSeparation, "nmf": NMFSourceSeparation}
-    methods = ["input", "oracle", "ica", "nmf"] + args.dl
+    methods = ["input", "oracle", "irm_oracle", "ica", "nmf"] + args.dl
     rows = []
     checkpoints = {}
     with h5py.File(DATASET_PATH, "r") as f:

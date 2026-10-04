@@ -270,3 +270,22 @@ Three points to keep in mind when reading the results, no action needed unless o
 3. With 800 val crops the bin counts for adjacent/SNR>20 and co/SNR>20 are probably small (roughly 100 and 50). Report n and a bootstrap interval for the gain in those bins, not only the mean, before comparing against the +6 dB bar.
 
 I will review each variant as it is posted. Your plan to do the collapse probe after the sweep is fine.
+
+---
+
+## Review of Builder update 14:42 UTC (origin/dev 95da8e5), written 2026-10-04 ~15:00 UTC
+
+I recomputed the table from `check/encoder_sweep_results.json` and it matches your note: stft epoch 1 / 2 adjacent-SNR>20 gain +4.31 / +5.10 dB (n=106, CI [+3.98, +6.22] at epoch 2), co-channel SNR>20 +5.19 / +6.09, all +4.21 / +4.89; l16 epoch 1 +2.88 / +2.38 / +3.06. The per-sample list has 800 entries and its mean equals the stored `all` gain. Good: the clipped L=16 control reproduces the old plateau (+2.9 dB at epoch 1), so clipping did not change that.
+
+### Reading it, and what the pre-registered rule says
+- By the rule I set (adjacent, SNR>20, +6 dB gain after 2 epochs) the STFT variant is a miss: point estimate +5.10, the bar sits inside the interval. Record it as a miss at 2 epochs, do not relabel it as a pass.
+- It is nonetheless a very different trajectory from L=16: train loss falls from 1.21 to -0.02 and the val gain keeps rising, while L=16 was flat from epoch 1. This supports the front-end-resolution explanation more than the L=16 plateau alone did.
+
+### Your proposal (stft for 10 epochs): yes, with these conditions
+1. Same protocol (validation only, fixed crops, clipping on, constant LR 1e-3). Report epochs 1 to 10 for the three bins, with n and CIs, and the train loss, so we see the saturation point.
+2. State in the log that this is an extension beyond the pre-registered 2-epoch protocol, chosen after seeing epoch 2; the final claim then rests on the 10-epoch run plus, later, the test evaluation with the final recipe, not on the 2-epoch table.
+3. Let l16 and l256 finish their 2 epochs as planned. If l256 is also still improving at epoch 2, give it the same 10 epochs so the two front ends are compared at equal budget. Do not compare the STFT variant at 10 epochs with l256 at 2.
+4. Parameter counts are not equal (stft 7.4M, l16 2.5M); report them in the table and note it. If STFT wins, a one-line capacity control is cheap: l256 with larger H or B to roughly 7M parameters, same protocol, so the paper can say the gain comes from the front end and not just from size. Optional if time is short, but I would like it before any paper claim about "why".
+
+### A decision to prepare, not to take yet
+If the STFT model clears the bar at 10 epochs, the benchmark's deep baselines would change from "Conv-TasNet, DPRNN, CNN-LSTM" with speech-style encoders to a set that includes a time-frequency model. Please do not start any restart of the nine-config training yet. Instead, when the 10-epoch result is in, send me a concrete proposal: which families (STFT-BLSTM, a longer-window Conv-TasNet if l256 works, a DPRNN with a longer window, CNN-LSTM with a longer window), epochs and time estimate for each, and what we keep from the old configs. I will take that proposal to Opus and, because it changes what the paper reports, to the user before the long compute starts.

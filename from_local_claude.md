@@ -221,3 +221,15 @@ This matches your L=16 hypothesis but does not prove it, and it is also what a d
 
 A time-frequency mask on a 2048-point STFT reaches +7 to +12 dB over the input at SNR above 10 dB, while the trained L=16 Conv-TasNet reaches +2 to +3 dB, so the metric rewards separation and a front end with frequency resolution can reach far higher
 (the IRM row is not a strict ceiling: at low SNR it exceeds the noise-limited row because the mask also suppresses noise). Next: the capped validation-only encoder test (L=16 vs L=256/stride 64 vs STFT front end), 2-source, same seed and budget.
+
+### Update 2026-10-04 14:14 UTC (reply to review 45f2892; commit d891e86)
+- `eval_all.py --split val|test` added (default test; a val run writes `eval_all_val[_src..]_results.json`). All further diagnostics use the validation split. For the record, the test split was looked at in these interim diagnostics only: `check/eval_all_src2_results.json` (two runs of 600 samples, the second adding the IRM row). Nothing else.
+- `ConvTasNet` got an optional `stride` argument (default `L // 2`, so every existing config is unchanged; shape-tested), needed for L=256 with stride 64.
+- Before your design arrived I had run a short 4,000-step L-sweep (L=16 only reached the control; I stopped it after the L=16 part): L=16 val SI-SINR -2.05 / -2.19 / -1.93 / -1.81 / -1.86 / -1.86 / -1.86 dB at steps 500..3500. It is superseded by the design below.
+- **Running now, your design** (`python check/encoder_sweep.py --variants ...`; output `check/encoder_sweep_results.json`; 2 epochs of the whole 2-source train split = 8,728 steps of batch 8, same seed and same data order, fixed validation crops, 800 validation items; training crops are drawn once per item, so all variants see identical inputs):
+  (a) `l16` control: Conv-TasNet L=16, stride 8, re-run under this protocol so the bins are comparable (I could not get binned numbers from the old log);
+  (b) `l256`: Conv-TasNet L=256, stride 64, everything else unchanged;
+  (c) `stft`: STFT (n_fft 2048, hop 512) of the complex signal, 2-layer BLSTM (hidden 256, bidirectional) on log(1+|X|) features, tanh-bounded complex ratio masks on the real/imag STFT per source, inverse STFT, trained with the same PIT SI-SINR loss; about 8M parameters.
+  Process A runs (a) and (b) on MPS, process B runs (c) on CPU (MPS has no istft backward), in parallel.
+  After each epoch it reports val SI-SINR and the gain over the input for: all, adjacent with SNR above 20 dB, co-channel with SNR above 20 dB. Threshold as you set it: gain of at least +6 dB in the adjacent, SNR above 20 dB bin after 2 epochs.
+- Expected time: about 30 min per Conv-TasNet variant plus data loading; the STFT variant on CPU may take 1 to 2 hours. I will post each variant as it finishes. The one-paragraph collapse probe (estimate correlation, mask statistics) will follow after the sweep so it does not compete for compute.

@@ -110,9 +110,10 @@ references. RFSS provides one, with the following features.
     separate transmitters.
   \item Co-channel and adjacent-channel mixtures are both included.
     Co-channel mixtures test whether overlapping waveforms can be separated at
-    all. Adjacent-channel mixtures add guard-band leakage and frequency offsets, so
-    results show how much of a method's score comes from spectral cues and how
-    much from waveform-level separation.
+    all. Adjacent-channel mixtures shift the sources in frequency by multiples of
+    2~MHz, which partly separates them spectrally (many sources are wider than the
+    shift), so results can show how much of a method's score comes from spectral
+    cues and how much from waveform-level separation.
   \item Classical and deep methods are evaluated under one protocol:
     FastICA, NMF, Conv-TasNet, DPRNN and an STFT-domain BLSTM (a CNN-LSTM and a Conv-TasNet
     variant are scored on validation data only). Each deep
@@ -320,7 +321,7 @@ y(t) = \sum_{i=1}^{N_{\rm src}} \sqrt{P_i}
 where $P_i$ is the power scaling factor for source $i$, $h_{i,l}(t)$ is
 the $l$-th tap of its TDL channel impulse response, $\tau_i$ is a
 differential timing offset, $f_i$ is the carrier frequency shift
-(zero for co-channel, standard-specific for adjacent-channel), and $n(t)$
+(zero for co-channel, a multiple of 2~MHz for adjacent-channel), and $n(t)$
 is additive white Gaussian noise.
 
 \subsection{Hardware Impairments}
@@ -360,11 +361,13 @@ shift: $f_i\!=\!0$ for all $i$). Sources share the entire spectral region,
 so separation must rely on differences in modulation type, temporal structure
 and statistics. This is the hardest scenario, so the results report it separately.
 
-\textbf{Adjacent-channel mixing.} Each source is frequency-shifted by a
-standard-specific offset before summing, so that the nominal carrier
-frequencies of different standards do not overlap. This reduces spectral
-overlap but introduces the frequency-management aspect of multi-standard
-reception.
+\textbf{Adjacent-channel mixing.} Source $k$ of a sample with $N_{\rm src}$ sources is
+frequency-shifted by $(k-\lfloor N_{\rm src}/2\rfloor)\times 2$~MHz before summing, the same
+spacing for every standard (offsets $\{-2,0\}$ MHz for two sources, $\{-2,0,2\}$ for three,
+$\{-4,-2,0,2\}$ for four). The spacing is smaller than the bandwidth of most UMTS, LTE and NR
+sources, so the sources are displaced but usually still overlap in frequency
+(\TBD{share of adjacent-channel mixtures whose source bands overlap}); the mode is
+named for the offset and not for non-overlapping channels.
 
 The number of simultaneous sources $N_{\rm src}$ is drawn from $\{2, 3, 4\}$
 with target sampling weights $[0.50, 0.35, 0.15]$, chosen to oversample

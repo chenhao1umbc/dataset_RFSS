@@ -636,3 +636,29 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **STFT-BLSTM seed gate finished** (lr 3e-4, 4 epochs; keys `stft_lr3e-4` seed 0, `stft_lr3e-4_seed1`, `stft_lr3e-4_seed2`). Adjacent SNR>20 gain by epoch: seed 0 +4.63 / +5.68 / +6.12 / **+6.79**; seed 1 +4.81 / ... / **+5.99** [+4.76, +7.17]; seed 2 +4.92 / +5.53 / +6.21 / **+6.18** [+5.07, +7.30]. All three escape at epoch 1 (worst seed at epoch 4: +5.99). All bin at epoch 4: seed 0 +5.77, seed 1 +5.40, seed 2 +5.43.
 - **Seed spread is as large as the family gaps, and it is paired-significant.** Seed 0 minus seed 1 at epoch 4: all **+0.37 [+0.27, +0.47]**, adjacent +0.80 [+0.46, +1.18], co-channel -0.01 [-0.25, +0.20]; seed 0 minus seed 2: all +0.35 [+0.25, +0.45], adjacent +0.61 [+0.26, +1.00]. The sweep seed changes initialisation and batch order on the same crops. The pilot gap STFT-BLSTM minus DPRNN at epoch 10 (all +0.37) is the same size as this seed-to-seed difference of one family. So the family ordering in the final table cannot rest on one seed per family; it needs the seed counts you set (and a paired or seed-level interval). I will not call any order between STFT-BLSTM, DPRNN and L=16 established from the pilots alone.
 - **20-epoch STFT-BLSTM probe started** (`train.py`, lr 3e-4, cosine over 20, seed 0, `--keep-epochs 10 20`, CPU, `pilots/stft_lr3e-4_20ep/`; about 505 s per epoch, 3 h). The `cnn_lstm_tconv` pilot (lr 3e-4) is in its first epoch. Two processes. Memory 86% free, ollama idle.
+
+### Update 2026-10-05 cron tick (reply to review 2d37345: cost table for the final plan)
+- Merged 2d37345. Noted B7 and B8 in ACTION_PLAN (your edits). **Seeds fixed: 0, 1, 2 for every family, via `train.py --seed`;** the existing 10-epoch pilots are seed 0 at the chosen LRs, so at E = 10 only seeds 1 and 2 are new. The inference rule (an order is stated only if the paired-difference sign holds in all matched seed pairs, with mean and range over seeds) is adopted.
+- **Measured seconds per epoch** (`train.py`, 2-source train split of 34,912 crops, two jobs sharing the Mac, as now): STFT-BLSTM 510 (CPU), DPRNN 700 (MPS), Conv-TasNet L=16 1290 (MPS), L=256 890 (MPS), `cnn_lstm_tconv` about 1500 (estimate from the sweep, the pilot's first epoch is still running). Training-set sizes by source count: 2-source 34,912, 3-source 24,547 (0.70 times), 4-source 10,541 (0.30 times); the epoch time is taken proportional to the sample count (the heads of the larger source counts add a little, ignored). Test split sizes: 7,526 / 5,324 / 2,150 samples.
+
+| Hours per run, 2-source | E = 10 | E = 20 |
+|---|---|---|
+| STFT-BLSTM | 1.4 | 2.8 |
+| DPRNN | 1.9 | 3.9 |
+| Conv-TasNet L=16 | 3.6 | 7.2 |
+| Conv-TasNet L=256 | 2.5 | 4.9 |
+| CNN-LSTM-tconv | 4.2 | 8.3 |
+| three primary families together | 6.9 | 13.9 |
+
+| Plan (process-hours; wall-clock with two jobs in parallel) | E = 10 | E = 20 |
+|---|---|---|
+| 2-source primary families, new runs (E = 10: seeds 1, 2 only, seed 0 exists; E = 20: seeds 0, 1, 2) | 13.9 | 41.7 |
+| 2-source secondary (L=256, tconv, 1 seed; E = 10: the pilots exist) | 0 | 13.3 |
+| 3-source, three primary families, 1 seed | 4.9 | 9.8 |
+| 4-source, three primary families, 1 seed | 2.1 | 4.2 |
+| **Total process-hours** | **20.9** | **68.9** |
+| **Wall-clock, two jobs in parallel** | **about 10 h** | **about 35 h** |
+| If 3 and 4 sources also get 3 seeds | about 17 h | about 48 h |
+
+- Not in the table: the once-only test evaluation (`eval_all.py` on the three source counts, plus three random-window passes; not yet timed, I will time it on the validation split first, I expect 1 to 2 h per model family set), and the remaining `cnn_lstm_tconv` pilot (about 4 h, already running). Uncertainty is about 30 percent either way: the epoch times were measured with two jobs running, and two MPS jobs slow each other down more than one MPS plus one CPU job, so pair the CPU STFT runs with the MPS runs where possible. The DGX Spark would shorten the E = 20 plan only if the user provides access; nothing is assumed here.
+- Running now: `cnn_lstm_tconv` pilot (epoch 1), 20-epoch STFT-BLSTM probe (epoch 2 of 20, `train.py` val SI-SINR epoch 1 -0.03 dB, 508 s per epoch). No other changes. Memory 86% free, ollama idle.

@@ -1,0 +1,11 @@
+\begin{tabular}{lrrr}
+\toprule
+Model & Learning rate & Gain & Escape epoch \\
+\midrule
+Conv-TasNet & $10^{-4}$, $\mathbf{3\times10^{-4}}$, $10^{-3}$ & +4.47, \textbf{+4.84}, +2.40 & 2, \textbf{1}, -- \\
+Conv-TasNet-L256 & $3\times10^{-5}$, $\mathbf{10^{-4}}$, $3\times10^{-4}$ & +0.89, \textbf{+2.50}, +1.55 & --, \textbf{--}, -- \\
+DPRNN & $10^{-4}$, $3\times10^{-4}$, $\mathbf{10^{-3}}$ & +4.47, +4.93, \textbf{+5.09} & 2, 1, \textbf{1} \\
+CNN-LSTM (transposed decoder) & $10^{-4}$, $\mathbf{3\times10^{-4}}$, $10^{-3}$ & +2.14, \textbf{+2.77}, +2.44 & --, \textbf{--}, -- \\
+STFT-BLSTM & $\mathbf{3\times10^{-4}}$, $10^{-3}$ & \textbf{+5.53}, +2.46 & \textbf{1}, -- \\
+\bottomrule
+\end{tabular}

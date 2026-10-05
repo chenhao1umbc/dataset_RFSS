@@ -41,14 +41,14 @@ amplifier nonlinearity (Rapp model). The sources are mixed either co-channel or
 adjacent-channel. A companion file holds 4,000 single-source reference samples.
 The multi-source file is 103~GB in HDF5, split 70/15/15 by index.
 
-We benchmark FastICA, Frobenius-norm NMF and four deep architectures (Conv-TasNet~\cite{luo2019conv},
-DPRNN~\cite{luo2020dual}, a CNN-LSTM, and an STFT-domain BLSTM mask estimator)
+We benchmark FastICA, Frobenius-norm NMF and three deep architectures (Conv-TasNet~\cite{luo2019conv},
+DPRNN~\cite{luo2020dual} and an STFT-domain BLSTM mask estimator)
 with permutation-invariant scale-invariant signal-to-interference-plus-noise
 ratio (PI-SI-SINR)~\cite{leroux2019sdr}, and report the improvement over the input
 mixture. Each deep model uses the learning rate chosen on the validation split.
-On the test split the best deep model improves PI-SI-SINR by
-\TBD{best gain} dB over the input, where an ideal-ratio-mask oracle reaches
-\TBD{IRM gain} dB and ICA and NMF reach \TBD{ICA gain} and \TBD{NMF gain} dB.
+On the two-source test split the best deep model improves PI-SI-SINR by
+6.1~dB over the input, where an ideal-ratio-mask oracle reaches
+8.0~dB and ICA and NMF reach $-13.6$ and $-1.2$~dB.
 The dataset and evaluation code will be released publicly.
 \end{abstract}
 
@@ -114,7 +114,8 @@ references. RFSS provides one, with the following features.
     results show how much of a method's score comes from spectral cues and how
     much from waveform-level separation.
   \item Classical and deep methods are evaluated under one protocol:
-    FastICA, NMF, Conv-TasNet, DPRNN, a CNN-LSTM and an STFT-domain BLSTM. Each deep
+    FastICA, NMF, Conv-TasNet, DPRNN and an STFT-domain BLSTM (a CNN-LSTM and a Conv-TasNet
+    variant are scored on validation data only). Each deep
     model is trained at the learning rate chosen on the validation split, and the
     results include an ideal-ratio-mask oracle as an upper reference.
   \item The dataset, generation code, trained checkpoints and evaluation scripts
@@ -526,8 +527,8 @@ these references has the power implied by the stored SNR to within 0.2~dB.
 We report two quantities. The absolute PI-SI-SINR is the score of the separated
 estimates. The gain is the absolute score minus the input score, where the input
 score is the mean over the sources of SI-SINR(mixture, source). The mixture contains
-every source, so the input score is finite (\TBD{input level} dB on average over the
-test samples used here). The gain is the main figure because the input level
+every source, so the input score is finite ($-4.4$, $-9.3$ and $-12.0$~dB on average over the
+2-, 3- and 4-source test samples). The gain is the main figure because the input level
 depends on source count, mixing mode and SNR. For context, well-performing speech
 separation systems reach about 15~dB SI-SNR improvement on
 WSJ0-2mix~\cite{luo2019conv}.
@@ -614,14 +615,29 @@ optimizer steps of the 2-source model (about 4,364, 3,069 and 1,318 steps per ep
 34,912, 24,547 and 10,541 training samples). All experiments use single-channel (SISO)
 signals.
 
+\textbf{Flagged cells.} The 3-source and 4-source cells were checked against the 2-source curve of the same model: at the same
+number of optimizer steps, a validation gain more than $0.5$~dB below the (interpolated) 2-source gain, or a rise of less than $0.3$~dB since epoch 2,
+flagged the cell and triggered a validation-only screen of neighbouring learning rates. The 3- and 4-source tasks are harder, so the reference is a diagnostic and not a target, and
+no cell was dropped for being low. Five cells were flagged. The STFT-BLSTM 3-source cell was flagged at epoch 2 and cleared. The Conv-TasNet 3-source cell was flagged at epochs 2 and 4
+($+3.63$ and $+4.11$~dB) and ended at $+4.62$~dB, so it was slow, not stuck. The Conv-TasNet 4-source cell stayed flat from epoch 4 to epoch 10 ($+3.44$ to $+3.47$~dB), and a screen of three rates
+changed nothing. The DPRNN 3-source run at $10^{-3}$ stayed at $+3.05$~dB for four epochs; a screen of four rates favoured $5\times10^{-4}$ over $10^{-3}$ by $0.51$~dB at epoch 2
+(borderline by the preset rule of $0.5$~dB, supported by the monotone trend with the learning rate and by the stuck run), and the cell was restarted at $5\times10^{-4}$, which cost four epochs
+(about 2~h with pauses). The restarted run was flagged again at epoch 4 by the gap ($0.70$~dB) but was rising ($+0.47$~dB since epoch 2) and ended at $+4.92$~dB (validation). The DPRNN 4-source cell was flagged at epoch 4
+($+3.38$~dB, rise $+0.07$~dB); a screen of three rates on 10,000 crops showed no winner (best $+0.20$~dB over $10^{-3}$), the run continued and ended at $+3.41$~dB.
+
 \subsection{Evaluation Protocol}
 
-Every method is scored on the first 7,680 samples of each test signal (shorter
-signals in full), on the same \TBD{N} test samples per source count, against the
+Every method is scored on one random 7,680-sample window of each test signal (shorter
+signals in full), chosen by a fixed seed (crop seed 0) and the sample index, which is the
+crop definition of the validation protocol. The same 7,526, 5,324 and 2,150 test samples are used for
+the 2-, 3- and 4-source columns, against the
 references described above. Intervals are 95\% bootstrap intervals over samples, and
-differences between methods are paired bootstraps over the same samples. A robustness
-pass repeats the evaluation on random 7,680-sample windows for \TBD{seeds}
-seeds. All recipe decisions (learning rate, epoch budget, checkpoint) use the
+differences between methods are paired bootstraps over the same samples. Three further passes
+(the first 7,680 samples of each signal, and random windows with seeds 1 and 2) change the gain of
+no 2-source model by more than 0.06~dB and of no 3- or 4-source model by more than 0.09~dB, and leave the order of the
+models unchanged in every source count; ICA and NMF were scored in the first two passes only. The
+first-window pass was run and read before the crop protocol was fixed; the headline is crop seed 0, and all four passes are
+reported. All recipe decisions (learning rate, epoch budget, checkpoint) use the
 validation split only. Two interim evaluations were run on the test split before the
 final run: one on 600 two-source samples with an early checkpoint, and one of ICA and NMF on
 the full test split. Neither was used to choose any setting.
@@ -634,31 +650,25 @@ Table~\ref{tab:main} reports the gain over the input mixture by source count.
 \begin{table}[t]
 \centering
 \caption{Gain over the input mixture (dB, PI-SI-SINR) on the test split, by source
-count, with 95\% bootstrap intervals. The input level is \TBD{2-source / 3-source /
-4-source input} dB.}
+count (random 7,680-sample windows, crop seed 0). Deep models at 2 sources: mean over three
+seeds (range of the seeds); deep models at 3 and 4 sources: one seed, 95\% bootstrap interval;
+all other rows: 95\% bootstrap interval over test samples. The input level is $-4.4$ / $-9.3$ / $-12.0$~dB.}
 \label{tab:main}
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrrr}
-\toprule
-Method & 2-source & 3-source & 4-source \\
-\midrule
-ICA & \TBD{} & \TBD{} & \TBD{} \\
-NMF & \TBD{} & \TBD{} & \TBD{} \\
-Conv-TasNet & \TBD{} & \TBD{} & \TBD{} \\
-Conv-TasNet-L256 & \TBD{} & \TBD{} & \TBD{} \\
-DPRNN & \TBD{} & \TBD{} & \TBD{} \\
-CNN-LSTM & \TBD{} & \TBD{} & \TBD{} \\
-STFT-BLSTM & \TBD{} & \TBD{} & \TBD{} \\
-\midrule
-IRM oracle & \TBD{} & \TBD{} & \TBD{} \\
-Noise-limited oracle & \TBD{} & \TBD{} & \TBD{} \\
-\bottomrule
-\end{tabular}}
+\input{tables/table_main.tex}}
 \end{table}
 
-\TBD{Two to three sentences on Table~\ref{tab:main} after the final run: best
-deep model against the IRM oracle and against ICA and NMF. Use paired intervals for
-every comparison between methods.}
+At two sources the STFT-BLSTM gains $+6.14$~dB (mean of three seeds), which is 76\% of the
+$+8.04$~dB of the IRM oracle; DPRNN and Conv-TasNet reach $+5.85$ and $+5.61$~dB. ICA and NMF end below the
+input level ($-13.60$ and $-1.24$~dB). In every matched seed pair (same seed number, independently
+initialised models) the STFT-BLSTM exceeds DPRNN, by $+0.29$~dB on average (range $+0.25$ to $+0.37$), and DPRNN exceeds Conv-TasNet, by $+0.24$~dB
+(range $+0.17$ to $+0.33$); the paired 95\% intervals over test samples are about $\pm0.03$~dB wide, and the sign is the same in the
+adjacent-channel and co-channel subsets with SNR above 20~dB. We therefore state the order STFT-BLSTM $>$ DPRNN $>$ Conv-TasNet for this recipe, with two cautions: the
+seed pairing is nominal, so the evidence is the consistent sign in three pairs together with the small seed ranges ($0.03$, $0.15$ and $0.29$~dB), and the models differ in
+parameters ($7.36$~M, $1.11$~M, $2.52$~M) and in cost per epoch, so the comparison does not isolate the domain in which the mask is estimated.
+With three and four sources every model gains less, and the gap to the IRM oracle, which rises to $+9.61$ and $+10.35$~dB, grows. These cells have one seed each, so we
+give no order and no trend across source counts. At three sources the models lie within $0.4$~dB (STFT-BLSTM minus DPRNN $+0.11$~dB, $[+0.06,+0.15]$);
+at four sources the STFT-BLSTM leads the two time-domain models by about $1$~dB ($+1.08$~dB, $[+1.01,+1.15]$, over DPRNN), while DPRNN and Conv-TasNet differ by $-0.10$~dB ($[-0.14,-0.06]$).
 
 Table~\ref{tab:modes} splits the 2-source gain by mixing mode and shows the
 adjacent-channel, SNR above 20~dB bin in which the epoch-budget criterion was set.
@@ -669,27 +679,14 @@ adjacent-channel, SNR above 20~dB bin in which the epoch-budget criterion was se
 $N$ is the number of test samples in each column.}
 \label{tab:modes}
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrrrr}
-\toprule
-Method & All & Co-channel & Adjacent & Adjacent, SNR${>}20$~dB \\
-\midrule
-ICA & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-NMF & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-Conv-TasNet & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-Conv-TasNet-L256 & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-DPRNN & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-CNN-LSTM & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-STFT-BLSTM & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-\midrule
-IRM oracle & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-$N$ & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-\bottomrule
-\end{tabular}}
+\input{tables/table_modes.tex}}
 \end{table}
 
-\TBD{Two to three sentences on Table~\ref{tab:modes}. Report the co-channel and
-adjacent-channel gains side by side with the IRM oracle. Do not state that the
-pre-registered criterion was met unless the final test run meets it exactly as worded.}
+Averaged over all SNRs the deep models gain about the same on co-channel and on adjacent-channel mixtures
+(STFT-BLSTM $+6.13$ and $+6.14$~dB, DPRNN $+5.89$ and $+5.82$~dB, Conv-TasNet $+5.68$ and $+5.56$~dB), whereas the IRM oracle gains $+7.77$ and
+$+8.22$~dB; adjacent-channel mixtures are not easier for these models, although they are for the oracle. In the adjacent-channel, SNR${>}20$~dB bin the
+three models reach $+6.94$, $+6.58$ and $+6.21$~dB against $+10.86$~dB for the oracle. Each of the nine two-source runs gains at least $+5.42$~dB over all test samples and at least
+$+5.94$~dB in that bin. The pre-registered criterion concerned two-epoch runs on the validation split, so these test values neither meet nor fail it.
 
 Table~\ref{tab:lr} lists the learning-rate screening on the validation split.
 
@@ -698,22 +695,18 @@ Table~\ref{tab:lr} lists the learning-rate screening on the validation split.
 \caption{Learning-rate screening on the validation split (800 fixed crops,
 2-source). Entries are the adjacent-channel, SNR${>}20$~dB gain (dB) at the screening
 epoch; ``escape'' is the first epoch with a gain above 4~dB. The chosen rate is in
-bold. Conv-TasNet-L256 at $10^{-3}$ was run for 10 epochs under a different protocol
+bold. Gains are the lowest over the available seeds (one to three) at the second epoch; ``escape'' is
+the first epoch at which the lowest-seed gain exceeds 4~dB, among the two to four epochs run (``--'': none).
+Conv-TasNet-L256 at $10^{-3}$ was run for 10 epochs under a different protocol
 and is omitted.}
 \label{tab:lr}
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrrr}
-\toprule
-Model & Learning rate & Gain & Escape epoch \\
-\midrule
-Conv-TasNet & $10^{-4}$, $3\times10^{-4}$, $10^{-3}$ & \TBD{} & \TBD{} \\
-Conv-TasNet-L256 & $3\times10^{-5}$, $10^{-4}$, $3\times10^{-4}$ & \TBD{} & \TBD{} \\
-DPRNN & $10^{-4}$, $3\times10^{-4}$, $10^{-3}$ & \TBD{} & \TBD{} \\
-CNN-LSTM (transposed decoder) & $10^{-4}$, $3\times10^{-4}$, $10^{-3}$ & \TBD{} & \TBD{} \\
-STFT-BLSTM & $3\times10^{-4}$, $10^{-3}$ & \TBD{} & \TBD{} \\
-\bottomrule
-\end{tabular}}
+\input{tables/table_lr.tex}}
 \end{table}
+
+Two variants were trained for 10 epochs with seed 0 and scored on the 800 validation crops only: Conv-TasNet-L256 ($+4.51$~dB, 95\%
+interval $[+4.16,+4.86]$) and the CNN-LSTM with the transposed decoder ($+4.47$~dB, $[+4.11,+4.81]$). Both are below the three models of the test tables on the same
+validation crops ($+5.84$, $+5.99$ and $+6.36$~dB for Conv-TasNet, DPRNN and STFT-BLSTM, seed 0).
 
 \subsection{SNR Sensitivity Analysis}
 \label{sec:snr}
@@ -725,22 +718,13 @@ Table~\ref{tab:snr} stratifies the 2-source gain by mixture SNR.
 \caption{Two-source gain over the input (dB) by mixture SNR on the test split.}
 \label{tab:snr}
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrrrr}
-\toprule
-Method & $-10$--$10$~dB & 10--20~dB & 20--30~dB & ${>}30$~dB \\
-\midrule
-ICA & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-NMF & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-Conv-TasNet & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-DPRNN & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-STFT-BLSTM & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-IRM oracle & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-\bottomrule
-\end{tabular}}
+\input{tables/table_snr.tex}}
 \end{table}
 
-\TBD{Describe the SNR trend of each method after the final run. Compare with the
-IRM oracle in each bin.}
+All three deep models improve with SNR, the STFT-BLSTM from $+5.43$~dB in the lowest bin to $+7.66$~dB above 30~dB, DPRNN from $+5.16$ to $+7.11$~dB and
+Conv-TasNet from $+4.98$ to $+6.73$~dB. The IRM oracle rises faster, from $+5.69$ to $+11.71$~dB, so the deficit of the STFT-BLSTM grows from $0.3$ to
+about $4$~dB; in the lowest bin the three models are within $0.8$~dB of the oracle. ICA and NMF fall with SNR ($-10.99$ to $-16.81$~dB and $-0.16$ to $-3.08$~dB); we did not
+isolate why.
 
 % ============================================================
 \section{Data Access and Format}
@@ -790,11 +774,12 @@ hardware impairments but before resampling, frequency shift and power scaling, s
 user has to rebuild the exact mixture terms with \texttt{build\_aligned\_references}.
 Storing the final terms as well would remove that step in a later release.
 
-\textbf{Evaluation scope.} All methods are scored on the first 7,680 samples of
+\textbf{Evaluation scope.} All methods are scored on one 7,680-sample window of
 each signal, and the metric is phase sensitive. A separator that returns the correct
 waveform with a constant phase offset is penalized. Model comparisons rest on
-\TBD{number of seeds} seeds per model at the chosen learning rate, from one
-learning-rate grid per model. The pilot runs use a cosine schedule that anneals to
+three seeds per model (two sources) or one seed (three and four sources) at the chosen learning rate, from one
+learning-rate grid per model. Seed 0 of the two-source runs also served to choose the learning rates, so its score is mildly optimistic; seeds 1 and 2
+are clean replicates and score the same within 0.3~dB. The pilot runs use a cosine schedule that anneals to
 almost zero, so no model is shown to have converged, and the epoch budget was set
 from the validation curves after the pre-registered criterion was missed. A 20-epoch
 probe of STFT-BLSTM gained 0.20~dB in the all-samples bin over 10 epochs on the
@@ -834,10 +819,11 @@ TDL fading channel and a chain of five hardware impairments, and mixed co-channe
 adjacent-channel. Every sample stores the per-source waveforms from which the exact mixture terms are
 rebuilt, so a model can be trained with permutation-invariant supervision.
 
-On the test split the best deep model improves PI-SI-SINR by \TBD{best gain}~dB
-over the input mixture, against \TBD{IRM gain}~dB for the ideal-ratio-mask oracle
-and \TBD{ICA gain} and \TBD{NMF gain}~dB for ICA and NMF. \TBD{One or two sentences
-on how the deep models compare, using paired intervals.} Training was sensitive to the
+On the two-source test split the best deep model, the STFT-BLSTM, improves PI-SI-SINR by $+6.14$~dB
+over the input mixture, against $+8.04$~dB for the ideal-ratio-mask oracle
+and $-13.60$ and $-1.24$~dB for ICA and NMF. The three deep models keep the same order in every matched seed pair, with mean
+paired differences of $0.24$ to $0.53$~dB; with three and four sources the gains fall to $+5.14$ and $+4.52$~dB for the best model
+(one seed per cell). Training was sensitive to the
 learning rate and, for some models, to the seed; the learning-rate screening is in
 Table~\ref{tab:lr}.
 

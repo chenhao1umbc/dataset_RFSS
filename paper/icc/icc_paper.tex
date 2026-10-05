@@ -165,7 +165,7 @@ mask per source from the log-magnitude STFT with a two-layer BiLSTM. \emph{DPRNN
 64 encoder filters, kernel 16 and six dual-path layers. \emph{Conv-TasNet}~\cite{luo2019conv} (2.52M) uses 256 filters,
 kernel 16 and 24 temporal blocks. All use permutation-invariant training with a negative SI-SINR loss, Adam, gradient-norm clipping at 1.0,
 batch size 8, cosine annealing to $10^{-5}$ over 10 epochs, and random 7,680-sample crops redrawn each epoch.
-The peak learning rate is chosen per model on validation data from a small grid of candidates, preferring the higher worst-seed gain where several seeds were available: $3\!\times\!10^{-4}$ for STFT-BLSTM and Conv-TasNet and $10^{-3}$ for DPRNN. The checkpoint with the lowest validation loss is evaluated;
+The peak learning rate is chosen per model on validation data from a small grid (three rates for Conv-TasNet: $10^{-4}$, $3\!\times\!10^{-4}$, $10^{-3}$), preferring the higher worst-seed gain where several seeds were available: $3\!\times\!10^{-4}$ for STFT-BLSTM and Conv-TasNet and $10^{-3}$ for DPRNN. The checkpoint with the lowest validation loss is evaluated;
 for the seed that was also used to choose the learning rate, the last epoch was kept. Each model is trained with three seeds.
 The three models differ in size and cost per epoch, so a difference between them is a difference between these configurations under this
 recipe and not between architecture families as such.

@@ -2,7 +2,7 @@
 
 Reads check/eval_all_src2_crop0_frozen_results.json and check/eval_all_src34_crop0_frozen_results.json (the headline pass,
 random window, crop seed 0) and check/encoder_sweep_results.json (learning-rate screening); writes paper/tables/table_main.tex,
-table_modes.tex, table_snr.tex, table_lr.tex and paper/journal_numbers.json. Run from the project root:
+table_modes.tex, table_snr.tex, table_lr.tex, table_cost.tex (from check/epoch_times.json) and paper/journal_numbers.json. Run from the project root:
     uv run python paper/make_journal_assets.py
 """
 
@@ -127,6 +127,21 @@ def lr_table(sweep: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def cost_table(runs: list) -> str:
+    """Epoch time (min / median / max over the epochs of the runs with seeds 1 and 2 at 2 sources, seed 0 otherwise) and concurrency."""
+    lines = [r"\begin{tabular}{llrrrr}", r"\toprule", r"Model & Sources & Parameters & Device & Epoch time (s) & Other runs \\", r"\midrule"]
+    for fam, label in FAMILIES.items():
+        name = {"conv": "conv_tasnet", "dprnn": "dprnn", "stft": "stft_blstm"}[fam]
+        for n in (2, 3, 4):
+            group = [r for r in runs if r["run"].startswith(f"{name}_{n}src_seed") and "stuck" not in r["run"]]
+            times = np.concatenate([r["epoch_seconds"] for r in group])
+            others = np.concatenate([r["concurrent_others"] for r in group])
+            lines.append(f"{label} & {n} & {group[0]['params'] / 1e6:.2f}~M & {group[0]['device']} & "
+                         f"{times.min():,.0f} / {np.median(times):,.0f} / {times.max():,.0f} & {others.min()}--{others.max()} \\\\".replace(",", "{,}"))
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines) + "\n"
+
+
 def main():
     passes = {**load_pass("eval_all_src2_crop0_frozen_results.json"), **load_pass("eval_all_src34_crop0_frozen_results.json")}
     numbers = {"git_commit_2src": passes[2]["commit"], "git_commit_34src": passes[3]["commit"]}
@@ -152,6 +167,8 @@ def main():
     numbers["adjacent_snr20"] = {fam: family_gain(p2, fam, adj20) for fam in FAMILIES}
     numbers["mode_gain"] = {label: {**{fam: family_gain(p2, fam, m) for fam in FAMILIES}, "irm_oracle": float(p2["gain"]["irm_oracle"][m].mean())} for label, m in modes}
 
+    runs = json.loads((ROOT / "check" / "epoch_times.json").read_text())
+    (OUT / "tables" / "table_cost.tex").write_text(cost_table(runs))
     sweep = json.loads((ROOT / "check" / "encoder_sweep_results.json").read_text())
     (OUT / "tables" / "table_lr.tex").write_text(lr_table(sweep))
     (OUT / "journal_numbers.json").write_text(json.dumps(numbers, indent=1))

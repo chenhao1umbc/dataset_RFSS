@@ -1,3 +1,5 @@
+> Superseded by paper/revised_paper.tex (kept for the record, not maintained).
+
 # RFSS: A Comprehensive Multi-Standard RF Signal Source Separation Dataset with Advanced Channel Modeling
 
 **Hao Chen and Dayuan Tan**

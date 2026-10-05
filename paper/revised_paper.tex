@@ -573,7 +573,7 @@ convolutions that computes the source masks, and a learned decoder. We use
 $N\!=\!256$ encoder filters, kernel length $L\!=\!16$, bottleneck dimension
 $B\!=\!128$, hidden channels $H\!=\!256$, kernel size $P\!=\!3$, $X\!=\!8$
 blocks per repeat and $R\!=\!3$ repeats ($24$ TCN blocks). A sigmoid gives the
-masks. A second variant, Conv-TasNet-L256, uses $L\!=\!256$ with stride 64 and is
+masks. A second variant, Conv-TasNet-L256 (a validation-only pilot, seed 0), uses $L\!=\!256$ with stride 64 and is
 otherwise identical.
 
 \textbf{DPRNN}~\cite{luo2020dual} splits the encoder output into
@@ -583,7 +583,7 @@ encoder filters, $L\!=\!16$, feature dimension $B\!=\!64$, hidden
 dimension $H\!=\!64$, chunk size $P\!=\!50$ encoder frames, 6 dual-path
 layers, sigmoid masks.
 
-\textbf{CNN-LSTM} is an encoder-decoder baseline. Three convolutional layers
+\textbf{CNN-LSTM} (a validation-only pilot, seed 0) is an encoder-decoder baseline. Three convolutional layers
 with channels [64, 128, 256] (kernel size 7, stride 2, batch normalization and ReLU)
 extract local features, and a 2-layer BiLSTM with hidden size 256 models the sequence.
 A decoder of three transposed convolutions (kernel 8, stride 2) mirrors the encoder,
@@ -598,8 +598,8 @@ passes the log magnitude through a linear layer and a 2-layer BiLSTM with hidden
 256. It predicts a complex ratio mask per source (tanh on the real and imaginary
 parts), applies it to the mixture STFT and inverts the result.
 
-The models have 2.52~M (Conv-TasNet), 2.77~M (Conv-TasNet-L256), 1.11~M (DPRNN),
-4.30~M (CNN-LSTM) and 7.36~M (STFT-BLSTM) parameters.
+The two-source models have 2.52~M (Conv-TasNet), 2.77~M (Conv-TasNet-L256), 1.11~M (DPRNN),
+4.30~M (CNN-LSTM) and 7.36~M (STFT-BLSTM) parameters; the output layers of the 3- and 4-source models are larger (Table~\ref{tab:cost}).
 
 All models are trained with permutation-invariant training
 (PIT)~\cite{kolbaek2017multitalker}, minimizing the negative SI-SINR of the best
@@ -710,6 +710,19 @@ and is omitted.}
 Two variants were trained for 10 epochs with seed 0 and scored on the 800 validation crops only: Conv-TasNet-L256 ($+4.51$~dB, 95\%
 interval $[+4.16,+4.86]$) and the CNN-LSTM with the transposed decoder ($+4.47$~dB, $[+4.11,+4.81]$). Both are below the three models of the test tables on the same
 validation crops ($+5.84$, $+5.99$ and $+6.36$~dB for Conv-TasNet, DPRNN and STFT-BLSTM, seed 0).
+
+Table~\ref{tab:cost} gives the training cost. Epoch times are raw wall-clock values with two to three training runs sharing the machine; they are not
+single-job timings.
+
+\begin{table}[t]
+\centering
+\caption{Training cost per epoch (minimum / median / maximum over the epochs of the final runs; two-source: seeds 1 and 2, otherwise seed 0) and the number of
+other final training runs running at the same time (range over epochs). The maximum of the 2-source Conv-TasNet includes two manual pauses of one run; the
+stopped DPRNN 3-source run at $10^{-3}$ (4 epochs, 806 to 953~s) is not included. Scoring jobs, screens and the seed-0 pilots are not counted. STFT-BLSTM ran on the CPU, the others on the GPU of an Apple M4 Pro with 48~GB memory.}
+\label{tab:cost}
+\resizebox{\columnwidth}{!}{%
+\input{tables/table_cost.tex}}
+\end{table}
 
 \subsection{SNR Sensitivity Analysis}
 \label{sec:snr}

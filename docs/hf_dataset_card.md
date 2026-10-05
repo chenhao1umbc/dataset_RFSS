@@ -1,5 +1,5 @@
 ---
-license: cc-by-4.0
+license: cc-by-nc-4.0
 pretty_name: RFSS - RF Signal Source Separation Dataset
 task_categories:
   - audio-to-audio
@@ -18,14 +18,11 @@ size_categories:
 
 # RFSS: Multi-Standard RF Signal Source Separation Dataset
 
-DRAFT by Reviewer, 2026-10-03. Items marked **[TBD-A#]** wait on workstream A of `ACTION_PLAN.md`.
-Do not publish until every TBD is resolved and the Builder has confirmed the numbers.
-
 RFSS contains complex baseband mixtures of 2 to 4 simultaneous cellular signals (GSM, UMTS, LTE, 5G NR)
 together with per-source reference waveforms and full generation metadata. It is intended for
 blind, single-channel RF source separation research.
 
-Paper: [arXiv:2508.12106] (replacement version, **[TBD-F]** link after v2 is live).
+Paper: arXiv:2508.12106. A corrected version replaces the earlier ones and supersedes arXiv:2604.00398, whose results and dataset description contained errors.
 Code: https://github.com/chenhao1umbc/dataset_RFSS
 
 ## Files
@@ -34,7 +31,7 @@ Code: https://github.com/chenhao1umbc/dataset_RFSS
 |---|---|---|---|
 | `data/rfss_dataset.h5` | 100,000 | about 103 GiB | 2-, 3- and 4-source mixtures |
 | `data/rfss_single.h5` | 4,000 | about 1.3 GiB | single-source reference samples |
-| **[TBD-C2]** `data/rfss_preview.h5` | about 1,000 | under 1 GB | quick-look subset |
+| `checkpoints/` | 15 files | about 0.8 GB | trained models of the paper (see Benchmark) |
 
 ## HDF5 layout (both files)
 
@@ -46,7 +43,7 @@ Code: https://github.com/chenhao1umbc/dataset_RFSS
 | `metadata` | (100000,) | variable-length JSON string | Generation parameters (below) |
 
 Root attributes: `actual_samples`, `max_samples`, `format` (`complex64`), `signal_duration_ms` (1.0),
-`creation_time`, `version` (currently `1.0`). Arrays are gzip-compressed, one sample per chunk.
+`creation_time`, `version` (still `1.0`; the files of release v1.1 are the same bytes as v1.0). Arrays are gzip-compressed, one sample per chunk.
 
 Read a sample:
 
@@ -111,12 +108,27 @@ and `sources`: a list with, per source, `standard`, `signal_params` (bandwidth, 
 ## Splits
 
 By sample index in `rfss_dataset.h5`: train 0-69,999; validation 70,000-84,999; test 85,000-99,999.
-**[TBD-B]** Confirm that generation order is random with respect to scenario so contiguous index splits are balanced.
+The source-count shares are the same in the three splits (2 / 3 / 4 sources: 50.2 / 35.5 / 14.3 % of the test split, 49.9 / 35.1 % for 2 / 3 sources in the training split).
 
 ## Benchmark
 
-**[TBD-B6]** Fill from committed result files only. Report PI-SI-SINR (Le Roux et al., 2019) for FastICA, NMF,
-Conv-TasNet, DPRNN and CNN-LSTM, with confidence intervals and sample counts. Do not copy numbers from the April 2026 arXiv version.
+Phase-sensitive permutation-invariant SI-SINR (Le Roux et al., 2019) on the test split, one random 7,680-sample window per sample,
+reported as the gain over the input mixture in dB. 2-source: mean of 3 training seeds, n = 7,526 test mixtures; 3- and 4-source: one seed,
+n = 5,324 and 2,150. Model gains with 95 % bootstrap intervals, the seed spread and the paired differences are in the paper;
+every number comes from the JSON files under `check/` of the GitHub repository (`eval_all_src*_crop0_frozen_results.json`).
+
+| Method | 2 sources | 3 sources | 4 sources |
+|---|---|---|---|
+| STFT-BLSTM (7.4 M parameters) | +6.14 | +5.14 | +4.52 |
+| DPRNN (1.1 M) | +5.85 | +5.03 | +3.44 |
+| Conv-TasNet (2.5 M) | +5.61 | +4.77 | +3.54 |
+| IRM oracle | +8.04 | +9.61 | +10.35 |
+| Noise-limited oracle | +10.16 | +11.53 | +12.13 |
+| NMF | -1.24 | -0.57 | -0.05 |
+| FastICA | -13.60 | -11.09 | -9.49 |
+
+The `checkpoints/` folder holds the 15 models scored in these tables, stored as `checkpoints/<run>/ckpt/<file>.pt`. Moving
+`checkpoints` to `final` in a clone of the GitHub repository lets `check/run_test_passes.sh` score them.
 
 ## Known limitations
 
@@ -124,8 +136,25 @@ Conv-TasNet, DPRNN and CNN-LSTM, with confidence intervals and sample counts. Do
 - Downlink waveforms only; no uplink, NB-IoT, LTE-M or sidelink.
 - Synthetic TDL channels, no measured channel data.
 - Absolute separation scores of current methods are low; the dataset is hard for the baselines tested.
-- Version history: `v1.0` (Feb 2026 files) and the corrected release **[TBD-A]**.
+- Version history: see the next section.
+
+## Version history
+
+- `v1.0` (git tag, February 2026): the two HDF5 files, without a dataset card.
+- `v1.1` (this card): the HDF5 files are byte-identical to v1.0 (SHA-256 of both files checked against the uploaded ones). What changed is the documentation and what is released with it:
+  the reference definition above (what `source_signals` holds and how to rebuild the aligned reference), the adjacent-channel convention (a fixed 2 MHz spacing, no
+  adjacent-channel filtering, so most adjacent-channel mixtures still overlap), the vestigial `mimo_config` field, the split indices, the evaluation protocol, the trained
+  checkpoints and the licence. Earlier descriptions of the dataset (arXiv:2508.12106 v1 and arXiv:2604.00398) are wrong where they differ from this card.
 
 ## License and citation
 
-CC BY 4.0. **[TBD-F]** BibTeX for arXiv:2508.12106 (author list as on the final arXiv v2) once v2 is live.
+Data: CC BY-NC 4.0, free for everyone to use and share with attribution, not for commercial use. Code (GitHub repository): PolyForm Noncommercial 1.0.0.
+
+```bibtex
+@article{chen2026rfss,
+  title   = {{RFSS}: A Multi-Standard {RF} Signal Source Separation Dataset with 3GPP-Standardized Channel and Hardware Impairments},
+  author  = {Chen, Hao and Jin, Rui and Tan, Dayuan},
+  journal = {arXiv preprint arXiv:2508.12106},
+  year    = {2026}
+}
+```

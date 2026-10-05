@@ -8,13 +8,13 @@ authors = [
     {name = "Dayuan Tan"},
 ]
 readme = "README.md"
-license = {text = "CC-BY-4.0"}
+license = {text = "PolyForm-Noncommercial-1.0.0 (code); CC-BY-NC-4.0 (data)"}
 requires-python = ">=3.13"
 keywords = ["rf", "signal-processing", "5g", "4g", "3g", "2g", "mimo", "dataset", "wireless"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
+    "License :: Free for non-commercial use",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Information Analysis",
@@ -72,7 +72,6 @@ comms = [
 [project.urls]
 Homepage = "https://github.com/chenhao1umbc/dataset_RFSS"
 Repository = "https://github.com/chenhao1umbc/dataset_RFSS"
-Documentation = "https://dataset-rfss.readthedocs.io"
 "Bug Tracker" = "https://github.com/chenhao1umbc/dataset_RFSS/issues"
 
 [build-system]

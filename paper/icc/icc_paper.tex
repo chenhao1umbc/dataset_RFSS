@@ -1,0 +1,247 @@
+\documentclass[conference]{IEEEtran}
+\renewcommand{\ttdefault}{cmtt}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{microtype}
+\usepackage{array}
+
+% A number that waits for a pass that has not finished; search for TBD before submission.
+\newcommand{\TBD}[1]{\textbf{[#1]}}
+
+\begin{document}
+
+\title{Blind Single-Channel Separation of Coexisting 2G--5G Cellular Signals:\\
+A Benchmark on 3GPP-Compliant Mixtures}
+
+% If the review is double blind, replace this block by anonymous text.
+\author{\IEEEauthorblockN{Hao Chen and Dayuan Tan}
+\IEEEauthorblockA{Department of Electrical Engineering\\
+\textit{contact details to be added}}}
+
+\maketitle
+
+% ============================================================
+\begin{abstract}
+% ============================================================
+GSM, UMTS, LTE and 5G NR transmissions now share or neighbour the same spectrum, yet
+there is little common ground for comparing methods that separate such signals from a
+single received mixture. We study this problem on RFSS, a corpus of 100,000 mixtures of
+two to four 3GPP-compliant sources, each passing through its own tapped-delay-line fading
+channel and hardware impairments, and mixed co-channel or adjacent-channel. For the
+two-source subset we give an exact definition of the per-source references, a
+phase-sensitive permutation-invariant SI-SINR protocol with oracle references, and results
+for FastICA, NMF and three deep separators (an STFT-domain BLSTM, DPRNN and Conv-TasNet),
+each trained with three seeds and a learning rate chosen on validation data. On 7,526 held-out
+test mixtures the deep models improve the SI-SINR over the input mixture by 5.6 to 6.1~dB,
+which is 70\% to 76\% of the gain of an ideal-ratio-mask oracle (8.0~dB), while ICA and NMF
+end below the input level. The ordering STFT-BLSTM, DPRNN, Conv-TasNet holds for every
+matched seed pair, with mean differences of 0.2 to 0.5~dB. Absolute output quality remains low (about
++1.8~dB for the best model), so the task is far from solved. We state the limits of the study,
+including that the data are simulated.
+\end{abstract}
+
+\begin{IEEEkeywords}
+RF source separation, cellular coexistence, 3GPP, benchmark, permutation-invariant training.
+\end{IEEEkeywords}
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+
+Cellular generations coexist in shared and neighbouring bands~\cite{cabric2004implementation,andrews2014what}.
+A receiver built for one standard sees the others as interference, and in dense deployments
+that interference is both co-channel and adjacent-channel. Separating the individual waveforms
+from one observation would let a receiver demodulate each standard in turn, and would give
+spectrum monitoring and interference management a signal-level tool in addition to detection and
+classification of the signals present~\cite{rajendran2018deep}.
+
+Source separation has advanced fastest where shared benchmarks exist. Speech separation grew around
+WSJ0-2mix~\cite{hershey2016deep}, permutation-invariant training~\cite{kolbaek2017multitalker}
+and scale-invariant metrics~\cite{leroux2019sdr}, which gave Conv-TasNet~\cite{luo2019conv} and
+DPRNN~\cite{luo2020dual} a common yardstick. For radio signals the nearest public benchmark, the
+RF Challenge~\cite{lancho2024rfchallenge}, asks for the recovery of one known desired signal in the presence of one
+interferer, so the receiver knows which signal to recover. The blind problem, with several unknown
+standard-compliant sources, a varying source count and a permutation to resolve, has no such reference
+point, and the widely used RadioML dataset contains single signals only~\cite{oshea2016radio}.
+
+This paper takes a first step toward such a reference point for the two-source case. Our contributions are:
+\begin{enumerate}
+  \item A precise protocol on the RFSS corpus: how the per-source references are rebuilt from
+    the stored waveforms, a phase-sensitive permutation-invariant SI-SINR, the gain over the input mixture as the main
+    figure, and two oracle references that bound what is achievable.
+  \item Results for FastICA, NMF and three deep separators trained under one recipe, with three seeds
+    per deep model, matched-seed paired comparisons and intervals over 7,526 test mixtures.
+  \item An account of what the numbers do and do not show: the gap to the oracle, the failure of the
+    classical methods, the size of the model differences compared with seed variation, and the limits of a
+    simulated, single-antenna benchmark.
+\end{enumerate}
+
+% ============================================================
+\section{Related Work}
+% ============================================================
+
+\textit{RF datasets.} RadioML~\cite{oshea2016radio} supplies single-signal samples of synthetic modulations
+and is a standard benchmark for modulation classification; it holds no mixtures and so no separation targets.
+The RF Challenge~\cite{lancho2024rfchallenge} (ICASSP 2024) pairs one desired signal of known type with one
+interferer and scores bit error rate and mean squared error. In our setting every source is unknown, the number
+of sources is two to four, and outputs are matched to references by permutation.
+
+\textit{Audio separation.} WSJ0-2mix~\cite{hershey2016deep}, WHAM!~\cite{wichern2019wham} and related corpora
+established the protocol we borrow: per-source references, a permutation-invariant loss~\cite{kolbaek2017multitalker}
+and SI-SNR~\cite{leroux2019sdr}. Conv-TasNet~\cite{luo2019conv} and DPRNN~\cite{luo2020dual} come from this
+line of work; we test them on radio signals without domain-specific changes, next to an STFT-domain mask estimator.
+
+\textit{Classical methods.} FastICA~\cite{hyvarinen2000ica} and NMF~\cite{fevotte2011nmf} are the usual blind baselines.
+They use no labelled data, which is the reason to include them: they show how much a corpus-trained model adds.
+
+% ============================================================
+\section{The RFSS Corpus and Reference Signals}
+\label{sec:data}
+% ============================================================
+
+\subsection{Signals, channels and impairments}
+
+Each RFSS sample mixes two to four sources drawn from GSM (GMSK, $BT\!=\!0.3$)~\cite{3gpp45004}, UMTS
+(W-CDMA, 3.84~Mcps)~\cite{3gpp25211}, LTE (OFDM, 1.4 to 20~MHz)~\cite{3gpp36211} and 5G NR
+(OFDM, 30 or 120~kHz subcarrier spacing, 10 to 100~MHz)~\cite{3gpp38211}. Every source is generated from the
+physical-layer specification of its standard at its native rate and then passes through its own SISO tapped-delay-line
+channel (TDL-A to TDL-E of TR~38.901~\cite{3gpp38901}) with Jakes Doppler~\cite{jakes1994microwave} up to 700~Hz.
+Each source then receives hardware impairments chosen at random, with parameter ranges informed by 3GPP base-station
+conformance specifications~\cite{3gpp38104,3gpp36104,3gpp25104}: carrier frequency offset, I/Q imbalance, phase noise,
+DC offset and a Rapp power-amplifier model~\cite{rapp1991effects}. About 20\% of sources are left clean, 30\% receive one
+impairment and 50\% several. Sources are mixed either co-channel (all at baseband) or adjacent-channel (shifted by
+standard-specific offsets), at per-sample SNRs between $-10$ and 40~dB, and white noise is added. A sample covers about 1~ms.
+The corpus has 100,000 mixtures, split by index into 70\%, 15\% and 15\% for training, validation and test.
+The two-source subsets used here hold 34,912, \TBD{val 2-src} and 7,526 mixtures. We use the single-antenna downlink
+case throughout.
+
+\subsection{References}
+
+The released file stores, for each source, the waveform after the channel and the impairments, at its native rate
+and before resampling, frequency shifting and power scaling. The reference for source $i$ is rebuilt from it with the
+released function \texttt{build\_aligned\_references}: resample to the mixture rate, apply the adjacent-channel shift, apply the power
+scaling. The noise is not stored; it equals the mixture minus the sum of the references. On 1,000 checked mixtures the
+power of that residual agrees with the stored SNR to within 0.2~dB.
+
+% ============================================================
+\section{Task, Metric and References}
+\label{sec:task}
+% ============================================================
+
+\subsection{Metric}
+
+For a reference $\mathbf{s}$ and an estimate $\hat{\mathbf{s}}$ (both with mean removed) the SI-SINR is
+\begin{equation}
+\text{SI-SINR}(\hat{\mathbf{s}},\mathbf{s}) = 10\log_{10}\frac{\|\alpha\mathbf{s}\|^2}{\|\hat{\mathbf{s}}-\alpha\mathbf{s}\|^2},
+\quad \alpha = \frac{\mathrm{Re}\{\hat{\mathbf{s}}^{H}\mathbf{s}\}}{\|\mathbf{s}\|^2}.
+\label{eq:sisinr}
+\end{equation}
+The projection coefficient is a real scalar, so a constant phase rotation of the estimate reduces the score. This is
+the phase-sensitive version appropriate for waveform recovery, and it is stricter than a magnitude or complex-gain
+variant. Permutation invariance takes the output permutation that maximizes the mean over sources.
+The \emph{gain} is the SI-SINR of the separated estimates minus that of the input mixture, where the input score is the mean over sources of
+SI-SINR(mixture, source). The gain is our main figure because the input level varies with mixing mode and SNR (it averages
+$-4.4$~dB over the test mixtures). All scores use 7,680-sample windows, drawn at a random offset that is fixed by a seed and the sample index.
+
+\subsection{Oracle and classical references}
+
+\emph{IRM oracle:} masks built from the reference magnitudes (2048-point STFT, hop 512) applied to the mixture STFT with the
+mixture phase. It is a reference for magnitude masking, not a bound on every method.
+\emph{Noise-limited oracle:} each reference plus the noise residual, the ceiling for perfect separation that leaves all additive noise in
+every output.
+\emph{FastICA:} on a Hankel embedding of the scalar mixture (window 256, hop 128), with the components matched to the references by the best permutation.
+\emph{NMF:} Frobenius-norm NMF of the magnitude STFT with one component per source, Wiener-type masks and the mixture phase.
+
+% ============================================================
+\section{Deep Separators and Training}
+\label{sec:methods}
+% ============================================================
+
+We train three models from scratch on the two-source training subset. The \emph{STFT-BLSTM} (7.36M parameters) predicts a complex ratio
+mask per source from the log-magnitude STFT with a two-layer BiLSTM. \emph{DPRNN}~\cite{luo2020dual} (1.11M) uses
+64 encoder filters, kernel 16 and six dual-path layers. \emph{Conv-TasNet}~\cite{luo2019conv} (2.52M) uses 256 filters,
+kernel 16 and 24 temporal blocks. All use permutation-invariant training with a negative SI-SINR loss, Adam, gradient-norm clipping at 1.0,
+batch size 8, cosine annealing to $10^{-5}$ over 10 epochs, and random 7,680-sample crops redrawn each epoch.
+The peak learning rate is chosen per model on validation data: $3\!\times\!10^{-4}$ for STFT-BLSTM and Conv-TasNet and $10^{-3}$ for DPRNN,
+the choice resting on the higher worst-seed validation gain. The checkpoint with the lowest validation loss is evaluated;
+for the seed that was also used to choose the learning rate, the last epoch was kept. Each model is trained with three seeds.
+The three models differ in size and cost per epoch, so a difference between them is a difference between these configurations under this
+recipe and not between architecture families as such.
+
+% ============================================================
+\section{Results}
+\label{sec:results}
+% ============================================================
+
+\begin{table}[t]
+\centering
+\caption{Two-source test results: gain over the input mixture (dB, PI-SI-SINR), mean over three seeds (range of the three seeds), and for the
+adjacent-channel and co-channel mixtures with SNR above 20~dB ($n\!=\!1{,}105$ and $756$). All test mixtures: $n\!=\!7{,}526$.}
+\label{tab:main}
+\resizebox{\columnwidth}{!}{%
+\input{table_main.tex}
+}
+\end{table}
+
+Table~\ref{tab:main} gives the main result. The three deep models improve the SI-SINR by 5.6 to 6.1~dB over the input, which is 70\% to
+76\% of the IRM-oracle gain of 8.0~dB. ICA and NMF end below the input level (by 13.6 and 1.2~dB): when the mixture contains
+unknown, overlapping, filtered and impaired waveforms, the independence and spectral-shape assumptions of these methods are only roughly met; we did not isolate
+which failure dominates. The absolute output score of the best model is only about
+$+1.8$~dB, because the input mixtures average $-4.4$~dB.
+
+\textit{Order and seed variation.} The seed-to-seed range is 0.03~dB for STFT-BLSTM, 0.14 for DPRNN and 0.30 for Conv-TasNet. In every matched seed pair
+(same seed number, independently initialised) STFT-BLSTM exceeds DPRNN, by 0.26, 0.25 and 0.37~dB, and DPRNN exceeds Conv-TasNet, by 0.17, 0.22 and 0.33~dB; the
+sign is the same in the adjacent-channel and co-channel bins. The paired 95\% intervals over test mixtures are about $\pm0.03$~dB wide. We therefore report the
+order STFT-BLSTM $>$ DPRNN $>$ Conv-TasNet for this recipe, with two cautions. The pairing by seed number is nominal, so the evidence is the consistent sign in three pairs together with
+the small seed ranges and not a paired test across seeds. And the models differ in parameters (7.36M, 1.11M, 2.52M) and in cost, so the comparison
+does not isolate the domain in which the mask is estimated. The gap between DPRNN and Conv-TasNet (0.2 to 0.3~dB) is small in practice.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig_snr.pdf}
+\caption{Gain over the input mixture by per-sample SNR bin on the two-source test mixtures (mean over three seeds for the deep models).
+Bins hold 1,083, 1,904, 2,678, 1,499 and 362 mixtures from low to high SNR.}
+\label{fig:snr}
+\end{figure}
+
+\textit{Dependence on SNR.} Figure~\ref{fig:snr} shows the gain by SNR bin. All three deep models improve steadily with SNR, from about 5 dB in the
+lowest bin to 6.7 to 7.7~dB in the highest, while the gap to the IRM oracle widens from nothing to 4 to 5~dB. In the lowest bin the best models match or exceed the
+oracle, which is a reference built on the mixture phase and not a limit on every method. At high SNR the noise-limited oracle shows that
+a large margin remains. The learned separators do not approach it.
+
+\textit{Robustness of the evaluation.} The headline numbers use one fixed random window per mixture. A pass on the first 7,680 samples of each mixture and
+\TBD{two further random-window passes} give gains within \TBD{x} dB of these for every model and leave the order unchanged.
+
+% ============================================================
+\section{Limitations}
+\label{sec:limits}
+% ============================================================
+
+\textit{Simulation.} RFSS is simulated. Standard-compliant generation, 3GPP channels and impairments make it a controlled benchmark in the way WSJ0-2mix is for speech,
+but it contains no over-the-air captures, and we do not claim that a model trained on it works on a real receiver. Its value is comparison under identical conditions, and a
+sim-to-real study is future work.
+\textit{Scope.} Single antenna, downlink waveforms, about 1~ms per mixture, two sources in this paper. Three- and four-source mixtures are in the corpus; we leave them to later work.
+\textit{Absolute quality.} The best separated output scores about $+1.8$~dB, which is not enough to demodulate and we report no bit error rate or error vector magnitude. The gain
+should be read as progress on a hard task and not as a deployable result.
+\textit{Metric.} SI-SINR with a real projection coefficient is phase sensitive; magnitude-only or phase-aligned scores would be higher.
+\textit{Training budget.} Ten epochs under-train the models: a validation probe of a twenty-epoch STFT-BLSTM run gained 0.20~dB more in the all-samples bin.
+\textit{Statistics.} Three seeds per model, a nominal seed pairing, and models that differ in size.
+\textit{Test-set use.} Before the final evaluation, one early checkpoint was scored on 600 two-source test crops and ICA and NMF were run on the full test split; neither informed any setting.
+The final evaluation used checkpoints and a recipe frozen on validation data. We ran a first-window pass and the random-window pass, read the first before fixing the window protocol, and report the
+random-window pass, which matches the validation crops, as the headline. Differences between the passes are given above.
+
+% ============================================================
+\section{Conclusion}
+% ============================================================
+
+On two-source RFSS mixtures, learned single-channel separators recover 70\% to 76\% of the IRM-oracle gain while ICA and NMF fall below the input, and the three deep models rank
+consistently across seeds with mean margins of 0.2 to 0.5~dB. The remaining gap to the noise-limited oracle and the low absolute output level make the task an open problem.
+The corpus, reference-building code and evaluation scripts are released with \TBD{RFSS v1.1 link}. Larger source counts, over-the-air validation and a downstream demodulation metric are the next steps.
+
+\bibliographystyle{IEEEtran}
+\bibliography{icc}
+
+\end{document}

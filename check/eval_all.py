@@ -103,7 +103,10 @@ def reference_scores(sample: dict) -> dict:
 
 def load_dl_model(name: str, n_sources: int, device: str, ckpt_dir_format: str):
     ckpt_dir = ROOT / ckpt_dir_format.format(name=name, n=n_sources)
-    best = min(ckpt_dir.glob("epoch_*.pt"), key=_checkpoint_loss)
+    candidates = list(ckpt_dir.glob("epoch_*.pt"))
+    if not candidates:
+        raise FileNotFoundError(f"no epoch_*.pt checkpoint in {ckpt_dir}")
+    best = min(candidates, key=_checkpoint_loss)
     model = build_model(name, n_sources)
     model.load_state_dict(torch.load(best, map_location=device)["model"])
     return model.to(device).eval(), best.name

@@ -122,9 +122,11 @@ def main():
                     help="explicit runs as variant,lr,seed,epochs,tag (for example stft,3e-4,0,4,_lr3e-4); overrides --variants/--epochs/--tag")
     ap.add_argument("--tag", default="", help="suffix for the result key, e.g. _10ep for a longer run of the same variant")
     args = ap.parse_args()
+    if args.ckpt is not None and not Path(args.ckpt).is_file():
+        ap.error(f"--ckpt {args.ckpt!r} is not a file")
 
     t0 = time.time()
-    if args.variants == ["irm"] or args.ckpt:
+    if args.variants == ["irm"] or args.ckpt is not None:
         train_x = train_y = torch.empty(0)
     else:
         train_x, train_y, _ = load_items("train", args.n_train, args.n_sources)
@@ -146,7 +148,7 @@ def main():
                 print(f"irm oracle n_fft={n_fft}: " + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
                                                                 for k, v in val.items() if k != "per_sample_gain_db"), flush=True)
             continue
-        if args.ckpt:  # score an existing checkpoint (for example from train.py) on the validation crops
+        if args.ckpt is not None:  # score an existing checkpoint (for example from train.py) on the validation crops
             device = "cpu" if variant.startswith("stft") else args.device
             model = build(variant, args.n_sources).to(device)
             model.load_state_dict(torch.load(args.ckpt, map_location=device)["model"])

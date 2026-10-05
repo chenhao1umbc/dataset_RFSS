@@ -1171,7 +1171,7 @@ STFT-BLSTM (CPU): 2-src seed 1 502 / 513 / 538, seed 2 533 / 539 / 566; 3-src 52
 | ICA / NMF | -13.60 / -1.24 | -16.01 / -2.61 | -16.19 / -2.38 |
 | STFT-BLSTM seeds 0 / 1 / 2 | +6.14 / +6.15 / +6.12 [+6.02, +6.26] | +6.96 / +6.96 / +6.92 | +6.92 / +6.90 / +6.91 |
 | DPRNN seeds 0 / 1 / 2 | +5.88 / +5.90 / +5.76 | +6.64 / +6.71 / +6.40 | +6.54 / +6.52 / +6.43 |
-| Conv-TasNet L16 seeds 0 / 1 / 2 | +5.72 / +5.68 / +5.42 | +6.41 / +6.28 / +5.94 | +6.34 / +6.35 / (see script) |
+| Conv-TasNet L16 seeds 0 / 1 / 2 | +5.72 / +5.68 / +5.42 | +6.41 / +6.28 / +5.94 | +6.34 / +6.35 / +6.10 |
 | family mean (range), all bin | STFT +6.14 (6.12 to 6.15); DPRNN +5.85 (5.76 to 5.90); Conv-TasNet +5.61 (5.42 to 5.72) | | |
 
 - **Matched-seed paired differences, all bin, seeds 0 / 1 / 2 (paired bootstrap):** STFT minus DPRNN +0.26 / +0.25 / +0.37 (mean +0.29, range +0.25 to +0.37); DPRNN minus Conv-TasNet +0.17 / +0.22 / +0.33 (mean +0.24, +0.17 to +0.33); STFT minus Conv-TasNet +0.42 / +0.47 / +0.70 (mean +0.53, +0.42 to +0.70). Adjacent bin: STFT-DPRNN +0.32 / +0.25 / +0.51, DPRNN-Conv +0.23 / +0.43 / +0.46, all lower limits at +0.14 or more. Signs positive in all seed pairs and bins: the order STFT-BLSTM > DPRNN > Conv-TasNet L16 is the same in the primary pass, the first-window pass and validation. All-bin gains of all nine runs are above 5.4 dB; adjacent-bin gains above 5.9 dB.

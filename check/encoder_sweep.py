@@ -143,7 +143,7 @@ def main():
                 val = validate(lambda m, t: irm_estimate(m, t, n_fft), val_x, val_y, val_info, "cpu")
                 key = "irm_oracle" if n_fft == 2048 else f"irm_oracle_nfft{n_fft}"
                 results = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
-                results[key] = {"variant": key, "n_fft": n_fft, "n_val_crops": len(val_x), "val": val}
+                results[key] = {"variant": key, "n_fft": n_fft, "n_sources": args.n_sources, "n_val_crops": len(val_x), "val": val}
                 OUTPUT.write_text(json.dumps(results, indent=1))
                 print(f"irm oracle n_fft={n_fft}: " + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
                                                                 for k, v in val.items() if k != "per_sample_gain_db"), flush=True)
@@ -155,7 +155,7 @@ def main():
             model.eval()
             val = validate(lambda m, t: model(m), val_x, val_y, val_info, device)
             results = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
-            results[variant + args.tag] = {"variant": variant, "checkpoint": Path(args.ckpt).name, "n_val_crops": len(val_x), "val": val}
+            results[variant + args.tag] = {"variant": variant, "checkpoint": Path(args.ckpt).name, "n_sources": args.n_sources, "n_val_crops": len(val_x), "val": val}
             OUTPUT.write_text(json.dumps(results, indent=1))
             print(f"{variant}{args.tag} ({Path(args.ckpt).name}): " + "; ".join(f"{k}: {v['val_si_sinr_db']:.2f} dB (gain {v['gain_over_input_db']:+.2f} [{v['gain_ci95'][0]:+.2f},{v['gain_ci95'][1]:+.2f}], n={v['n']})"
                                                                          for k, v in val.items() if k != "per_sample_gain_db"), flush=True)
@@ -166,7 +166,7 @@ def main():
         n_params = sum(p.numel() for p in model.parameters())
         opt = torch.optim.Adam(model.parameters(), lr=lr)
         gen = torch.Generator().manual_seed(seed)
-        record = {"variant": variant, "params": n_params, "batch_size": args.batch_size, "seed": seed, "lr": lr,
+        record = {"variant": variant, "params": n_params, "batch_size": args.batch_size, "seed": seed, "lr": lr, "n_sources": args.n_sources,
                   "n_train_crops": len(train_x), "n_val_crops": len(val_x), "epochs": []}
         t1 = time.time()
         for epoch in range(1, epochs + 1):

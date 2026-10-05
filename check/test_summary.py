@@ -8,9 +8,11 @@ differences of the three families (label prefixes stft, dprnn, conv, same seed n
 Usage:
     uv run python check/test_summary.py 2          # 2-source pass, first 7,680 samples of every signal
     uv run python check/test_summary.py 34 0       # 3- and 4-source pass, crop seed 0 (primary pass)
+    uv run python check/test_summary.py 2 robust   # all-bin gain of every run in the four passes, difference to crop seed 0
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -32,7 +34,32 @@ def interval(values: np.ndarray, rng: np.random.RandomState) -> str:
     return f"{values.mean():+.2f} [{np.percentile(boot, 2.5):+.2f}, {np.percentile(boot, 97.5):+.2f}]"
 
 
+def robustness(sources: str):
+    """All-bin gain of every run in the first-window pass and crop seeds 0, 1, 2 (headline = crop seed 0)."""
+    passes = {"first": "", "crop0": "_crop0", "crop1": "_crop1", "crop2": "_crop2"}
+    gains = {}
+    for name, crop in passes.items():
+        result = json.loads((ROOT / "check" / f"eval_all_src{sources}{crop}_frozen_results.json").read_text())
+        for n_sources in sorted({r["num_sources"] for r in result["samples"]}):
+            rows = [r for r in result["samples"] if r["num_sources"] == n_sources]
+            for m in rows[0]:
+                if re.fullmatch(r"[a-z]+_s\d", m):
+                    gains.setdefault((n_sources, m), {})[name] = float(np.mean([r[m] - r["input"] for r in rows]))
+    print("gain over input (dB), all bin, per pass; last column is the largest absolute difference to crop seed 0")
+    for (n_sources, m), g in gains.items():
+        diffs = [abs(g[k] - g["crop0"]) for k in passes if k != "crop0"]
+        print(f"  {n_sources}-source {m:9s} " + " ".join(f"{k} {g[k]:+.2f}" for k in passes) + f"  max diff {max(diffs):.2f}")
+    for n_sources in sorted({k[0] for k in gains}):
+        for name in passes:
+            order = sorted((m for (n, m) in gains if n == n_sources), key=lambda m: -gains[(n_sources, m)][name])
+            print(f"  {n_sources}-source order in {name}: " + " > ".join(order))
+    print(f"  overall largest difference to crop seed 0: {max(abs(g[k] - g['crop0']) for g in gains.values() for k in passes if k != 'crop0'):.2f} dB")
+
+
 def main():
+    if len(sys.argv) > 2 and sys.argv[2] == "robust":
+        robustness(sys.argv[1])
+        return
     crop = f"_crop{sys.argv[2]}" if len(sys.argv) > 2 else ""
     result = json.loads((ROOT / "check" / f"eval_all_src{sys.argv[1]}{crop}_frozen_results.json").read_text())
     print(f"commit {result['git_commit']}, code modified {result['git_code_modified']}, samples {len(result['samples'])}")

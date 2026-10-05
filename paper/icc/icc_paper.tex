@@ -115,7 +115,7 @@ DC offset and a Rapp power-amplifier model~\cite{rapp1991effects}. About 20\% of
 impairment and 50\% several. Sources are mixed either co-channel (all at baseband) or adjacent-channel (shifted by
 standard-specific offsets), at per-sample SNRs between $-10$ and 40~dB, and white noise is added. A sample covers about 1~ms.
 The corpus has 100,000 mixtures, split by index into 70\%, 15\% and 15\% for training, validation and test.
-The two-source subsets used here hold 34,912, \TBD{val 2-src} and 7,526 mixtures. We use the single-antenna downlink
+The two-source subsets used here hold 34,912, 7,461 and 7,526 mixtures. We use the single-antenna downlink
 case throughout.
 
 \subsection{References}
@@ -213,7 +213,7 @@ oracle, which is a reference built on the mixture phase and not a limit on every
 a large margin remains. The learned separators do not approach it.
 
 \textit{Robustness of the evaluation.} The headline numbers use one fixed random window per mixture. A pass on the first 7,680 samples of each mixture and
-\TBD{two further random-window passes} give gains within \TBD{x} dB of these for every model and leave the order unchanged.
+two further random-window passes give gains within 0.06~dB of these for every model and leave the order unchanged.
 
 % ============================================================
 \section{Limitations}

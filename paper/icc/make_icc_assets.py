@@ -68,6 +68,35 @@ for lo, hi in SNR_EDGES:
 num["snr_bins"] = bins
 (OUT / "icc_numbers.json").write_text(json.dumps(num, indent=1))
 
+
+# per-mode gains over all SNRs and the pair table
+mode_all = {}
+for name, key in (("adjacent", "adjacent-channel"), ("co", "co-channel")):
+    msk = mode == key
+    mode_all[name] = {"n": int(msk.sum()), "input": float(inp[msk].mean()), "irm": float(gain["irm_oracle"][msk].mean()),
+                      "nmf": float(gain["nmf"][msk].mean()), "ica": float(gain["ica"][msk].mean()),
+                      **{k: float(np.mean([gain[f"{k}_s{i}"][msk].mean() for i in range(3)])) for k in FAMILIES}}
+num["mode_all_snr"] = mode_all
+(OUT / "icc_numbers.json").write_text(json.dumps(num, indent=1))
+
+
+def pair_cell(a, b, i, msk):
+    x = (gain[f"{a}_s{i}"] - gain[f"{b}_s{i}"])[msk]
+    lo, hi = boot(x)
+    return f"{x.mean():+.2f} [{lo:+.2f}, {hi:+.2f}]"
+
+
+allm = np.ones(len(rows), dtype=bool)
+plines = [r"\begin{tabular}{llccc}", r"\toprule", r"Pair (A $-$ B) & Subset & Seed 0 & Seed 1 & Seed 2 \\", r"\midrule"]
+names = {"stft": "STFT", "dprnn": "DPRNN", "conv": "Conv-TasNet"}
+for a, b in (("stft", "dprnn"), ("dprnn", "conv"), ("stft", "conv")):
+    for lab, msk in (("all", allm), ("adjacent", adj), ("co-channel", co)):
+        plines.append(f"{names[a]} $-$ {names[b]} & {lab} & " + " & ".join(pair_cell(a, b, i, msk) for i in range(3)) + r" \\")
+    plines.append(r"\midrule" if (a, b) != ("stft", "conv") else "")
+plines[-1] = r"\bottomrule"
+plines.append(r"\end{tabular}")
+(OUT / "table_pairs.tex").write_text("\n".join(plines) + "\n")
+
 f = lambda v: f"{v:+.2f}"
 lines = [r"\begin{tabular}{lrrrr}", r"\toprule", r"Method & Params & All & Adjacent & Co-channel \\", r"\midrule"]
 lines.append(f"ICA & -- & {f(num['ica']['all'])} & {f(num['ica']['adj'])} & {f(num['ica']['co'])} \\\\")

@@ -165,8 +165,7 @@ mask per source from the log-magnitude STFT with a two-layer BiLSTM. \emph{DPRNN
 64 encoder filters, kernel 16 and six dual-path layers. \emph{Conv-TasNet}~\cite{luo2019conv} (2.52M) uses 256 filters,
 kernel 16 and 24 temporal blocks. All use permutation-invariant training with a negative SI-SINR loss, Adam, gradient-norm clipping at 1.0,
 batch size 8, cosine annealing to $10^{-5}$ over 10 epochs, and random 7,680-sample crops redrawn each epoch.
-The peak learning rate is chosen per model on validation data: $3\!\times\!10^{-4}$ for STFT-BLSTM and Conv-TasNet and $10^{-3}$ for DPRNN,
-the choice resting on the higher worst-seed validation gain. The checkpoint with the lowest validation loss is evaluated;
+The peak learning rate is chosen per model on validation data from a small grid of candidates, preferring the higher worst-seed gain where several seeds were available: $3\!\times\!10^{-4}$ for STFT-BLSTM and Conv-TasNet and $10^{-3}$ for DPRNN. The checkpoint with the lowest validation loss is evaluated;
 for the seed that was also used to choose the learning rate, the last epoch was kept. Each model is trained with three seeds.
 The three models differ in size and cost per epoch, so a difference between them is a difference between these configurations under this
 recipe and not between architecture families as such.
@@ -197,7 +196,19 @@ $+1.8$~dB, because the input mixtures average $-4.4$~dB.
 sign is the same in the adjacent-channel and co-channel bins. The paired 95\% intervals over test mixtures are about $\pm0.03$~dB wide. We therefore report the
 order STFT-BLSTM $>$ DPRNN $>$ Conv-TasNet for this recipe, with two cautions. The pairing by seed number is nominal, so the evidence is the consistent sign in three pairs together with
 the small seed ranges and not a paired test across seeds. And the models differ in parameters (7.36M, 1.11M, 2.52M) and in cost, so the comparison
-does not isolate the domain in which the mask is estimated. The gap between DPRNN and Conv-TasNet (0.2 to 0.3~dB) is small in practice.
+does not isolate the domain in which the mask is estimated. The gap between DPRNN and Conv-TasNet (0.2 to 0.3~dB) is small in practice. Table~\ref{tab:pairs} lists every matched pair.
+
+\begin{table*}[t]
+\centering
+\caption{Matched-seed paired differences in gain (dB) on the two-source test mixtures, with paired 95\% bootstrap intervals over mixtures.
+``Adjacent'' and ``co-channel'' are the mixtures with SNR above 20~dB ($n\!=\!1{,}105$ and $756$).}
+\label{tab:pairs}
+\input{table_pairs.tex}
+\end{table*}
+
+\textit{Mixing mode.} Averaged over all SNRs, the deep models gain about the same on co-channel and on adjacent-channel mixtures: for STFT-BLSTM, DPRNN and Conv-TasNet
+$+6.13$, $+5.89$ and $+5.68$~dB on the 3,035 co-channel mixtures against $+6.14$, $+5.82$ and $+5.56$~dB on the 4,491 adjacent-channel mixtures, while the IRM oracle gains $+7.77$ and $+8.22$~dB.
+Adjacent-channel mixtures are therefore not easier for these models in this benchmark, although they are for the oracle.
 
 \begin{figure}[t]
 \centering
@@ -213,7 +224,7 @@ oracle, which is a reference built on the mixture phase and not a limit on every
 a large margin remains. The learned separators do not approach it.
 
 \textit{Robustness of the evaluation.} The headline numbers use one fixed random window per mixture. A pass on the first 7,680 samples of each mixture and
-two further random-window passes give gains within 0.06~dB of these for every model and leave the order unchanged.
+two further random-window passes give gains within 0.06~dB of these for every one of the nine models and leave the order unchanged.
 
 % ============================================================
 \section{Limitations}
@@ -227,11 +238,13 @@ sim-to-real study is future work.
 \textit{Absolute quality.} The best separated output scores about $+1.8$~dB, which is not enough to demodulate and we report no bit error rate or error vector magnitude. The gain
 should be read as progress on a hard task and not as a deployable result.
 \textit{Metric.} SI-SINR with a real projection coefficient is phase sensitive; magnitude-only or phase-aligned scores would be higher.
-\textit{Training budget.} Ten epochs under-train the models: a validation probe of a twenty-epoch STFT-BLSTM run gained 0.20~dB more in the all-samples bin.
+\textit{Training budget.} Ten epochs under-train the models: a twenty-epoch STFT-BLSTM run scored 0.20~dB higher than the ten-epoch run on validation data ($+6.56$ against $+6.36$~dB, one seed, different schedules).
 \textit{Statistics.} Three seeds per model, a nominal seed pairing, and models that differ in size.
 \textit{Test-set use.} Before the final evaluation, one early checkpoint was scored on 600 two-source test crops and ICA and NMF were run on the full test split; neither informed any setting.
-The final evaluation used checkpoints and a recipe frozen on validation data. We ran a first-window pass and the random-window pass, read the first before fixing the window protocol, and report the
-random-window pass, which matches the validation crops, as the headline. Differences between the passes are given above.
+The final evaluation used checkpoints and a recipe frozen on validation data. We ran a first-window pass and three random-window passes (seeds 0, 1, 2). The first-window pass was run and read before the crop protocol was fixed; the headline is random-window seed 0, which is the validation crop definition, and all four passes are reported.
+
+\textit{Reproducibility.} Every number in this paper is computed from per-mixture score files written by one evaluation script at a recorded code revision, from checkpoints named in the script.
+The table and figure are generated from those files.
 
 % ============================================================
 \section{Conclusion}

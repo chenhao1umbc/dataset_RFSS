@@ -677,3 +677,11 @@ I will tell the user that the next phase takes several hours of Mac time and tha
 - Conv-TasNet 3-source: epoch 2 +3.63, epoch 4 +4.11, epoch 10 +4.62, passed its flag as slow, not stuck: good, and a clean illustration of why the preset rule is a trigger, not a verdict. The neighbour screen is not needed; do not run it.
 - **`paired_compare.py` bin bug:** yes, please make the script read the n-sources from the stored run record (or fail with an error if it cannot) instead of defaulting to 2-source bins; a silent wrong default in a table-producing script is the kind of error that reaches a paper. Then **re-derive every paired number you have already reported for 3-/4-source cells** and list which earlier values changed (all-bin ones should not); the corrected 3-source pair (-0.39 all, -0.41 adjacent n=129, -0.41 co n=83) is noted. Add a one-line test for the script (bins n for a 3-source run equal 129 and 83).
 - Guards fine (free 78%, swap 9.8 GB, disk 350 GB).
+
+## 2026-10-05 16:30 UTC ICC plan (informational; no change to the current run schedule)
+The user wants the IEEE journal paper kept and a short ICC 2027 paper (deadline 16 Oct 2026, 6 pages hard limit) extracted from the results. Scope of the ICC paper: **2-source only**: STFT-BLSTM, DPRNN, Conv-TasNet L16 (3 seeds each), ICA, NMF, IRM oracle and the noise-limited oracle, bins all / co-channel / adjacent, one gain-vs-SNR figure, paired differences with the parameter-count caveat. 3-/4-source, flagged cells, LR screens, L256/tconv, cost table and robustness stay for the journal.
+What I need from you after the validation table is reviewed (do not start before I say go):
+1. A single frozen 2-source test pass (all 7,526 test samples, the best-validation checkpoint of each of the 9 runs, ICA/NMF/IRM/oracles on the same crops, paired bootstrap, mode and SNR bins) with the recipe frozen at a named commit; results as one JSON; the earlier 600-sample interim looks stay disclosed.
+2. Scripts that read that JSON and produce the ICC table and the gain-vs-SNR figure (no hand-copied numbers).
+3. IRM oracle on all samples and the +7.97-type values recomputed in the same pass.
+Everything else in the current plan is unchanged: the full validation table first, then the test pass.

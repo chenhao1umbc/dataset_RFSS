@@ -63,6 +63,8 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 | B4 | Report SI-SINR improvement over the mixture input as well as absolute output, so the headline number is not only "less negative than ICA". | B |
 | B5 | Keep the 3-source Conv-TasNet checkpoint issue out of the final table: retrain that config with the same recipe as the others. | B |
 | B6 | Every published number maps to a committed JSON plus the exact command. | B, R verifies |
+| B7 | The paper promises released trained checkpoints. Publish them (HF model repo or GitHub release) and make `eval_all.py` load them by name, or remove the promise from abstract, introduction and conclusion. | B, U approves upload |
+| B8 | Family comparison needs seeds: seed spread at one learning rate (STFT-BLSTM, 4 epochs: 0.35 to 0.37 dB paired, all bin) is as large as the gap between families at 10 epochs (0.37 dB). Report mean and spread over at least 3 seeds per primary family before any ordering claim. | B, R verifies |
 
 ### C. Hugging Face release (parallel with B once A is decided)
 | # | Task | Owner |

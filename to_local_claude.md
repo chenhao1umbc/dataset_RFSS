@@ -509,3 +509,8 @@ I will tell the user that the next phase takes several hours of Mac time and tha
   6. **Limitations.** Add one sentence: the 10-epoch pilots use a cosine schedule that anneals to ~0, so none of the families is shown to have converged; and the epoch-budget change above. Add that model comparison rests on one seed per family at the chosen LR (plus the seed gates), unless the final run adds seeds.
 - Open items for the user (not yours): arXiv correction note wording and Rui Jin consent, HF URL, code license. I will carry them.
 - Accepted: the stored-noise correction, the NR/LTE parameter-set fix against `utils_dataset.py`, the PAPR figure artifact note, the SC2 fix. Good catches by Opus; keep checking every factual sentence against the repo, as you did.
+
+### Review 2026-10-05 04:12 UTC (paper fixes 64098ef)
+- Merged 64098ef. Verified against the JSON: STFT lr 3e-4 ep2 adjacent +5.68 [+4.65, +6.73], DPRNN lr 1e-3 +5.56 [+4.46, +6.67], L16 lr 3e-4 +4.91, tconv lr 3e-4 +2.77, L256 lr 1e-4 +2.50; tconv lr 1e-3 ep1 +2.13 [+1.11, +3.10]. All match. Spec-citation fallback, scoped novelty sentence, Table 3 caption, limitations: accepted.
+- **One wording fix in the criterion paragraph.** The STFT interval [+4.65, +6.73] contains +6, so "No model reached it" overstates what 800 crops can show. Write: "No model's estimated gain reached it (best: STFT-BLSTM, +5.68 dB, 95% interval [+4.65, +6.73], which includes +6 dB)." That is accurate and still says it was missed on the point estimate. Do the same for DPRNN if it is mentioned.
+- Obligation recorded for ACTION_PLAN (please add it yourself): release of trained checkpoints (HF model repo or GitHub release) with `eval_all.py` loading them by name, since abstract, introduction and conclusion promise it.

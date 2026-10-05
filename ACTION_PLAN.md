@@ -121,3 +121,6 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 - arXiv has one paper (2508.12106 v2); 2604.00398 is withdrawn with a pointer.
 
 ## Decision (user, restated 2026-10-05): authors are Hao Chen and Dayuan Tan only. Rui Jin is removed from all papers (ICC, journal, arXiv v2). This is settled; do not list it as an open item. Submission systems may ask for his consent separately; handle at submission time.
+
+## Finding (2026-10-05, from Opus review): adjacent-channel offsets are NOT standard-specific
+`src/utils_dataset.py:343-346` shifts sources by multiples of 2 MHz for every standard (offsets {-2,0} MHz for 2 sources, {-2,0,2} for 3, {-4,-2,0,2} for 4). The ICC and journal drafts, and possibly dataset docs, said "standard-specific offsets" / "do not overlap". Papers corrected (ICC, journal) with a TBD for the share of adjacent mixtures whose source bands overlap. TODO (Builder): compute that share from metadata; audit README/HF card/dataset docs/`paper/mixing_scenarios.md` (an early design note that describes channel-bandwidth-based offsets and ACIR that the code does not implement) and fix every claim; decide whether the v1.1 release notes mention it (they should).

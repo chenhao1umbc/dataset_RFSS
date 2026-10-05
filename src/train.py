@@ -43,6 +43,8 @@ def build_model(name: str, n_sources: int) -> nn.Module:
     """Construct a separator with the hyperparameters used in the paper."""
     if name == 'conv_tasnet':
         return ConvTasNet(N=256, L=16, B=128, H=256, P=3, X=8, R=3, n_sources=n_sources)
+    if name == 'conv_tasnet_l256':
+        return ConvTasNet(N=256, L=256, B=128, H=256, P=3, X=8, R=3, n_sources=n_sources, stride=64)
     if name == 'cnn_lstm':
         return CNNLSTMSeparator(n_sources=n_sources)
     if name == 'cnn_lstm_tconv':
@@ -307,7 +309,7 @@ class Trainer:
 
 def main():
     parser = argparse.ArgumentParser(description='Train RF source separation model')
-    parser.add_argument('--model', choices=['conv_tasnet', 'cnn_lstm', 'cnn_lstm_tconv', 'dprnn', 'stft_blstm'],
+    parser.add_argument('--model', choices=['conv_tasnet', 'conv_tasnet_l256', 'cnn_lstm', 'cnn_lstm_tconv', 'dprnn', 'stft_blstm'],
                         default='conv_tasnet')
     parser.add_argument('--n-sources', type=int, default=2)
     parser.add_argument('--epochs', type=int, default=30)

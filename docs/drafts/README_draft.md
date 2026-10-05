@@ -75,4 +75,4 @@ uv run pytest
 
 ## Citation
 
-**[TBD-F]** BibTeX for the arXiv paper (authors Hao Chen and Dayuan Tan).
+**[TBD-F]** BibTeX for the arXiv paper (authors as on the final arXiv v2).

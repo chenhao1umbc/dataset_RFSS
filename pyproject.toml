@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "RF Signal Source Separation Dataset - A comprehensive dataset for 2G/3G/4G/5G RF signals with fading, channel effects, and MIMO"
 authors = [
     {name = "Hao Chen"},
+    {name = "Rui Jin"},
     {name = "Dayuan Tan"},
 ]
 readme = "README.md"

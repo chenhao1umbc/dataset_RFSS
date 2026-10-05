@@ -128,4 +128,4 @@ Conv-TasNet, DPRNN and CNN-LSTM, with confidence intervals and sample counts. Do
 
 ## License and citation
 
-CC BY 4.0. **[TBD-F]** BibTeX for arXiv:2508.12106 (authors: Hao Chen, Dayuan Tan) once v2 is live.
+CC BY 4.0. **[TBD-F]** BibTeX for arXiv:2508.12106 (author list as on the final arXiv v2) once v2 is live.

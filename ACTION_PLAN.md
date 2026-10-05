@@ -13,8 +13,8 @@ and a corrected paper that replaces the unsupported 2025 arXiv paper.
 |---|---|
 | arXiv 2508.12106 (Aug 2025, 1 citation) | Results unsupported (26.7 dB, 52,847 samples). Repo's own results say ICA/NMF fail. |
 | arXiv 2604.00398 (Apr 2026) | Honest benchmark, but several dataset descriptions are wrong (see section 2, item P). |
-| `paper/revised_paper.tex` on `dev` (Jul 2026) | Fixes most of those errors. Not on arXiv. |
-| HF `Chrishao/rfss` | Public. Two HDF5 files, no dataset card, no license, not linked from any paper. |
+| `paper/revised_paper.tex` on `dev` | Complete draft (11 pages) with the corrected description, final results and the correction note. Not on arXiv. A 4-page ICC paper is in `paper/icc/`. |
+| HF `Chrishao/rfss` | Public. Two HDF5 files, no dataset card, no license. Both papers now link it; v1.1 upload still pending. |
 | GitHub `main` | Old 2025 code with placeholders. The real code is only on `dev`. |
 
 ## 1. Roles and sync protocol
@@ -93,9 +93,8 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 | E5 | Venue is IEEE journal (decided). Remove NeurIPS wording from `tasks.md`/`plan.md`. Update author list to Hao Chen and Dayuan Tan. | B |
 
 ### F. arXiv actions (user only, in this order)
-1. Author agreement. Dayuan Tan must agree to the plan (replace 2508.12106 with v2, then withdraw 2604.00398). Rui Jin is on both existing
-   arXiv entries; removing an author should be done with that person's knowledge and consent, and arXiv may ask about an author change
-   in a replacement. Suggested route: tell Rui Jin, get a written OK, and move the contribution to the acknowledgments if applicable.
+1. Author agreement. Dayuan Tan agrees to the plan (replace 2508.12106 with v2, then withdraw 2604.00398), per the user (2026-10-05).
+   Rui Jin is on both existing arXiv entries and stays on the journal paper. The author list of arXiv v2 is not decided yet.
 2. Ask arXiv help whether a substantially rewritten v2 is acceptable, and mention the duplicate 2604.00398.
 3. Submit v2 to 2508.12106. Comments field: "Substantially revised; v1 results were not reproducible and have been corrected. Supersedes arXiv:2604.00398."
 4. After v2 is live: withdraw 2604.00398 with the comment "Superseded by arXiv:2508.12106v2."
@@ -107,7 +106,7 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 3. **Release scope: corrected release (v1.1), not v1.0 as is.** Data fixes from workstream A land before the paper goes to arXiv.
    Note: v1.0 is already public on Hugging Face (32 downloads at last check). Plan: tag the current files as `v1.0`,
    put corrected files on `main`, and say so on the card. Do not silently overwrite v1.0.
-4. **Authors: Hao Chen and Dayuan Tan only; Rui Jin removed.** See F1 for what this requires.
+4. **Authors (revised by the user, 2026-10-05): journal paper Hao Chen, Rui Jin and Dayuan Tan; ICC paper Hao Chen and Dayuan Tan only.** arXiv v2 list not decided (F1).
 
 ## 4. Order of work
 1. Now, in parallel: A1-A3 (Builder), C1 and D2/D3 drafts (Reviewer), B1 (Builder).
@@ -120,7 +119,7 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 - Every paper number reproduces from a committed command.
 - arXiv has one paper (2508.12106 v2); 2604.00398 is withdrawn with a pointer.
 
-## Decision (user, restated 2026-10-05): authors are Hao Chen and Dayuan Tan only. Rui Jin is removed from all papers (ICC, journal, arXiv v2). This is settled; do not list it as an open item. Submission systems may ask for his consent separately; handle at submission time.
+## Decision (user, 2026-10-05, supersedes the earlier "Rui Jin removed everywhere"): Rui Jin is an author of the IEEE journal paper (Hao Chen, Rui Jin, Dayuan Tan) and is not an author of the ICC paper (Hao Chen, Dayuan Tan). The arXiv v2 list is not decided. Dayuan Tan has agreed to the arXiv plan. Submission systems may ask for consent separately; handle at submission time.
 
 ## Finding (2026-10-05, from Opus review): adjacent-channel offsets are NOT standard-specific
 `src/utils_dataset.py:343-346` shifts sources by multiples of 2 MHz for every standard (offsets {-2,0} MHz for 2 sources, {-2,0,2} for 3, {-4,-2,0,2} for 4). The ICC and journal drafts, and possibly dataset docs, said "standard-specific offsets" / "do not overlap". Papers corrected (ICC, journal) with a TBD for the share of adjacent mixtures whose source bands overlap. TODO (Builder): compute that share from metadata; audit README/HF card/dataset docs/`paper/mixing_scenarios.md` (an early design note that describes channel-bandwidth-based offsets and ACIR that the code does not implement) and fix every claim; decide whether the v1.1 release notes mention it (they should).

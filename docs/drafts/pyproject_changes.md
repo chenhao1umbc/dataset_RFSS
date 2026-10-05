@@ -2,7 +2,7 @@
 
 Against `dev` at 9d5357c:
 
-1. `authors`: replace "Your Name / your.email@example.com" with Hao Chen and Dayuan Tan (confirm emails with the user).
+1. `authors`: replace "Your Name / your.email@example.com" with the author list the user confirms (journal paper: Hao Chen, Rui Jin, Dayuan Tan; ICC paper: Hao Chen, Dayuan Tan); confirm emails with the user.
 2. `[project.urls]`: replace all `github.com/yourusername/dataset_RFSS` with `github.com/chenhao1umbc/dataset_RFSS`;
    drop the `readthedocs.io` Documentation URL unless docs exist.
 3. `classifiers`: change "License :: OSI Approved :: MIT License" to a CC BY 4.0-consistent choice (or remove the License classifier).

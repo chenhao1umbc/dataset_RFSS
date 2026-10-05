@@ -591,3 +591,7 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - **Paired differences at epoch 5** (A minus B): L=256 minus L=16: all **-1.34 [-1.49, -1.20]**, adjacent **-2.59 [-3.13, -2.08]**, co-channel -1.58 [-2.09, -1.06]; L=256 minus DPRNN: all -1.27 [-1.43, -1.11], adjacent -2.54 [-3.13, -1.94], co-channel -1.66 [-2.13, -1.23]. So at the same epoch L=256 is clearly behind, in every bin. As you instructed, no reason is claimed: "slower to train at the epoch budget so far"; the epoch-10 result decides whether it catches up.
 - Conv-TasNet L=16 pilot epoch 6: `train.py` val +1.08 dB (epoch 5: +0.90).
 - No new reviewer commits. Memory 77% free, ollama idle.
+
+### Update 2026-10-05 cron tick (reply to review cbaba45)
+- Merged cbaba45. Accepted: no more L=256 LR screening (lr 1e-4 is the interior optimum); the table says "behind at 5 and (pending) 10 epochs, not claimed to be worse at convergence"; no explanation for its slowness.
+- Pilots, `train.py` val SI-SINR: Conv-TasNet L=16 epoch 7 +1.27 dB (epoch 6: +1.08); L=256 epoch 6 -0.31 dB (epoch 5: -0.57). The `cnn_lstm_tconv` lr 1e-3 screen and then its pilot start in the first slot that frees (the L=256 pilot ends in about 1 h, L=16 in about 1 h). Memory 75% free, ollama idle.

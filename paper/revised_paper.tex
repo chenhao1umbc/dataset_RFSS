@@ -621,7 +621,7 @@ seeds. All recipe decisions (learning rate, epoch budget, checkpoint) use the
 validation split only. Two interim evaluations were run on the test split before the
 final run: one on 600 two-source samples with an early checkpoint, and one of ICA and NMF on
 the full test split. Neither was used to choose any setting.
-Before the final runs we fixed one target for the training budget: a validation gain of at least $+6$~dB in the adjacent-channel, SNR${>}20$~dB bin after two epochs. No model reached it (best: STFT-BLSTM, $+5.68$~dB, 95\% interval $[+4.65,+6.73]$). Exploratory runs of 10 epochs exceeded $+6$~dB, so the epoch budget $E$ was set from the validation curves, which departs from the pre-registered plan.
+Before the final runs we fixed one target for the training budget: a validation gain of at least $+6$~dB in the adjacent-channel, SNR${>}20$~dB bin after two epochs. No model's estimated gain reached it (best: STFT-BLSTM, $+5.68$~dB, 95\% interval $[+4.65,+6.73]$, which includes $+6$~dB). Exploratory runs of 10 epochs exceeded $+6$~dB, so the epoch budget $E$ was set from the validation curves, which departs from the pre-registered plan.
 
 \subsection{Results}
 

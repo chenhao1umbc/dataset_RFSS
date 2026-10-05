@@ -1,6 +1,6 @@
 # RFSS: A Comprehensive Multi-Standard RF Signal Source Separation Dataset with Advanced Channel Modeling
 
-**Hao Chen, Rui Jin, and Dayuan Tan**
+**Hao Chen and Dayuan Tan**
 
 ---
 

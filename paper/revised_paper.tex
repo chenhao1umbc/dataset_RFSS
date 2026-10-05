@@ -600,7 +600,7 @@ The models have 2.52~M (Conv-TasNet), 2.77~M (Conv-TasNet-L256), 1.11~M (DPRNN),
 All models are trained with permutation-invariant training
 (PIT)~\cite{kolbaek2017multitalker}, minimizing the negative SI-SINR of the best
 permutation. Optimization uses Adam, gradient clipping at norm 1.0, batch size 8 and
-cosine annealing to $\eta_{\min}\!=\!10^{-5}$ over \TBD{E} epochs. Input crops of
+cosine annealing to $\eta_{\min}\!=\!10^{-5}$ over $E\!=\!10$ epochs. Input crops of
 7,680 samples are redrawn at random every epoch. The learning rate is chosen per
 model on the validation split (Table~\ref{tab:lr}) and is not shared across models. In an earlier run at $10^{-3}$ the Conv-TasNet did not leave a plateau within 30 epochs. In
 a validation sweep with otherwise identical settings it stayed at a gain of about
@@ -625,7 +625,7 @@ seeds. All recipe decisions (learning rate, epoch budget, checkpoint) use the
 validation split only. Two interim evaluations were run on the test split before the
 final run: one on 600 two-source samples with an early checkpoint, and one of ICA and NMF on
 the full test split. Neither was used to choose any setting.
-Before the final runs we fixed one target for the training budget: a validation gain of at least $+6$~dB in the adjacent-channel, SNR${>}20$~dB bin after two epochs. No model's estimated gain reached it (best: STFT-BLSTM, $+5.68$~dB, 95\% interval $[+4.65,+6.73]$, which includes $+6$~dB). Exploratory runs of 10 epochs exceeded $+6$~dB, so the epoch budget $E$ was set from the validation curves, which departs from the pre-registered plan.
+Before the final runs we fixed one target for the training budget: a validation gain of at least $+6$~dB in the adjacent-channel, SNR${>}20$~dB bin after two epochs. No model's estimated gain reached it (best: STFT-BLSTM, $+5.68$~dB, 95\% interval $[+4.65,+6.73]$, which includes $+6$~dB). Exploratory runs of 10 epochs exceeded $+6$~dB, so the epoch budget was set from the validation curves, which departs from the pre-registered plan. We chose $E\!=\!10$ by a threshold fixed in advance: a 20-epoch probe of STFT-BLSTM on the validation split had to gain at least $0.30$~dB over the 10-epoch run in the all-samples bin. It gained $0.20$~dB (95\% interval $[0.15,0.25]$). Within the probe, the second 10 epochs added $0.26$~dB ($[0.20,0.31]$), so 10 epochs under-train the models relative to 20; the threshold is a cost--benefit rule, not a convergence claim.
 
 \subsection{Results}
 
@@ -796,7 +796,9 @@ waveform with a constant phase offset is penalized. Model comparisons rest on
 \TBD{number of seeds} seeds per model at the chosen learning rate, from one
 learning-rate grid per model. The pilot runs use a cosine schedule that anneals to
 almost zero, so no model is shown to have converged, and the epoch budget was set
-from the validation curves after the pre-registered criterion was missed. The
+from the validation curves after the pre-registered criterion was missed. A 20-epoch
+probe of STFT-BLSTM gained 0.20~dB in the all-samples bin over 10 epochs on the
+validation split, so some performance was left unused. The
 3-source and 4-source models get fewer optimizer steps than the 2-source models because
 each trains for the same number of epochs on a smaller subset.
 

@@ -1,0 +1,14 @@
+\begin{tabular}{lrrrr}
+\toprule
+Method & Params & All & Adjacent & Co-channel \\
+\midrule
+ICA & -- & -13.60 & -16.01 & -16.19 \\
+NMF & -- & -1.24 & -2.61 & -2.38 \\
+STFT-BLSTM & 7.36M & +6.14 (+6.12 to +6.15) & +6.94 & +6.91 \\
+DPRNN & 1.11M & +5.85 (+5.76 to +5.90) & +6.58 & +6.50 \\
+Conv-TasNet & 2.52M & +5.61 (+5.42 to +5.72) & +6.21 & +6.26 \\
+\midrule
+IRM oracle & -- & +8.04 & +10.86 & +10.08 \\
+Noise-limited oracle & -- & +10.16 & +21.28 & +21.13 \\
+\bottomrule
+\end{tabular}

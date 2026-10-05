@@ -90,7 +90,8 @@ optimize against. Other work classifies the signals of individual standards on a
 single channel~\cite{rajendran2018deep}, and GNU Radio~\cite{blossom2004gnu}
 generates waveforms, but neither supplies separation ground truth. In audio,
 WSJ0-2mix drove the development of Conv-TasNet, DPRNN and related architectures. No
-comparable RF dataset exists. RFSS provides one with the following features.
+public RF separation dataset covers several cellular standards with per-source
+references. RFSS provides one, with the following features.
 \begin{enumerate}
   \item It has 100,000 multi-source samples covering GSM, UMTS, LTE and 5G NR,
     enough to train deep models from scratch, with variation in channel type,
@@ -104,7 +105,7 @@ comparable RF dataset exists. RFSS provides one with the following features.
     durations of TS~36.211 Table~6.12-1, and the flexible numerology of
     TS~38.211.
   \item Five hardware impairments use parameter ranges informed by 3GPP
-    conformance specifications (TS~38.104, TS~36.101, TS~25.102~\cite{3gpp25102})
+    base-station conformance specifications (TS~38.104, TS~36.104, TS~25.104)
     and are applied independently to each source, as they would be with several
     separate transmitters.
   \item Co-channel and adjacent-channel mixtures are both included.
@@ -325,7 +326,7 @@ is additive white Gaussian noise.
 
 Hardware impairments are informed by 3GPP conformance requirements and are applied
 independently to each source before
-mixing~\cite{3gpp38104,3gpp38101,3gpp36101,3gpp25102}.
+mixing~\cite{3gpp38104,3gpp36104,3gpp25104}.
 For each source, the impairment application mode is drawn from a weighted
 distribution: approximately 20\% of sources receive no impairments (clean),
 30\% receive a single impairment type, and 50\% receive multiple impairments
@@ -333,15 +334,14 @@ simultaneously:
 
 \textit{Carrier Frequency Offset (CFO).} A multiplicative phase rotation
 $e^{j2\pi f_{\rm CFO} t}$ with $f_{\rm CFO}$ drawn from $\pm0.05$--$5$~ppm
-of the carrier, per TS~38.104 Section~6.5.1.
+of the carrier, informed by TS~38.104.
 
 \textit{I/Q Imbalance.} Amplitude mismatch 0.1--3~dB and phase error
-$1^\circ$--$10^\circ$, following the image rejection requirements of
-TS~36.101 Section~7.9.
+$1^\circ$--$10^\circ$, informed by the conformance requirements of
+TS~36.104.
 
 \textit{Phase Noise.} A Wiener-process phase perturbation with spectral
-density $-110$ to $-90$~dBc/Hz at 10~kHz offset, per TS~25.102~\cite{3gpp25102}
-Section~6.7.2.
+density $-110$ to $-90$~dBc/Hz at 10~kHz offset, informed by TS~25.104.
 
 \textit{DC Offset.} A constant complex additive offset at $-40$ to
 $-30$~dBc relative to signal power, modeling local-oscillator leakage.
@@ -621,7 +621,7 @@ seeds. All recipe decisions (learning rate, epoch budget, checkpoint) use the
 validation split only. Two interim evaluations were run on the test split before the
 final run: one on 600 two-source samples with an early checkpoint, and one of ICA and NMF on
 the full test split. Neither was used to choose any setting.
-\TBD{wording of the pre-registered +6~dB criterion, as specified by the reviewer}
+Before the final runs we fixed one target for the training budget: a validation gain of at least $+6$~dB in the adjacent-channel, SNR${>}20$~dB bin after two epochs. No model reached it (best: STFT-BLSTM, $+5.68$~dB, 95\% interval $[+4.65,+6.73]$). Exploratory runs of 10 epochs exceeded $+6$~dB, so the epoch budget $E$ was set from the validation curves, which departs from the pre-registered plan.
 
 \subsection{Results}
 
@@ -694,7 +694,8 @@ Table~\ref{tab:lr} lists the learning-rate screening on the validation split.
 \caption{Learning-rate screening on the validation split (800 fixed crops,
 2-source). Entries are the adjacent-channel, SNR${>}20$~dB gain (dB) at the screening
 epoch; ``escape'' is the first epoch with a gain above 4~dB. The chosen rate is in
-bold.}
+bold. Conv-TasNet-L256 at $10^{-3}$ was run for 10 epochs under a different protocol
+and is omitted.}
 \label{tab:lr}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrrr}
@@ -704,7 +705,7 @@ Model & Learning rate & Gain & Escape epoch \\
 Conv-TasNet & $10^{-4}$, $3\times10^{-4}$, $10^{-3}$ & \TBD{} & \TBD{} \\
 Conv-TasNet-L256 & $3\times10^{-5}$, $10^{-4}$, $3\times10^{-4}$ & \TBD{} & \TBD{} \\
 DPRNN & $10^{-4}$, $3\times10^{-4}$, $10^{-3}$ & \TBD{} & \TBD{} \\
-CNN-LSTM & $10^{-4}$, $3\times10^{-4}$, $10^{-3}$ & \TBD{} & \TBD{} \\
+CNN-LSTM (transposed decoder) & $10^{-4}$, $3\times10^{-4}$, $10^{-3}$ & \TBD{} & \TBD{} \\
 STFT-BLSTM & $3\times10^{-4}$, $10^{-3}$ & \TBD{} & \TBD{} \\
 \bottomrule
 \end{tabular}}
@@ -771,8 +772,8 @@ training uses indices 0--69,999, validation 70,000--84,999, and test
 \subsection{Evaluation Code}
 
 A \texttt{SeparationDataset} PyTorch class is provided with evaluation scripts for
-the classical baselines and the deep models. The scripts reproduce the tables in
-Section~\ref{sec:benchmark} from the released checkpoints. A requirements file lists
+the classical baselines and the deep models. The scripts retrain the models and reproduce the tables in
+Section~\ref{sec:benchmark} from the released dataset. A requirements file lists
 the Python dependencies, including PyTorch, h5py, scikit-learn and scipy.
 
 % ============================================================
@@ -787,8 +788,11 @@ Storing the final terms as well would remove that step in a later release.
 
 \textbf{Evaluation scope.} All methods are scored on the first 7,680 samples of
 each signal, and the metric is phase sensitive. A separator that returns the correct
-waveform with a constant phase offset is penalized. Results come from \TBD{number of seeds}
-seeds per model and one learning-rate grid per model.
+waveform with a constant phase offset is penalized. Model comparisons rest on
+\TBD{number of seeds} seeds per model at the chosen learning rate, from one
+learning-rate grid per model. The pilot runs use a cosine schedule that anneals to
+almost zero, so no model is shown to have converged, and the epoch budget was set
+from the validation curves after the pre-registered criterion was missed.
 
 \textbf{Single-antenna (SISO) only.} The current dataset models each
 source as a scalar complex waveform with no spatial structure. Real

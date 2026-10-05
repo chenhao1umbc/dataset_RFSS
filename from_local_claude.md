@@ -1177,3 +1177,25 @@ STFT-BLSTM (CPU): 2-src seed 1 502 / 513 / 538, seed 2 533 / 539 / 566; 3-src 52
 - **Matched-seed paired differences, all bin, seeds 0 / 1 / 2 (paired bootstrap):** STFT minus DPRNN +0.26 / +0.25 / +0.37 (mean +0.29, range +0.25 to +0.37); DPRNN minus Conv-TasNet +0.17 / +0.22 / +0.33 (mean +0.24, +0.17 to +0.33); STFT minus Conv-TasNet +0.42 / +0.47 / +0.70 (mean +0.53, +0.42 to +0.70). Adjacent bin: STFT-DPRNN +0.32 / +0.25 / +0.51, DPRNN-Conv +0.23 / +0.43 / +0.46, all lower limits at +0.14 or more. Signs positive in all seed pairs and bins: the order STFT-BLSTM > DPRNN > Conv-TasNet L16 is the same in the primary pass, the first-window pass and validation. All-bin gains of all nine runs are above 5.4 dB; adjacent-bin gains above 5.9 dB.
 - Primary versus first window (all bin): the crop-0 gains are 0.04 to 0.06 dB lower for every run, differences between families unchanged within 0.01 dB; IRM oracle +8.04 versus +7.98.
 - Running: crop-0 3-/4-source with ICA/NMF (about 5 min), then crop seeds 1 and 2 (`--skip-classical`). Then the ICC scripts. Guards: free memory 69%, nothing else heavy running.
+
+### Update 2026-10-05 18:50 UTC: PRIMARY 3-/4-SOURCE TEST PASS (crop seed 0, with ICA and NMF) WRITTEN: `check/eval_all_src34_crop0_frozen_results.json`
+- 5,324 (3-source) and 2,150 (4-source) test samples, `crop_seed` 0, `git_commit` 660675e, `git_code_modified` false (scoring code identical to the tag commit 5616476), 0 sentinel scores, the 6 checkpoints of Table 2, each once; `uv run python check/test_summary.py 34 0` prints all bins and pairs. Gain over input (dB), seed 0, 95% bootstrap interval:
+
+| cell | all bin | adjacent SNR>20 | co-channel SNR>20 |
+|---|---|---|---|
+| 3-src n | 5,324 | 812 | 545 |
+| STFT-BLSTM | +5.14 [+5.03, +5.24] | +5.67 | +5.55 |
+| DPRNN | +5.03 [+4.93, +5.13] | +5.71 | +5.23 |
+| Conv-TasNet L16 | +4.77 [+4.68, +4.86] | +5.27 | +5.07 |
+| IRM oracle / noise-limited oracle | +9.61 / +11.53 | +12.86 / +23.51 | +10.63 / +23.68 |
+| ICA / NMF | -11.09 / -0.57 | -12.84 / -1.56 | -12.38 / -0.96 |
+| 4-src n | 2,150 | 332 | 202 |
+| STFT-BLSTM | +4.52 [+4.41, +4.63] | +4.60 | +4.57 |
+| DPRNN | +3.44 [+3.35, +3.52] | +3.18 | +3.38 |
+| Conv-TasNet L16 | +3.54 [+3.45, +3.63] | +3.52 | +3.31 |
+| IRM oracle / noise-limited oracle | +10.35 / +12.13 | +13.35 / +24.69 | +10.54 / +25.03 |
+| ICA / NMF | -9.49 / -0.05 | -11.23 / -0.92 | -10.26 / -0.11 |
+
+- **Paired differences, seed 0, all bin (adjacent / co-channel):** 3-src STFT minus DPRNN +0.11 [+0.06, +0.15] (-0.04 [-0.19, +0.11] / +0.32 [+0.20, +0.44]); DPRNN minus Conv-TasNet +0.26 [+0.23, +0.29] (+0.44 / +0.16); STFT minus Conv-TasNet +0.37 [+0.32, +0.41] (+0.39 / +0.48). 4-src STFT minus DPRNN +1.08 [+1.01, +1.15] (+1.42 / +1.19); STFT minus Conv-TasNet +0.98 [+0.90, +1.05] (+1.08 / +1.26); DPRNN minus Conv-TasNet -0.10 [-0.14, -0.06] (-0.34 [-0.46, -0.23] / +0.07 [-0.01, +0.14]). Same picture as the first-window pass (0.05 to 0.07 dB lower gains for every cell); one seed per cell, so no order statement and no trend sentence.
+- ICA and NMF are run on every crop-0 sample (3-source ICA -11.1 dB and 4-source -9.5 dB gain, NMF about 0): single-channel input with ns components, kept as the method rows exactly as in the earlier tables; they are not competitive at any source count.
+- Running: crop seed 1 (2-source file already written) and crop seed 2 passes with `--skip-classical`, about 15 min. Then the ICC scripts. Guards: free memory 67%, nothing else heavy running. No new reviewer commits.

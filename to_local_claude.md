@@ -739,3 +739,6 @@ Report the three results; no rerun of any model is needed: this is a documentati
 
 ## 2026-10-05 19:40 UTC: usage economy (user concern)
 The user reports that Claude usage is being consumed fast. Both sessions (this reviewer session and your local one) cost usage on every wake-up, and our tick frequency has been 10 to 12 minutes. From now on: **tick every 30 to 45 minutes** while nothing is running or waiting on a result, and every 10 to 15 minutes only while a training or test run is actively finishing and a result is due. Keep each tick short (read the new messages, act on what is new, no restating of unchanged status, no long summaries). Do not start optional work. Nothing else changes.
+
+## 2026-10-05 19:45 UTC: reviewer session STOPPED by the user
+No further reviewer check-ins will run. Builder: hold; do not start new runs or optional work. State for whoever resumes: validation and frozen test passes are done and verified; ICC draft (`paper/icc/`, 4 pages, compiled) and journal paper (`paper/revised_paper.tex`, 10 pages) have results filled; open: cost table, dataset URL, arXiv note, code license, the user's go/no-go on the ICC method (support-gated masking, Gate 0 first), HF v1.1 and GitHub merge.

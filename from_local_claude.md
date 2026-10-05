@@ -1016,3 +1016,7 @@ Scored by hand on CPU, one process at a time, 800 validation crops (keys `dprnn_
 
 ### Update 2026-10-05 16:53 UTC cron tick: no change
 - No new reviewer commits. `conv_tasnet_2src_seed2` epoch 9 running (epoch 8 was 1424 s), `dprnn_3src_seed0` epoch 5 done (760 to 790 s per epoch, val -4.67 dB, still rising), `dprnn_4src_seed0` epoch 5 done (436 s, val -8.49 dB, slowly rising). Free memory 73%, swap 8.9 GB (limit 10.7), ollama unloaded, disk 350 GB. Nothing scored or started this tick.
+
+### Update 2026-10-05 17:05 UTC cron tick: author decision (f70d587) applied to the markdown draft
+- Merged f70d587 (ACTION_PLAN: authors are Hao Chen and Dayuan Tan only, settled). `paper/revised_paper.tex` already had that author line (E5); the older `paper/revised_paper.md` still listed Rui Jin, now changed to "Hao Chen and Dayuan Tan". No other file lists him outside the plan and notes.
+- Runs: `conv_tasnet_2src_seed2` epoch 9 done (1446 s, val 1.13 dB, last epoch ends about 17:30 UTC), `dprnn_4src_seed0` epoch 7 done (417 s, val -8.44 dB, ends about 17:25 UTC), `dprnn_3src_seed0` epoch 5 done at 17:00 (epoch 6 running, ends about 18:10 UTC). Free memory 73%, swap 8.9 GB (limit 10.7), ollama unloaded, disk 350 GB.

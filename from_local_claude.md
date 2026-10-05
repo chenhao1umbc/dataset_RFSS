@@ -1130,3 +1130,26 @@ STFT-BLSTM (CPU): 2-src seed 1 502 / 513 / 538, seed 2 533 / 539 / 566; 3-src 52
 - **Validation versus test:** test gains are 0.05 to 0.15 dB lower than the validation means (STFT +6.32 to +6.19, DPRNN +5.96 to +5.89, Conv-TasNet +5.72 to +5.65), the family differences are the same size (0.37 to 0.30, 0.24 to 0.24). IRM oracle +7.98 on all test samples (validation +7.97 type value you mentioned: same).
 - **Question for you (wording, not a rerun):** adjacent SNR>20 gains of STFT-BLSTM on test are +7.05 to +7.10 and of DPRNN and Conv-TasNet +6.0 to +6.8, i.e. all above the pre-registered +6 dB mark, which was defined for 2-epoch runs on validation (best +5.68). For the paper I plan to state the test numbers without calling them "meeting the pre-registered bar", because the bar belonged to the earlier protocol (2 epochs, 800 validation crops); please confirm or give the wording you want.
 - The 3- and 4-source pass is running (3-source done in about 5 min, 4-source next); I report it in the next tick together with `check/test_summary.py 34`. After that: crop-seed passes 0, 1, 2 (`--crop-seed`, same checkpoints), then the ICC scripts (table and gain-vs-SNR figure from the JSON), paper cells. Guards: free memory 77%, nothing else running, no new reviewer commits.
+
+### Update 2026-10-05 18:35 UTC: 3- AND 4-SOURCE FROZEN TEST PASS WRITTEN (`check/eval_all_src34_frozen_results.json`); crop-seed passes started
+- **Provenance note:** the 3-/4-source JSON records `git_commit` c24af2f (not the tag commit 5d86ec5) because I committed the 2-source result and `check/test_summary.py` while that pass was running. `git diff 5d86ec5 c24af2f` touches only the 2-source JSON, `test_summary.py` and this log; `src/`, `check/eval_all.py`, `check/run_test_passes.sh` and `train_all.sh` are identical (`git_code_modified` = false). No checkpoint, recipe or scoring change.
+- Same procedure as the 2-source pass (first 7,680 samples of every test sample, the 6 checkpoints of Table 2 as named in `check/run_test_passes.sh`, ICA, NMF, oracles; each checkpoint once, no crash, `n_sentinel_scores` 0). `uv run python check/test_summary.py 34` prints everything below, per bin, with paired intervals. Gain over input (dB), 95% bootstrap interval:
+
+| cell (seed 0) | all bin | adjacent SNR>20 | co-channel SNR>20 |
+|---|---|---|---|
+| 3-src n | 5,324 | 812 | 545 |
+| 3-src STFT-BLSTM | +5.20 [+5.10, +5.30] | +5.68 | +5.55 |
+| 3-src DPRNN | +5.10 [+5.00, +5.20] | +5.77 | +5.30 |
+| 3-src Conv-TasNet L16 | +4.82 [+4.73, +4.92] | +5.33 | +5.11 |
+| 3-src IRM oracle / noise-limited oracle | +9.51 / +11.70 | +12.76 / +23.59 | +10.54 / +23.79 |
+| 3-src ICA / NMF | -11.07 / -0.59 | -12.93 / -1.63 | -12.52 / -0.97 |
+| 4-src n | 2,150 | 332 | 202 |
+| 4-src STFT-BLSTM | +4.59 [+4.48, +4.71] | +4.69 | +4.76 |
+| 4-src DPRNN | +3.51 [+3.42, +3.59] | +3.26 | +3.52 |
+| 4-src Conv-TasNet L16 | +3.63 [+3.54, +3.71] | +3.61 | +3.50 |
+| 4-src IRM oracle / noise-limited oracle | +10.12 / +12.39 | +13.17 / +25.06 | +10.63 / +25.35 |
+| 4-src ICA / NMF | -9.46 / -0.04 | -11.21 / -0.91 | -10.28 / -0.11 |
+
+- **Paired differences, seed 0, all bin (adjacent / co-channel):** 3-src STFT minus DPRNN +0.09 [+0.05, +0.14] (-0.09 [-0.23, +0.07] / +0.25 [+0.14, +0.36]); DPRNN minus Conv-TasNet +0.28 [+0.25, +0.31] (+0.44 / +0.19); STFT minus Conv-TasNet +0.37 [+0.33, +0.42]. 4-src STFT minus DPRNN +1.09 [+1.01, +1.16] (+1.43 / +1.24); STFT minus Conv-TasNet +0.97 [+0.90, +1.04] (+1.08 / +1.26); **DPRNN minus Conv-TasNet -0.12 [-0.16, -0.08] (adjacent -0.34, co-channel +0.02 [-0.06, +0.10])**: on the test split the 4-source DPRNN is slightly below Conv-TasNet in the all bin, while on validation the pair was -0.06 [-0.12, +0.01]; same sign, now excluding zero, still one seed per cell. 3-source adjacent bin: DPRNN +5.77 is above STFT +5.68 (difference not distinguishable from zero). As you ruled, single-seed 3-/4-source cells get no order statement and no trend sentence; the three cells are stated separately.
+- Validation versus test (seed 0, all bin, validation 800 random crops vs test first segment): 3-src STFT +5.02 to +5.20, DPRNN +4.92 to +5.10, Conv-TasNet +4.62 to +4.82; 4-src STFT +4.44 to +4.59, DPRNN +3.41 to +3.51, Conv-TasNet +3.47 to +3.63. The test numbers are 0.1 to 0.2 dB higher for 3 and 4 sources (different crop protocol; I do not read it as a difference between the splits).
+- **Started now (background, CPU, about 40 min):** crop-seed robustness passes 0, 1, 2 (`check/run_test_passes.sh 2|34 --crop-seed N --skip-classical`; random 7,680-sample window per sample, same 15 checkpoints; ICA/NMF stay from the main pass because they were run once). Files `check/eval_all_src2_crop<N>_frozen_results.json` and `..._src34_crop<N>_...`. Then the ICC scripts. No new reviewer commits; the tag push still waits for the user's permission. Guards: free memory 77%, nothing else heavy running.

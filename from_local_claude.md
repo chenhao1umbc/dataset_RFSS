@@ -1048,3 +1048,6 @@ Scored on CPU, one process at a time, 800 validation crops, best-validation chec
 ### Update 2026-10-05 17:33 UTC cron tick: no change (time stamp note)
 - The heading of the previous entry says 17:35 UTC; it was written at about 17:30 UTC (clock error of mine, content unaffected). No new reviewer commits.
 - Last final run: `dprnn_3src_seed0` epoch 8 done (653 s with no other heavy job, val -4.43 dB), epochs 9 and 10 end about 17:55 UTC (earlier than my 18:10 estimate, because the other two jobs have finished). Then I score it and post the full validation table. Guards: free memory 87%, swap 8.6 GB (limit 10.7), ollama unloaded, disk 350 GB.
+
+### Update 2026-10-05 17:43 UTC cron tick: no change
+- No new reviewer commits. `dprnn_3src_seed0` epoch 9 done (633 s, val -4.32 dB, still improving); epoch 10 ends about 17:53 UTC, then it is scored. Free memory 87%, swap 8.6 GB, nothing else running.

@@ -521,3 +521,14 @@ I will tell the user that the next phase takes several hours of Mac time and tha
 - **Consequence for the final plan, please prepare the cost table now** (hours per run from your measured s/epoch, MPS vs CPU, at the epoch budget E under discussion, E = 10 and E = 20): for 2-source, STFT-BLSTM, DPRNN, L=16 at 3 seeds each; L=256 and CNN-LSTM-tconv at 1 seed (secondary, behind in the pilots); for 3 and 4 sources, 1 seed for the same three primary families. Show total wall-clock if two jobs run in parallel as now. I will decide the final design from that table plus the 20-epoch probe. Inference rule I will hold you to: an order between two families is stated only if the sign of the paired difference holds in all matched seed pairs, and the report gives mean and range over seeds, not one run.
 - `train.py --seed` is the seed handle for the final runs; fix the three seeds now (0, 1, 2) and use the same seeds for every family.
 - Nothing else to change. Good seed-gate analysis.
+
+### Review 2026-10-05 04:40 UTC (cost table 87fd3cd)
+- Merged 87fd3cd. Table accepted as the planning basis (about 10 h wall-clock at E=10, about 35 h at E=20, with about 30% uncertainty). Seeds 0, 1, 2 for every family and the inference rule: adopted.
+- **Decision rule, fixed now so it cannot be tuned after seeing results.** When the 20-epoch STFT-BLSTM probe finishes, compute paired (all bin, 800 crops, `paired_compare.py`) the 20-epoch run at epoch 20 minus the 10-epoch pilot at epoch 10 (seed 0, same recipe except the schedule length).
+  - If the difference is **at least +0.30 dB** with the paired interval above zero: final E = 20 for the three primary families, 2-source, seeds 0 to 2 (about 42 process-hours); L=256 and tconv stay at 1 seed (E=20 if affordable, otherwise the 10-epoch pilots with that stated).
+  - Otherwise: final E = 10, new runs are seeds 1 and 2 for the three primary families.
+  - Either way 3-source and 4-source: three primary families, 1 seed (seed 0), same E.
+  Record which branch applied and why in `from_local_claude.md`; the paper states E and says it was set from the validation curves after the pre-registered criterion was missed.
+- **Do not start any final or seed-1/2 run before the probe decision**, since an E=10 run would be wasted if E=20 wins. Use free slots only for non-training work: time `eval_all.py` on the validation split (I need the evaluation cost per model), and prepare the exact command lines for the final runs (a script with one line per run, outputs under `final/`, seed and E as arguments), so the decision turns into a launch in one step.
+- Pairing note: put CPU STFT runs next to MPS runs, as you say. Do not run two MPS jobs together if memory pressure or slowdown appears; tell me the measured slowdown rather than guessing.
+- The DGX Spark: not assumed; I will ask the user only if the E=20 plan is selected and the wall-clock matters to them.

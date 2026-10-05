@@ -983,3 +983,16 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
   5. Scoring still to do (CPU, after the runs): `conv_tasnet_2src_seed2`, `dprnn_3src_seed0` (5e-4), `dprnn_4src_seed0`, each on the 800 validation crops; the stuck 1e-3 run keeps its two epoch checks in the JSON.
   **"All final runs done" is true when items 1, 2 and 3 have finished (about 18:20 to 18:30 UTC); the validation table is complete only after the three scorings of item 5.** The Conv-TasNet 3-source and the 4-source Conv-TasNet and STFT cells (one seed each) are already done and scored.
 - **DPRNN 4-source screen, first value** (`dprnn_4src_lr3e-4` epoch 1, 10,000 crops, 197 s): all-bin gain +3.13 [+2.99, +3.27], adjacent +2.80 (n=113), co-channel +3.51 (n=68); 5e-4 and the 1e-3 baseline follow. Heavy processes: seed 2, the 3-source DPRNN restart, the screen. Guards: free memory 68%, swap 9,698 MB (below 10.7 GB), ollama unloaded. No crash.
+
+### Update 2026-10-05 16:20 UTC cron tick: DPRNN 4-source screen read; `dprnn_4src_seed0` started at lr 1e-3
+- **DPRNN 4-source screen** (sweep protocol, **10,000 crops (the same for all LRs)**, validation 800 crops, seed 0, 2 epochs; all-bin / adjacent SNR>20 / co-channel gain; keys `dprnn_4src_lr...`, `n_sources` added by hand to the three records, as announced):
+
+| lr | epoch 1 | epoch 2 |
+|---|---|---|
+| 3e-4 | +3.134 / +2.798 / +3.506 | +3.416 / +3.311 / +3.699 |
+| 5e-4 | +3.351 / +3.204 / +3.432 | **+3.553 / +3.438 / +3.617** |
+| 1e-3 (baseline) | +3.306 / +3.284 / +3.163 | **+3.357 / +3.211 / +3.156** |
+
+  **Reading by the rule: no neighbour wins.** The best neighbour (5e-4) is +0.196 dB over the baseline in the all bin at epoch 2, under the 0.5 dB bar (adjacent +0.227); 3e-4 is +0.059. The three rates are within 0.2 dB at epoch 2, and unlike the 3-source cell there is no monotone trend (3e-4 is below 5e-4 and above 1e-3). **Decision: 1e-3 stays for the 4-source DPRNN cell** (the family recipe), as in your wording of point 4: "start at 1e-3 with the epoch-4 test only if the screen shows no neighbour winning".
+- **`final/dprnn_4src_seed0` started at 16:11 UTC** (DPRNN, lr 1e-3, seed 0, 10 epochs, `--keep-epochs 10`, 1,122,496 parameters, 10,541 training crops, 1,317 steps per epoch, about 0.3 x 800 s = 4 min per epoch if alone, more with three heavy jobs; ends in about 45 to 60 min). Its epoch-4 test (step-matched against the 2-source DPRNN curve: 4-source epoch 4 is 5,272 steps = 1.2 2-source epochs; reference = 4.62 + 0.2 x (4.96 - 4.62) = +4.69, threshold +4.19, rise from epoch 2 at least 0.3 dB) is applied at epoch 4 (about 16:30 UTC) by a waiter if you agree: I will score the epoch-4 checkpoint myself by hand and decide, no unattended launcher this time. The aborted 1e-3 start from 15:44 stays as `final/dprnn_4src_seed0_aborted_lr1e-3_start` (4.5 min, no results).
+- Heavy processes now: `conv_tasnet_2src_seed2` (epoch 8 running; epoch 7 took **1466 s**, the 2-source Conv-TasNet epoch the rule applies to, 1.14x), `dprnn_3src_seed0` (epoch 2 running), `dprnn_4src_seed0` = three; no screen runs. Free memory 79%, swap 9,674 MB (below 10.7 GB), ollama unloaded. The only runs still to finish: Conv-TasNet seed 2 (about 17:10 UTC now), DPRNN 3-source (about 18:10 UTC), DPRNN 4-source (about 17:15 UTC). No crash.

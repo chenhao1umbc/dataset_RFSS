@@ -1023,3 +1023,24 @@ Scored by hand on CPU, one process at a time, 800 validation crops (keys `dprnn_
 
 ### Update 2026-10-05 17:13 UTC cron tick: no change
 - No new reviewer commits. `conv_tasnet_2src_seed2` epoch 10 running (epoch 9 was 1446 s), `dprnn_3src_seed0` epoch 6 done (762 s, val -4.61 dB), `dprnn_4src_seed0` epoch 8 done (421 s, val -8.53 dB; its best-validation checkpoint remains epoch 7 so far). Free memory 70%, swap 8.9 GB (limit 10.7), ollama unloaded, disk 350 GB. Nothing scored or started.
+
+### Update 2026-10-05 17:35 UTC cron tick: Conv-TasNet seed 2 and DPRNN 4-source scored; family order rule met at 2-source
+Scored on CPU, one process at a time, 800 validation crops, best-validation checkpoint (keys in `check/encoder_sweep_results.json`, `n_sources` stored):
+
+| run | checkpoint | all-bin gain [95% CI] | adjacent SNR>20 | co-channel SNR>20 |
+|---|---|---|---|---|
+| Conv-TasNet L16 2-source seed 2 (`l16_final_conv_tasnet_2src_seed2_ep9`) | `epoch_008_loss_-1.1304.pt` (epoch 9; epoch 10 val loss was -1.1057, train loss -1.0419) | +5.51 [+5.15, +5.87] | +6.28 (n=106) | +6.77 (n=83) |
+| DPRNN 4-source seed 0 (`dprnn_final_dprnn_4src_seed0_ep7`) | `epoch_006_loss_8.4403.pt` (epoch 7; train loss at epoch 10 8.6142, val 8.5603) | +3.41 [+3.26, +3.55] | +3.24 (n=113) | +3.43 (n=68) |
+
+- **Conv-TasNet seed 2 is the lowest of its three seeds** (+5.84, +5.81, +5.51: mean +5.72, range 0.33, wider than STFT-BLSTM 0.06 and DPRNN 0.13). Its training was paused twice (SIGSTOP at epochs 2 to 3), but the seed was not changed and the curve is smooth, so I report it as is, with the pauses in the cost table.
+- **Matched-seed differences, all-bin (adjacent / co-channel) in dB, A minus B, seeds 0 / 1 / 2:**
+
+| pair | seed 0 | seed 1 | seed 2 | mean, range (all bin) |
+|---|---|---|---|---|
+| STFT-BLSTM minus DPRNN | +0.37 | +0.31 (adj +0.35 [+0.02, +0.67]) | +0.42 (adj +0.56 [+0.18, +0.94], co +0.54) | +0.37, +0.31 to +0.42 |
+| DPRNN minus Conv-TasNet L16 | +0.15 (adj +0.22 [+0.01 as upper limit -0.01 side, see CI], co +0.34) | +0.20 (adj +0.47, co +0.23) | +0.37 (adj +0.57, co +0.38) | +0.24, +0.15 to +0.37 |
+| STFT-BLSTM minus Conv-TasNet L16 | +0.52 (adj +0.82, co +0.69) | +0.51 (adj +0.82, co +0.69) | +0.79 (adj +1.13, co +0.92) | +0.61, +0.51 to +0.79 |
+
+  (Seed-0 Conv-TasNet minus DPRNN adjacent CI is [-0.45, -0.01]; every other all-bin and bin CI listed above excludes zero except that one touching it, and STFT minus DPRNN adjacent seed 1 has a lower limit of +0.02.) Signs agree in all three seed pairs and in all three bins for every pair, so by your rule **the 2-source order STFT-BLSTM > DPRNN > Conv-TasNet L16 may be stated**, with the caveats you set: nominal pairing (same seed number, independent initialisation), parameter counts (7.36M, 1.11M, 2.52M) and per-epoch costs next to it, the DPRNN-Conv-TasNet gap small (0.15 to 0.37 dB), no "clearly", no statement about STFT-domain versus time-domain masking as such.
+- **DPRNN 4-source:** the flat curve of the epoch-4 test continues (gain +3.38 at epoch 4, +3.41 at epoch 7); best validation at epoch 7, the last epochs are slightly worse in val loss. It sits at the Conv-TasNet 4-source level (+3.47), below STFT-BLSTM 4-source (+4.44); one seed, one cell, with the flag and the screen reported as agreed.
+- Remaining final run: only `dprnn_3src_seed0` (epoch 8 running, ends about 18:10 UTC), then score it. Epoch 10 of `conv_tasnet_2src_seed2` took 1441 s; `dprnn_4src_seed0` epoch 10 took 378 s. No heavy job but DPRNN 3-source is running now. Guards: free memory 86%, swap 8.65 GB (limit 10.7), ollama unloaded, disk 350 GB. No new reviewer commits.

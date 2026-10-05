@@ -739,3 +739,14 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - Merged 367c509. **Empty-`--ckpt` slip made impossible:** `check/encoder_sweep.py` now tests `args.ckpt is not None` (both places) and exits with "--ckpt '...' is not a file" before loading any data if the file does not exist (checked with `--ckpt ""` and a missing path). `eval_all.py` already failed on an empty checkpoint directory, but with the unhelpful "min() iterable argument is empty"; it now raises `FileNotFoundError: no epoch_*.pt checkpoint in <dir>`. Scoring of the final runs happens at the end, one pass per run on the 800 validation crops with the best-validation `epoch_*.pt`, the file name stored in the result key, none while three jobs train.
 - **Three-lane check, partial** (single-job times: DPRNN 673 s, STFT-BLSTM 505 s): `dprnn_2src_seed1` epoch 6 755 s (1.12x), `dprnn_2src_seed2` epoch 4 743 s (1.10x), `stft_blstm_2src_seed2` epochs 1 and 2 551 s and 566 s (1.09x and 1.12x); `conv_tasnet_2src_seed1` (started 08:52) is still in its first epoch, so its time against 1.5x of the single-job Conv-TasNet time (1290 s) is not measured yet; the DPRNN epochs after the third lane started have not logged. Free memory 73%, swap 8088 MB (not above 8096), ollama idle.
 - Progress: `stft_blstm_2src_seed2` epoch 2 +0.59 dB (pilot +0.61); `dprnn_2src_seed1` epoch 6 +1.24 dB. No run flagged, none crashed.
+
+### Update 2026-10-05 09:21 UTC cron tick: three-lane check complete (single-job epoch times: DPRNN 673 s, Conv-TasNet L=16 1290 s, STFT-BLSTM 505 s)
+| Job (all running together) | Epoch time now | Ratio to single job | Your limit 1.5x |
+|---|---|---|---|
+| DPRNN seed 1 (epoch 7) | 901 s | 1.34x | about 1010 s: holds |
+| DPRNN seed 2 (epoch 6) | 897 s | 1.33x | holds |
+| Conv-TasNet L=16 seed 1 (epoch 1) | 1491 s | 1.16x | about 1935 s: holds |
+| STFT-BLSTM seed 2, CPU (epoch 4) | 538 s | 1.06x | holds |
+- Free memory 74% (guard 20%), swap 8088 MB (not above 8096), ollama idle. **All conditions hold, the third lane stays.** Three MPS jobs at about 1.2 to 1.3x give about 2.4 job-equivalents against 1.9 for two, so the throughput gain is real but modest.
+- **New estimate for all runs DONE:** remaining MPS work at single-job speed is about 14 h (DPRNN seed 1 and 2: 1.6 h, Conv-TasNet seeds 1 and 2: 6.8 h, DPRNN 3- and 4-source: 2.0 h, Conv-TasNet 3- and 4-source: 3.6 h); over three lanes at 1.25x that is about 5.8 h, so **about 15:30 UTC today**; the CPU lane ends about 12:00 UTC (STFT seed 2, then 3- and 4-source). Then the 800-crop scoring of all 14 final and pilot runs (about 5 to 10 min each on the quiet machine) and the table.
+- Progress (`train.py` val SI-SINR): DPRNN seed 1 epoch 7 +1.39 dB (pilot epoch 7 +1.35), seed 2 epoch 6 +1.11 dB (pilot epoch 6 +1.23); Conv-TasNet seed 1 epoch 1 +0.01 dB (pilot -0.01); STFT-BLSTM seed 2 epoch 4 +1.12 dB (pilot +1.24). No run flagged, none crashed. No new reviewer commits.

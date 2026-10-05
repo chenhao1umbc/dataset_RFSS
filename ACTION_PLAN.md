@@ -119,3 +119,5 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 - HF card, README, paper, and code agree on every dataset fact.
 - Every paper number reproduces from a committed command.
 - arXiv has one paper (2508.12106 v2); 2604.00398 is withdrawn with a pointer.
+
+## Decision (user, restated 2026-10-05): authors are Hao Chen and Dayuan Tan only. Rui Jin is removed from all papers (ICC, journal, arXiv v2). This is settled; do not list it as an open item. Submission systems may ask for his consent separately; handle at submission time.

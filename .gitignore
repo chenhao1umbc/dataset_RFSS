@@ -193,6 +193,10 @@ data/processed/*.hdf5
 *.iq
 
 *.pdf
+!paper/figures/fig_pipeline.pdf
+!paper/figures/fig_dataset_stats.pdf
+!paper/figures/fig_spectrograms.pdf
+!paper/figures/fig_signal_quality.pdf
 # Generated figures
 papers/figures/*.pdf
 papers/figures/*.png

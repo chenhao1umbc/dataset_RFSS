@@ -120,7 +120,7 @@ references. RFSS provides one, with the following features.
     model is trained at the learning rate chosen on the validation split, and the
     results include an ideal-ratio-mask oracle as an upper reference.
   \item The dataset, generation code, trained checkpoints and evaluation scripts
-    will be released publicly.
+    are released for non-commercial use.
 \end{enumerate}
 
 The remainder of the paper is organized as follows. Section~\ref{sec:related}
@@ -750,9 +750,10 @@ isolate why.
 \subsection{Public Release}
 
 The two HDF5 files (\texttt{rfss\_dataset.h5}, 103~GB;
-\texttt{rfss\_single.h5}, 1.3~GB) will be hosted on Hugging Face at \url{https://huggingface.co/datasets/Chrishao/rfss}. The
-generation code, trained checkpoints and evaluation scripts are in the GitHub
-repository \texttt{chenhao1umbc/dataset\_RFSS}.
+\texttt{rfss\_single.h5}, 1.3~GB) are hosted on Hugging Face at \url{https://huggingface.co/datasets/Chrishao/rfss} (release v1.1) under the
+CC BY-NC 4.0 licence. The 15 trained checkpoints scored in this paper are in its \texttt{checkpoints} folder. The
+generation code and evaluation scripts are in the GitHub
+repository \texttt{chenhao1umbc/dataset\_RFSS} under the PolyForm Noncommercial 1.0.0 licence.
 
 \subsection{Relation to Earlier arXiv Versions}
 
@@ -862,7 +863,7 @@ Table~\ref{tab:lr}.
 
 These results are a reproducible baseline for later methods. Planned extensions
 are MIMO spatial diversity, uplink waveforms and emerging 6G candidate signals. The
-dataset, code and checkpoints will be released openly.
+dataset, code and checkpoints are released for non-commercial use.
 
 \bibliographystyle{ieeetr}
 \bibliography{revised_paper}

@@ -568,3 +568,8 @@ So at lr 1e-3 two of three seeds escape immediately and one does not, as far as 
 - Merged bab9571. **Paired comparison added:** `check/paired_compare.py RUN_A RUN_B` (run = key in `encoder_sweep_results.json`, optionally `:EPOCH`), paired bootstrap of the per-sample gain difference over the same 800 crops, 5000 resamples, seed 0, per bin. It reproduces your numbers: STFT ep5 minus DPRNN ep5 = all **+0.51 [+0.38, +0.64]**, adjacent **+0.76 [+0.21, +1.37]** (n=106), co-channel +0.60 [+0.19, +1.01]; STFT ep10 minus ep5 = all +0.58 [+0.49, +0.67], adjacent +0.91 [+0.60, +1.24], co-channel +0.58 [+0.35, +0.80]. So in the adjacent bin the paired interval also excludes zero, and my earlier wording "CIs overlap" was too weak; the comparison table will carry paired CIs only. (Different-budget example for checking the tool, not a comparison: L=16 lr 3e-4 epoch 3 minus DPRNN lr 1e-3 epoch 2, sweep protocol: all -0.09 [-0.19, -0.01], adjacent -0.34 [-0.71, -0.03].)
 - Noted: STFT is "not converged at 10 epochs" in the table; 10 epochs is not the final budget; it is decided from the curves after all pilots.
 - Pilots: DPRNN epoch 7 running; L=16 pilot (lr 3e-4) is in its first epoch. No other changes. Memory 83% free, ollama idle.
+
+### Update 2026-10-04 cron tick (`train.py` metric: val SI-SINR on the full validation set)
+- **Conv-TasNet L=16 pilot (lr 3e-4, seed 0), epoch 1:** val SI-SINR -0.01 dB, train loss 1.00, **1294 s per epoch** (10 epochs about 3.6 h while sharing). Not on the 800-crop table until epoch 5.
+- DPRNN pilot epoch 8: +1.44 dB (epoch 7: +1.35), about 780 s per epoch. Two more epochs, about 25 min.
+- No new reviewer commits. Memory 81% free, ollama idle.

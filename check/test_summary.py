@@ -6,8 +6,8 @@ Prints, per source count, the gain over the input mixture (method score minus in
 differences of the three families (label prefixes stft, dprnn, conv, same seed number) with paired bootstrap intervals.
 
 Usage:
-    uv run python check/test_summary.py 2        # 2-source pass
-    uv run python check/test_summary.py 34       # 3- and 4-source pass
+    uv run python check/test_summary.py 2          # 2-source pass, first 7,680 samples of every signal
+    uv run python check/test_summary.py 34 0       # 3- and 4-source pass, crop seed 0 (primary pass)
 """
 
 import json
@@ -33,7 +33,8 @@ def interval(values: np.ndarray, rng: np.random.RandomState) -> str:
 
 
 def main():
-    result = json.loads((ROOT / "check" / f"eval_all_src{sys.argv[1]}_frozen_results.json").read_text())
+    crop = f"_crop{sys.argv[2]}" if len(sys.argv) > 2 else ""
+    result = json.loads((ROOT / "check" / f"eval_all_src{sys.argv[1]}{crop}_frozen_results.json").read_text())
     print(f"commit {result['git_commit']}, code modified {result['git_code_modified']}, samples {len(result['samples'])}")
     rng = np.random.RandomState(SEED)
     for n_sources in sorted({r["num_sources"] for r in result["samples"]}):

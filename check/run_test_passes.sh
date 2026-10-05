@@ -5,7 +5,10 @@
 #   bash check/run_test_passes.sh 2                    2-source pass: 9 checkpoints, ICA, NMF, oracles, all test samples
 #   bash check/run_test_passes.sh 34                   3- and 4-source pass: 6 checkpoints, ICA, NMF, oracles
 #   SPLIT=val bash check/run_test_passes.sh 2 --n 30 --tag _smoke    smoke test on 30 validation samples per source count
-# Extra arguments are passed to check/eval_all.py. Output: check/eval_all_src<list>_frozen_results.json (test split).
+#   CROP_SEED=first bash check/run_test_passes.sh 2    secondary pass: the first 7,680 samples of every signal
+#   CROP_SEED=1 bash check/run_test_passes.sh 2 --skip-classical    robustness pass with another random window
+# CROP_SEED is the seed of the random 7,680-sample window per sample (default 0, the primary pass) or "first". Extra
+# arguments are passed to check/eval_all.py. Output: check/eval_all_src<list>[_crop<seed>]_frozen_results.json (test split).
 # Labels are <family>_s<seed>: stft = STFT-BLSTM, dprnn = DPRNN, conv = Conv-TasNet L=16. Seed 0 of the 2-source runs is the
 # pilot (scored at its last epoch); every other run is scored at its best-validation epoch.
 
@@ -14,6 +17,11 @@ cd "$(dirname "$0")/.."
 
 PASS=${1:?pass: 2 or 34}
 SPLIT=${SPLIT:-test}
+CROP_SEED=${CROP_SEED:-0}
+CROP_ARGS=()
+if [ "${CROP_SEED}" != "first" ]; then
+    CROP_ARGS=(--crop-seed "${CROP_SEED}")
+fi
 
 case "${PASS}" in
     2)
@@ -44,4 +52,4 @@ case "${PASS}" in
     *) echo "unknown pass ${PASS}"; exit 1 ;;
 esac
 
-uv run python -u check/eval_all.py --split "${SPLIT}" --sources ${SOURCES} --tag _frozen --runs "${RUNS[@]}" "${@:2}"
+uv run python -u check/eval_all.py --split "${SPLIT}" --sources ${SOURCES} --tag _frozen "${CROP_ARGS[@]}" --runs "${RUNS[@]}" "${@:2}"

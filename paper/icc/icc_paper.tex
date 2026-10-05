@@ -191,7 +191,7 @@ unknown, overlapping, filtered and impaired waveforms, the independence and spec
 which failure dominates. The absolute output score of the best model is only about
 $+1.8$~dB, because the input mixtures average $-4.4$~dB.
 
-\textit{Order and seed variation.} The seed-to-seed range is 0.03~dB for STFT-BLSTM, 0.14 for DPRNN and 0.30 for Conv-TasNet. In every matched seed pair
+\textit{Order and seed variation.} The seed-to-seed range is 0.03~dB for STFT-BLSTM, 0.15 for DPRNN and 0.29 for Conv-TasNet. In every matched seed pair
 (same seed number, independently initialised) STFT-BLSTM exceeds DPRNN, by 0.26, 0.25 and 0.37~dB, and DPRNN exceeds Conv-TasNet, by 0.17, 0.22 and 0.33~dB; the
 sign is the same in the adjacent-channel and co-channel bins. The paired 95\% intervals over test mixtures are about $\pm0.03$~dB wide. We therefore report the
 order STFT-BLSTM $>$ DPRNN $>$ Conv-TasNet for this recipe, with two cautions. The pairing by seed number is nominal, so the evidence is the consistent sign in three pairs together with
@@ -234,6 +234,7 @@ two further random-window passes give gains within 0.06~dB of these for every on
 \textit{Simulation.} RFSS is simulated. Standard-compliant generation, 3GPP channels and impairments make it a controlled benchmark in the way WSJ0-2mix is for speech,
 but it contains no over-the-air captures, and we do not claim that a model trained on it works on a real receiver. Its value is comparison under identical conditions, and a
 sim-to-real study is future work.
+\textit{Adjacent-channel mode.} The mode shifts sources by multiples of 2~MHz for every standard, so it is a frequency displacement and not a guard-banded channel plan: about 97\% of the two-source adjacent-channel test mixtures still have overlapping nominal bands. For about 3\% of them the mixture rate is below 4~MHz and the shift wraps around the sampling band; the references are built with the same shift, so the labels remain exact.
 \textit{Scope.} Single antenna, downlink waveforms, about 1~ms per mixture, two sources in this paper. Three- and four-source mixtures are in the corpus; we leave them to later work.
 \textit{Absolute quality.} The best separated output scores about $+1.8$~dB, which is not enough to demodulate and we report no bit error rate or error vector magnitude. The gain
 should be read as progress on a hard task and not as a deployable result.

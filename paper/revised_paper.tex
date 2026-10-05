@@ -790,6 +790,16 @@ validation split, so some performance was left unused. The
 3-source and 4-source models get fewer optimizer steps than the 2-source models because
 each trains for the same number of epochs on a smaller subset.
 
+\textbf{Adjacent-channel mode.} The mode shifts the sources by multiples of 2~MHz for
+every standard and applies no filtering or adjacent-channel leakage model. It is a
+frequency displacement and not a guard-banded channel plan: 97\% of the two-source
+adjacent-channel mixtures (99.5\% of the three-source and 99.9\% of the four-source
+ones) have overlapping nominal channel bands. For 1.8\% of the adjacent-channel mixtures
+the mixture rate is below 4~MHz (2--3 MHz sources with narrow LTE channels), so the 2~MHz
+shift wraps around the sampling band; the references are built with the same shift, so the
+labels are exact, but these mixtures are effectively co-channel or folded scenes. A
+future release could use standard-specific offsets with an adjacent-channel leakage model.
+
 \textbf{Single-antenna (SISO) only.} The current dataset models each
 source as a scalar complex waveform with no spatial structure. Real
 multi-antenna receivers can exploit spatial degrees of freedom for

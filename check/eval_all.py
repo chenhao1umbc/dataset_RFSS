@@ -25,6 +25,9 @@ Usage:
     uv run python check/eval_all.py --dl conv_tasnet --sources 2      # only the finished source counts
     uv run python check/eval_all.py --dl stft_blstm --skip-classical --tag _seed1 \
         --ckpt-dir-format final/{name}_{n}src_seed1/ckpt                 # one seed of a final run
+    uv run python check/eval_all.py --sources 2 --runs stft_s1=stft_blstm:2:final/stft_blstm_2src_seed1/ckpt/epoch_009_loss_-1.7889.pt
+                                                                        # trained runs by explicit checkpoint file
+    bash check/run_test_passes.sh 2                                     # the frozen test pass of the 2-source runs
 
 Output: check/eval_all_val_results.json for the validation split, check/eval_all_results.json for the test split;
 a partial --sources run writes check/eval_all[_val]_src<list>_results.json and --crop-seed adds _crop<seed>, so only a
@@ -33,6 +36,7 @@ full run produces the main-table file.
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -61,6 +65,7 @@ SEGMENT_LEN = 7680
 SNR_BINS = [(-10, 0), (0, 10), (10, 20), (20, 30), (30, 40.001)]
 N_BOOT = 2000
 BOOT_SEED = 0
+DL_MODELS = ["conv_tasnet", "conv_tasnet_l256", "dprnn", "cnn_lstm", "cnn_lstm_tconv", "stft_blstm"]
 
 
 def load_segment(f: h5py.File, idx: int, crop_seed: int | None) -> dict:
@@ -101,15 +106,30 @@ def reference_scores(sample: dict) -> dict:
     }
 
 
+def load_checkpoint(name: str, n_sources: int, device: str, path: Path):
+    model = build_model(name, n_sources)
+    model.load_state_dict(torch.load(path, map_location=device)["model"])
+    return model.to(device).eval()
+
+
 def load_dl_model(name: str, n_sources: int, device: str, ckpt_dir_format: str):
     ckpt_dir = ROOT / ckpt_dir_format.format(name=name, n=n_sources)
     candidates = list(ckpt_dir.glob("epoch_*.pt"))
     if not candidates:
         raise FileNotFoundError(f"no epoch_*.pt checkpoint in {ckpt_dir}")
     best = min(candidates, key=_checkpoint_loss)
-    model = build_model(name, n_sources)
-    model.load_state_dict(torch.load(best, map_location=device)["model"])
-    return model.to(device).eval(), best.name
+    return load_checkpoint(name, n_sources, device, best), best.name
+
+
+def parse_run(spec: str) -> tuple[str, str, int, Path]:
+    """LABEL=MODEL:N_SOURCES:CHECKPOINT -> (label, model, n_sources, checkpoint path)."""
+    label, _, rest = spec.partition("=")
+    model, n_sources, path = rest.split(":", 2)
+    if model not in DL_MODELS:
+        raise ValueError(f"unknown model {model} in run {spec}")
+    if not (ROOT / path).is_file():
+        raise FileNotFoundError(f"checkpoint {path} of run {label} does not exist")
+    return label, model, int(n_sources), ROOT / path
 
 
 @torch.no_grad()
@@ -175,7 +195,9 @@ def summarise(rows: list[dict], methods: list[str]) -> dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=0, help="random test samples per source count (0 = all)")
-    ap.add_argument("--dl", nargs="*", default=[], choices=["conv_tasnet", "conv_tasnet_l256", "dprnn", "cnn_lstm", "cnn_lstm_tconv", "stft_blstm"])
+    ap.add_argument("--dl", nargs="*", default=[], choices=DL_MODELS)
+    ap.add_argument("--runs", nargs="*", default=[], metavar="LABEL=MODEL:N:CKPT",
+                    help="trained runs given by explicit checkpoint file, e.g. stft_s1=stft_blstm:2:final/stft_blstm_2src_seed1/ckpt/epoch_009_loss_-1.7889.pt")
     ap.add_argument("--device", default="auto")
     ap.add_argument("--split", choices=["val", "test"], default="val", help="val for every recipe decision and every unfinished run; test only once for the final table")
     ap.add_argument("--sources", type=int, nargs="*", default=[2, 3, 4], choices=[2, 3, 4], help="source counts to evaluate")
@@ -199,7 +221,8 @@ def main():
         device = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
 
     classical = {} if args.skip_classical else {"ica": ICASourceSeparation, "nmf": NMFSourceSeparation}
-    methods = ["input", "oracle", "irm_oracle"] + list(classical) + args.dl
+    runs = [parse_run(spec) for spec in args.runs]
+    methods = list(dict.fromkeys(["input", "oracle", "irm_oracle"] + list(classical) + args.dl + [label for label, _, _, _ in runs]))
     rows = []
     checkpoints = {}
     with h5py.File(DATASET_PATH, "r") as f:
@@ -236,6 +259,13 @@ def main():
                 checkpoints[f"{name}_{ns}src"] = ckpt_name
                 for row, score in zip(part, dl_scores(model, samples, dl_device)):
                     row[name] = score
+            for label, name, run_ns, path in runs:
+                if run_ns != ns:
+                    continue
+                dl_device = "cpu" if name == "stft_blstm" else device
+                checkpoints[f"{label}_{ns}src"] = str(path.relative_to(ROOT))
+                for row, score in zip(part, dl_scores(load_checkpoint(name, ns, dl_device, path), samples, dl_device)):
+                    row[label] = score
             rows += part
 
     result = {
@@ -244,6 +274,8 @@ def main():
         "split": args.split,
         "index_range": [start, end],
         "checkpoints": checkpoints,
+        "git_commit": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip(),
+        "git_code_modified": bool(subprocess.run(["git", "diff", "--quiet", "HEAD", "--", "src", "check", "train_all.sh"], cwd=ROOT).returncode),
         "summary": summarise(rows, methods),
         "samples": rows,
     }

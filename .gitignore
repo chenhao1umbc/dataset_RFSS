@@ -229,3 +229,4 @@ tmp/
 
 # Claude Code guidance file (contains development context)
 CLAUDE.md
+final/

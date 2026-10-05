@@ -20,6 +20,8 @@ Usage:
     uv run python check/eval_all.py --dl ... --crop-seed 0            # robustness pass, random window
     uv run python check/eval_all.py --dl conv_tasnet --sources 2      # only the finished source counts
     uv run python check/eval_all.py --split val ...                   # validation split for recipe decisions
+    uv run python check/eval_all.py --dl stft_blstm --skip-classical --tag _seed1 \
+        --ckpt-dir-format final/{name}_{n}src_seed1/ckpt                 # one seed of a final run
 
 Output: check/eval_all_results.json; a partial --sources run writes check/eval_all_src<list>_results.json and
 --crop-seed adds _crop<seed>, so only a full run produces the main-table file.
@@ -49,7 +51,6 @@ from src.utils_mixing import build_aligned_references  # noqa: E402
 
 DATASET_PATH = ROOT / "data" / "rfss_dataset.h5"
 OUTPUT = ROOT / "check" / "eval_all_results.json"
-CHECKPOINT_ROOT = ROOT / "checkpoints"
 
 SPLITS = {"val": (70000, 85000), "test": (85000, 100000)}
 SEGMENT_LEN = 7680
@@ -96,8 +97,8 @@ def reference_scores(sample: dict) -> dict:
     }
 
 
-def load_dl_model(name: str, n_sources: int, device: str):
-    ckpt_dir = CHECKPOINT_ROOT / f"{name}_{n_sources}src"
+def load_dl_model(name: str, n_sources: int, device: str, ckpt_dir_format: str):
+    ckpt_dir = ROOT / ckpt_dir_format.format(name=name, n=n_sources)
     best = min(ckpt_dir.glob("epoch_*.pt"), key=_checkpoint_loss)
     model = build_model(name, n_sources)
     model.load_state_dict(torch.load(best, map_location=device)["model"])
@@ -172,6 +173,10 @@ def main():
     ap.add_argument("--split", choices=["val", "test"], default="test", help="use val for every recipe decision; test only for the final table")
     ap.add_argument("--sources", type=int, nargs="*", default=[2, 3, 4], choices=[2, 3, 4], help="source counts to evaluate")
     ap.add_argument("--crop-seed", type=int, default=None, help="random window per sample instead of the first SEGMENT_LEN samples")
+    ap.add_argument("--ckpt-dir-format", default="checkpoints/{name}_{n}src",
+                    help="checkpoint directory relative to the repo; {name} and {n} are the model name and source count")
+    ap.add_argument("--tag", default="", help="suffix for the output file, e.g. _seed1")
+    ap.add_argument("--skip-classical", action="store_true", help="leave out ICA and NMF (they are seed independent and slow)")
     args = ap.parse_args()
     start, end = SPLITS[args.split]
     suffix = "" if args.split == "test" else "_val"
@@ -179,14 +184,15 @@ def main():
         suffix += "_src" + "".join(str(n) for n in sorted(args.sources))
     if args.crop_seed is not None:
         suffix += f"_crop{args.crop_seed}"
+    suffix += args.tag
     output = OUTPUT.with_name(f"eval_all{suffix}_results.json")
 
     device = args.device
     if device == "auto":
         device = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
 
-    classical = {"ica": ICASourceSeparation, "nmf": NMFSourceSeparation}
-    methods = ["input", "oracle", "irm_oracle", "ica", "nmf"] + args.dl
+    classical = {} if args.skip_classical else {"ica": ICASourceSeparation, "nmf": NMFSourceSeparation}
+    methods = ["input", "oracle", "irm_oracle"] + list(classical) + args.dl
     rows = []
     checkpoints = {}
     with h5py.File(DATASET_PATH, "r") as f:
@@ -219,7 +225,7 @@ def main():
                 part.append(row)
             for name in args.dl:
                 dl_device = "cpu" if name == "stft_blstm" else device  # MPS lacks the inverse-STFT backward
-                model, ckpt_name = load_dl_model(name, ns, dl_device)
+                model, ckpt_name = load_dl_model(name, ns, dl_device, args.ckpt_dir_format)
                 checkpoints[f"{name}_{ns}src"] = ckpt_name
                 for row, score in zip(part, dl_scores(model, samples, dl_device)):
                     row[name] = score

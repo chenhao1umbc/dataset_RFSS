@@ -14,17 +14,21 @@ samples above zero, for the absolute score and for the improvement over the inpu
   irm_oracle : ideal ratio mask on a 2048-point STFT (hop 512) built from the reference magnitudes, applied to the
            mixture STFT (mixture phase); an upper bound for time-frequency masking separators
 
+The default split is validation, which is where every recipe decision and every check of an unfinished or
+failed run belongs. The test split needs an explicit --split test and is used once, after all final runs are done.
+
 Usage:
-    uv run python check/eval_all.py                       # input, oracle, ICA, NMF
-    uv run python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm   # also trained models
+    uv run python check/eval_all.py                                   # validation: input, oracles, ICA, NMF
+    uv run python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm   # validation, also trained models
+    uv run python check/eval_all.py --split test --dl ...             # the single test pass for the final table
     uv run python check/eval_all.py --dl ... --crop-seed 0            # robustness pass, random window
     uv run python check/eval_all.py --dl conv_tasnet --sources 2      # only the finished source counts
-    uv run python check/eval_all.py --split val ...                   # validation split for recipe decisions
     uv run python check/eval_all.py --dl stft_blstm --skip-classical --tag _seed1 \
         --ckpt-dir-format final/{name}_{n}src_seed1/ckpt                 # one seed of a final run
 
-Output: check/eval_all_results.json; a partial --sources run writes check/eval_all_src<list>_results.json and
---crop-seed adds _crop<seed>, so only a full run produces the main-table file.
+Output: check/eval_all_val_results.json for the validation split, check/eval_all_results.json for the test split;
+a partial --sources run writes check/eval_all[_val]_src<list>_results.json and --crop-seed adds _crop<seed>, so only a
+full run produces the main-table file.
 """
 
 import argparse
@@ -170,7 +174,7 @@ def main():
     ap.add_argument("--n", type=int, default=0, help="random test samples per source count (0 = all)")
     ap.add_argument("--dl", nargs="*", default=[], choices=["conv_tasnet", "conv_tasnet_l256", "dprnn", "cnn_lstm", "cnn_lstm_tconv", "stft_blstm"])
     ap.add_argument("--device", default="auto")
-    ap.add_argument("--split", choices=["val", "test"], default="test", help="use val for every recipe decision; test only for the final table")
+    ap.add_argument("--split", choices=["val", "test"], default="val", help="val for every recipe decision and every unfinished run; test only once for the final table")
     ap.add_argument("--sources", type=int, nargs="*", default=[2, 3, 4], choices=[2, 3, 4], help="source counts to evaluate")
     ap.add_argument("--crop-seed", type=int, default=None, help="random window per sample instead of the first SEGMENT_LEN samples")
     ap.add_argument("--ckpt-dir-format", default="checkpoints/{name}_{n}src",

@@ -46,14 +46,14 @@ All methods are scored by `check/eval_all.py` on the same test samples (indices 
 of each signal, or the whole signal if shorter), with the exact per-source references from `src/utils_mixing.py:build_aligned_references`.
 
 ```bash
-# 1. Train the nine models (3 architectures x 2/3/4 sources, 30 epochs each, about 60 h on an Apple M-series GPU)
-nohup bash train_all.sh >> runs/train_all_v2.log 2>&1 &
+# 1. Train the final models (STFT-BLSTM on the CPU lane, the other models on the MPS lane; EPOCHS and the seeds are set in the paper)
+nohup bash train_all.sh all EPOCHS >> final_train.log 2>&1 &
 
-# 2. Main table: input, noise-limited oracle, ICA, NMF and the trained models, with 95 percent bootstrap intervals
-uv run python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm            # writes check/eval_all_results.json
+# 2. Main table (test split, used once after all runs are done): input, oracles, ICA, NMF and the trained models, 95 percent bootstrap intervals
+uv run python check/eval_all.py --split test --dl stft_blstm dprnn conv_tasnet   # writes check/eval_all_results.json
 
 # 3. Robustness: random 7,680-sample windows instead of the first 7,680 samples
-uv run python check/eval_all.py --dl conv_tasnet dprnn cnn_lstm --crop-seed 0   # also seeds 1 and 2
+uv run python check/eval_all.py --split test --dl stft_blstm dprnn conv_tasnet --crop-seed 0   # also seeds 1 and 2
 
 # Supplementary: ICA/NMF on the full-length signals
 uv run python check/run_baselines.py                                         # writes check/baseline_results.json

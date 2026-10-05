@@ -7,6 +7,8 @@
 #   SEEDS_2SRC="0 1 2" bash train_all.sh mps 20  all three seeds
 #   SECONDARY=1 bash train_all.sh mps 20         also Conv-TasNet-L256 and CNN-LSTM-tconv (2-source, seed 0)
 #   DRY_RUN=1 bash train_all.sh all 10           print the commands only
+#   bash train_all.sh link 10                    link the finished 10-epoch pilots as seed 0 of the 2-source runs
+#   bash train_all.sh link 20                    link the 20-epoch STFT-BLSTM probe as its seed 0
 #
 # The cpu lane (STFT-BLSTM) and the mps lane (the other models) can run side by side.
 # Each run writes final/<model>_<n>src_seed<seed>/{ckpt,tb,log.txt}; a finished run leaves a DONE file
@@ -20,7 +22,7 @@
 set -e
 cd "$(dirname "$0")"
 
-LANE=${1:?lane: cpu, mps or all}
+LANE=${1:?lane: cpu, mps, all or link}
 EPOCHS=${2:?epochs}
 SEEDS_2SRC=${SEEDS_2SRC:-"0 1 2"}
 
@@ -40,7 +42,11 @@ run() {
     fi
     mkdir -p "${dir}"
     echo "start ${dir} $(date -u +%FT%TZ)"
-    ${cmd} > "${dir}/log.txt" 2>&1
+    if ! ${cmd} > "${dir}/log.txt" 2>&1; then
+        echo "FAILED ${dir}"
+        tail -n 20 "${dir}/log.txt"
+        exit 1
+    fi
     touch "${dir}/DONE"
     echo "done ${dir} $(date -u +%FT%TZ)"
 }
@@ -64,7 +70,35 @@ lane_mps() {
     fi
 }
 
+# The pilots used the same arguments as a final run with seed 0 (train.py --seed 0), so they are linked into the
+# final/ layout instead of being trained again.
+link_pilot() {
+    local pilot=$1 model=$2 last_epoch=$3
+    local ckpt=pilots/${pilot}/ckpt/keep_epoch_$(printf '%03d' $((last_epoch - 1))).pt
+    if [ ! -f "${ckpt}" ]; then
+        echo "missing ${ckpt}: pilot ${pilot} is not finished, not linked"
+        return
+    fi
+    touch "pilots/${pilot}/DONE"
+    mkdir -p final
+    ln -sfn "../pilots/${pilot}" "final/${model}_2src_seed0"
+    echo "linked final/${model}_2src_seed0 -> pilots/${pilot}"
+}
+
+link_all() {
+    if [ "${EPOCHS}" = "10" ]; then
+        link_pilot stft_lr3e-4 stft_blstm 10
+        link_pilot dprnn_lr1e-3 dprnn 10
+        link_pilot l16_lr3e-4 conv_tasnet 10
+        link_pilot l256_lr1e-4 conv_tasnet_l256 10
+        link_pilot tconv_lr3e-4 cnn_lstm_tconv 10
+    elif [ "${EPOCHS}" = "20" ]; then
+        link_pilot stft_lr3e-4_20ep stft_blstm 20
+    fi
+}
+
 case "${LANE}" in
+    link) link_all ;;
     cpu) lane_cpu ;;
     mps) lane_mps ;;
     all) lane_cpu; lane_mps ;;

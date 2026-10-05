@@ -1244,3 +1244,11 @@ Both papers recompile (journal 10 pages, no undefined references; ICC 4 pages). 
 ### Update 2026-10-05 user instruction: author list revised, files updated
 - User decision (supersedes the earlier "Rui Jin removed everywhere"): the IEEE journal paper lists Hao Chen, Rui Jin and Dayuan Tan (986182c); the ICC paper lists Hao Chen and Dayuan Tan only. The arXiv v2 list is not decided. Dayuan Tan has agreed to the arXiv plan (user). Dataset URL `https://huggingface.co/datasets/Chrishao/rfss` is in both papers (7e53c69); the correction note is in the journal paper (7b8d904); no `\TBD` text remains in either paper.
 - Updated at the user's explicit request: `ACTION_PLAN.md` (situation table, F1, decision 4, restated decision), `pyproject.toml` (Rui Jin added, same list as the journal paper), the three `docs/drafts` author lines (arXiv BibTeX lines now say "as on the final arXiv v2"; pyproject note states both lists). `to_local_claude.md` and older log entries are left as history; they still say "Chen and Tan only" and are superseded by this entry.
+
+### Update 2026-10-05 release step (user instruction)
+- Licences: code PolyForm Noncommercial 1.0.0 (`LICENSE`), data CC BY-NC 4.0 (`LICENSE-DATA`); pyproject, README, card, both papers agree.
+- HF `Chrishao/rfss`: tag v1.0 on the original commit cacb38a3 (2 HDF5 files), v1.1 = 02d1700f (card, LICENSE, 15 scored checkpoints under `checkpoints/`). SHA-256 of both local HDF5 files equals the HF LFS hashes, so the data are unchanged. Script: `src/upload_huggingface.py` (token from env, no hardcoded path).
+- Card and README rewritten from the reviewer drafts, all TBD resolved; the old drafts removed; `docs/hf_dataset_card.md`, `docs/dataset_definition.md` moved out of `docs/drafts/`.
+- GitHub: `main` fast-forwarded to dev 51e7328; freeze tag pushed. `old_agent/`, `upload_hf*.{py,sh}` and the internal logs are still in the tree (deleting was not authorised).
+- Fresh clone of dev: both asset scripts reproduce the committed tables and numbers (no diff); journal paper failed on missing figures (`*.pdf` ignored); the four used figure PDFs are now tracked and the bundle compiles.
+- arXiv: bundle and texts prepared in ~/Downloads; submission needs the user's account.

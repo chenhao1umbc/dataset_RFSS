@@ -14,8 +14,8 @@ and a corrected paper that replaces the unsupported 2025 arXiv paper.
 | arXiv 2508.12106 (Aug 2025, 1 citation) | Results unsupported (26.7 dB, 52,847 samples). Repo's own results say ICA/NMF fail. |
 | arXiv 2604.00398 (Apr 2026) | Honest benchmark, but several dataset descriptions are wrong (see section 2, item P). |
 | `paper/revised_paper.tex` on `dev` | Complete draft (11 pages) with the corrected description, final results and the correction note. Not on arXiv. A 4-page ICC paper is in `paper/icc/`. |
-| HF `Chrishao/rfss` | Public. Two HDF5 files, no dataset card, no license. Both papers now link it; v1.1 upload still pending. |
-| GitHub `main` | Old 2025 code with placeholders. The real code is only on `dev`. |
+| HF `Chrishao/rfss` | Public. Tag `v1.0` = the original two HDF5 files; `v1.1` (main) = same bytes (SHA-256 checked) plus dataset card, CC BY-NC 4.0 licence and 15 checkpoints. Both papers link it. |
+| GitHub `main` | Fast-forwarded to `dev` on 2026-10-05 (same commit). Licences: code PolyForm Noncommercial 1.0.0 (`LICENSE`), data CC BY-NC 4.0 (`LICENSE-DATA`). |
 
 ## 1. Roles and sync protocol
 
@@ -123,3 +123,8 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 
 ## Finding (2026-10-05, from Opus review): adjacent-channel offsets are NOT standard-specific
 `src/utils_dataset.py:343-346` shifts sources by multiples of 2 MHz for every standard (offsets {-2,0} MHz for 2 sources, {-2,0,2} for 3, {-4,-2,0,2} for 4). The ICC and journal drafts, and possibly dataset docs, said "standard-specific offsets" / "do not overlap". Papers corrected (ICC, journal) with a TBD for the share of adjacent mixtures whose source bands overlap. TODO (Builder): compute that share from metadata; audit README/HF card/dataset docs/`paper/mixing_scenarios.md` (an early design note that describes channel-bandwidth-based offsets and ACIR that the code does not implement) and fix every claim; decide whether the v1.1 release notes mention it (they should).
+
+## Release status (2026-10-05, user instructed: licence non-commercial, HF v1.1, merge main, arXiv)
+- Done: HF v1.0 tag and v1.1 commit; `LICENSE`, `LICENSE-DATA`, README, `docs/hf_dataset_card.md` (the card on HF); `main` = `dev`; freeze tag `val-frozen-2026-10-05` pushed; fresh-clone check passed (asset scripts reproduce the committed tables and numbers byte for byte; journal paper compiles from a clean copy once the four figure PDFs are tracked, now committed).
+- arXiv (F): the source bundle `~/Downloads/rfss_arxiv_v2.tar.gz` and the texts in `~/Downloads/rfss_arxiv_v2_texts.txt` are ready. Submission, the arXiv help email and the withdrawal need the user's arXiv login and are not done. v2 author list proposed: Hao Chen, Rui Jin, Dayuan Tan (as on the journal paper and on both arXiv entries).
+- Not done, left for the user: removal of `old_agent/` and moving the internal logs out of the tree (D1/D5), `CITATION.cff`, CI.

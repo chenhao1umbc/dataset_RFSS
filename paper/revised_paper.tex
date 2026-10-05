@@ -608,7 +608,11 @@ a validation sweep with otherwise identical settings it stayed at a gain of abou
 at $3\times10^{-4}$. For the STFT-BLSTM at $10^{-3}$, whether the model left the plateau
 depended on the seed. We therefore choose the learning rate with the higher worst-seed validation
 gain at the common epoch budget. The checkpoint with the lowest validation loss is
-evaluated once on the test split. All experiments use single-channel (SISO) signals.
+evaluated once on the test split. Each model trains for $E$ passes over the training subset
+with its source count, so the 3-source and 4-source models see 0.70 and 0.30 times the
+optimizer steps of the 2-source model (about 4,364, 3,069 and 1,318 steps per epoch for the
+34,912, 24,547 and 10,541 training samples). All experiments use single-channel (SISO)
+signals.
 
 \subsection{Evaluation Protocol}
 
@@ -792,7 +796,9 @@ waveform with a constant phase offset is penalized. Model comparisons rest on
 \TBD{number of seeds} seeds per model at the chosen learning rate, from one
 learning-rate grid per model. The pilot runs use a cosine schedule that anneals to
 almost zero, so no model is shown to have converged, and the epoch budget was set
-from the validation curves after the pre-registered criterion was missed.
+from the validation curves after the pre-registered criterion was missed. The
+3-source and 4-source models get fewer optimizer steps than the 2-source models because
+each trains for the same number of epochs on a smaller subset.
 
 \textbf{Single-antenna (SISO) only.} The current dataset models each
 source as a scalar complex waveform with no spatial structure. Real

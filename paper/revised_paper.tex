@@ -754,7 +754,14 @@ The two HDF5 files (\texttt{rfss\_dataset.h5}, 103~GB;
 generation code, trained checkpoints and evaluation scripts are in the GitHub
 repository \texttt{chenhao1umbc/dataset\_RFSS}.
 
-\TBD{Correction note on the earlier arXiv versions (2508.12106 and 2604.00398): which results are superseded and why; wording to follow ACTION\_PLAN section 3 once the authors have agreed.}
+\subsection{Relation to Earlier arXiv Versions}
+
+This paper supersedes arXiv:2508.12106 and arXiv:2604.00398 by the same group. The first reported separation results
+(26.7~dB on 52,847 samples) that could not be reproduced from the released data and code; the
+results here replace them. The second reported a benchmark whose dataset description contained errors: the common
+sampling rate, the signal duration, the channel and Doppler ranges, the SNR range, the share of mixing modes and the GSM
+peak-to-average power ratio. Sections~\ref{sec:construction} and~\ref{sec:characterization} give the corrected description. The
+corrected data are released as v1.1; the files of the earlier release remain available as v1.0.
 
 \subsection{HDF5 Access Example}
 

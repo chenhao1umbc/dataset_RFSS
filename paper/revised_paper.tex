@@ -366,7 +366,7 @@ frequency-shifted by $(k-\lfloor N_{\rm src}/2\rfloor)\times 2$~MHz before summi
 spacing for every standard (offsets $\{-2,0\}$ MHz for two sources, $\{-2,0,2\}$ for three,
 $\{-4,-2,0,2\}$ for four). The spacing is smaller than the bandwidth of most UMTS, LTE and NR
 sources, so the sources are displaced but usually still overlap in frequency
-(\TBD{share of adjacent-channel mixtures whose source bands overlap}); the mode is
+(by the nominal channel bandwidths in the metadata, at least one pair of source bands overlaps in 97\% of the two-source, 99.5\% of the three-source and 99.9\% of the four-source adjacent-channel samples; \texttt{check/adjacent\_overlap.py}); the mode is
 named for the offset and not for non-overlapping channels.
 
 The number of simultaneous sources $N_{\rm src}$ is drawn from $\{2, 3, 4\}$

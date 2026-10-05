@@ -14,7 +14,7 @@ References:
 - 3GPP TR 38.901: Channel models
 - 3GPP TS 38.104/38.101: RF requirements (ACIR, ACLR)
 - Dynamic Spectrum Sharing (DSS): LTE-NR coexistence
-- See paper/mixing_scenarios.md for detailed specifications
+- See paper/mixing_scenarios.md for the original design note (it describes ACIR modelling that the generator does not implement)
 """
 
 import numpy as np
@@ -43,7 +43,7 @@ class SignalMixer:
     Features:
     - Per-source independent channel effects before mixing
     - Co-channel mixing (hardest case, all at baseband)
-    - Adjacent-channel mixing (frequency-shifted with realistic ACIR)
+    - Adjacent-channel mixing (frequency-shifted, no ACIR model)
     - Realistic power ratios (near-far scenarios)
     - Timing offsets (asynchronous signal arrival)
     - MIMO spatial mixing with correlation

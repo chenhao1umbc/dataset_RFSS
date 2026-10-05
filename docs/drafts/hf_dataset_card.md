@@ -101,7 +101,7 @@ and `sources`: a list with, per source, `standard`, `signal_params` (bandwidth, 
 ## Generation summary (from the paper source and the 20,000-sample coverage check)
 
 - Source counts: 2 / 3 / 4 sources with target weights 0.50 / 0.35 / 0.15 (realized about 0.50 / 0.35 / 0.15).
-- Mixing mode: about 40% co-channel, 60% adjacent-channel.
+- Mixing mode: about 40% co-channel, 60% adjacent-channel. In adjacent-channel mode source k of N is shifted by (k - floor(N/2)) x 2 MHz for every standard and no adjacent-channel filtering is modelled, so most mixtures still contain overlapping bands (97% of the two-source adjacent-channel test samples). For the 1.8% of adjacent-channel samples whose mixture rate is below 4 MHz (GSM and narrow LTE sources only) the shift exceeds the Nyquist frequency and the shifted source wraps around in frequency; the aligned references apply the same wrap, so the labels stay exact.
 - Channels: 3GPP TDL-A to TDL-E (TR 38.901), weighted selection, Jakes fading with Doppler up to 700 Hz.
 - Noise: AWGN, SNR from -10 to 40 dB (observed mean about 12 dB).
 - Hardware impairments per source: CFO, SFO, I/Q imbalance, DC offset, phase noise, PA nonlinearity (Rapp model);

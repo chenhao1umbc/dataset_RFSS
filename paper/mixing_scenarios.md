@@ -1,5 +1,7 @@
 # Signal Mixing Scenarios for RFSS Dataset
 
+> Design note, not the implemented generator. The released generator shifts adjacent-channel sources by fixed multiples of 2 MHz for every standard and models no ACIR (`src/utils_dataset.py`, `sample_mixing_params`); the channel-bandwidth offsets, ACIR modelling and the ACIR check in sections 2.2, 3.2, 7.2 and 8.2 below describe the original design intent only.
+
 ## 1. Introduction
 
 This document defines realistic multi-standard RF signal mixing scenarios based on 3GPP coexistence studies, spectrum sharing research, and practical deployment scenarios. The goal is to create a dataset that accurately represents real-world wireless coexistence challenges for source separation research.

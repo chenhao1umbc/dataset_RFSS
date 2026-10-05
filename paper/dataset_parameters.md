@@ -301,9 +301,8 @@
 - Requires blind source separation
 
 **Adjacent-Channel Mixing:** 60%
-- Sources at different frequencies
-- Frequency offsets: realistic spectrum allocation
-- Models ACIR ~32 dB per 3GPP coexistence studies
+- Source k of N is shifted by (k - floor(N/2)) x 2 MHz, the same fixed spacing for every standard (src/utils_dataset.py, sample_mixing_params)
+- No ACIR or adjacent-channel filtering is modelled; most sources are wider than the spacing, so the bands usually still overlap (97% of the two-source adjacent-channel test samples, check/adjacent_overlap.py)
 
 ### 5.4 Power Ratio Ranges (SIR)
 

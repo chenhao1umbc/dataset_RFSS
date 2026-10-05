@@ -33,7 +33,7 @@ The rapid evolution of wireless communication systems has created complex electr
 The dataset includes two distinct mixing modes:
 
 - **Co-channel mixing**: All sources are mixed at baseband with no frequency offset between them. This is the hardest separation scenario because sources occupy the same spectral region.
-- **Adjacent-channel mixing**: Each source is frequency-shifted to occupy a distinct spectral band before mixing. This reduces co-channel interference but introduces carrier frequency offsets that must be undone to match the stored reference signals.
+- **Adjacent-channel mixing**: Each source is frequency-shifted by a multiple of 2 MHz (the same spacing for every standard) before mixing. Most sources are wider than the spacing, so the bands usually still overlap; the shift introduces carrier frequency offsets that must be undone to match the stored reference signals.
 
 **Important evaluation note:** Reference signals in the HDF5 dataset are stored in their pre-frequency-shift (baseband) form. For adjacent-channel mixtures, a separation algorithm must undo the per-source frequency offset to match the reference; this makes adjacent-channel PI-SI-SINR lower than co-channel SI-SINR despite the sources occupying distinct spectral bands. Approximately 63% of test samples are adjacent-channel mixtures. The co-channel breakdown is the more meaningful metric for assessing core separation performance.
 
@@ -55,7 +55,7 @@ The RFSS dataset comprises **100,000 multi-source signal samples** systematicall
 
 Samples are generated with:
 - **Source counts**: 2, 3, or 4 simultaneous sources per mixture
-- **Mixing modes**: co-channel (sources share spectral band) and adjacent-channel (sources frequency-shifted to distinct bands)
+- **Mixing modes**: co-channel (sources share spectral band) and adjacent-channel (sources frequency-shifted by multiples of 2 MHz)
 - **Signal standards**: GSM, UMTS, LTE, 5G NR; any combination per sample
 - **Channel**: per-source independent 3GPP TDL channel with hardware impairments
 - **SNR range**: −10 to +40 dB per source; SIR: −20 to +20 dB between sources

@@ -208,7 +208,7 @@ does not isolate the domain in which the mask is estimated. The gap between DPRN
 
 \textit{Mixing mode.} Averaged over all SNRs, the deep models gain about the same on co-channel and on adjacent-channel mixtures: for STFT-BLSTM, DPRNN and Conv-TasNet
 $+6.13$, $+5.89$ and $+5.68$~dB on the 3,035 co-channel mixtures against $+6.14$, $+5.82$ and $+5.56$~dB on the 4,491 adjacent-channel mixtures, while the IRM oracle gains $+7.77$ and $+8.22$~dB.
-Adjacent-channel mixtures are therefore not easier for these models in this benchmark, although they are for the oracle. A likely contributor is that the offsets are multiples of 2~MHz for every standard, which is below the bandwidth of most UMTS, LTE and NR sources, so many adjacent-channel mixtures still overlap in frequency (\TBD{share of adjacent-channel mixtures with overlapping bands, from the metadata}); we did not test this explanation.
+Adjacent-channel mixtures are therefore not easier for these models in this benchmark, although they are for the oracle. A likely contributor is that the offsets are multiples of 2~MHz for every standard, which is below the bandwidth of most UMTS, LTE and NR sources, so many adjacent-channel mixtures still overlap in frequency (97\% of the 4,491 two-source adjacent-channel test mixtures have overlapping nominal channel bands); we did not test this explanation.
 
 \begin{figure}[t]
 \centering

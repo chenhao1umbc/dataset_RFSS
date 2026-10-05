@@ -1051,3 +1051,61 @@ Scored on CPU, one process at a time, 800 validation crops, best-validation chec
 
 ### Update 2026-10-05 17:43 UTC cron tick: no change
 - No new reviewer commits. `dprnn_3src_seed0` epoch 9 done (633 s, val -4.32 dB, still improving); epoch 10 ends about 17:53 UTC, then it is scored. Free memory 87%, swap 8.6 GB, nothing else running.
+
+### Update 2026-10-05 17:58 UTC cron tick: ALL FINAL RUNS DONE; full validation table for review (test split untouched)
+`dprnn_3src_seed0` finished at 17:52 UTC (epoch 10 626 s) and is scored: `dprnn_final_dprnn_3src_seed0_ep10` (`epoch_009_loss_4.2910.pt`) **+4.92 [+4.69, +5.16]**, adjacent +5.16 [+4.43, +5.95] (n=129), co-channel +4.99 [+4.17, +5.75] (n=83). No training or scoring job is running now. Everything below is read from `check/encoder_sweep_results.json` (800 fixed validation crops, best-validation checkpoint, gain over the input mixture, 95% bootstrap intervals; bins: all, adjacent SNR>20, co-channel SNR>20).
+
+**Table 1. 2-source, three seeds (E = 10; seed 0 = the pilot)**
+
+| family (params) | seed | scored epoch | all-bin gain [CI] | adjacent (n=106) | co-channel (n=83) | train / val loss, last epoch |
+|---|---|---|---|---|---|---|
+| STFT-BLSTM (7.36M) | 0 | 10 (pilot) | +6.36 [+5.98, +6.72] | +7.65 | +7.67 | -1.8637 / -1.8325 |
+| | 1 | 10 | +6.31 [+5.93, +6.67] | +7.53 | +7.70 | -1.8517 / -1.7889 |
+| | 2 | 9 | +6.30 [+5.92, +6.65] | +7.41 | +7.69 | -1.8584 / -1.8165 (ep 9: -1.8602) |
+| | **mean, range** | | **+6.32, 6.30 to 6.36** | | | |
+| DPRNN (1.11M) | 0 | 10 (pilot) | +5.99 [+5.64, +6.33] | +7.05 | +7.32 | -1.4814 / -1.5765 |
+| | 1 | 10 | +6.01 [+5.65, +6.35] | +7.18 | +7.24 | -1.5074 / -1.5551 |
+| | 2 | 10 | +5.88 [+5.53, +6.21] | +6.85 | +7.16 | -1.3601 / -1.4313 |
+| | **mean, range** | | **+5.96, 5.88 to 6.01** | | | |
+| Conv-TasNet L=16 (2.52M) | 0 | 10 (pilot) | +5.84 [+5.48, +6.19] | +6.83 | +6.99 | -1.3422 / -1.3603 |
+| | 1 | 9 | +5.81 [+5.45, +6.15] | +6.70 | +7.01 | -1.3383 / -1.3600 (ep 9: -1.3647) |
+| | 2 | 9 | +5.51 [+5.15, +5.87] | +6.28 | +6.77 | -1.0419 / -1.1057 (ep 9: -1.1304) |
+| | **mean, range** | | **+5.72, 5.51 to 5.84** | | | |
+
+Seed-0 pilot pairs are copied from my earlier entries (the pilot logs were not kept under `pilots/`); seed 1 and 2 pairs are the last lines of `final/<run>/log.txt`. Secondary pilots (seed 0 only, validation only): Conv-TasNet-L256 +4.51 [+4.16, +4.86], CNN-LSTM-tconv +4.47 [+4.11, +4.81].
+
+**Table 2. 3- and 4-source cells (seed 0 only, one run per cell)**
+
+| cell | scored epoch / checkpoint | all-bin gain [CI] | adjacent | co-channel | train / val loss, last epoch |
+|---|---|---|---|---|---|
+| STFT-BLSTM 3-src | 10, `epoch_009_loss_4.2458.pt` | +5.02 [+4.78, +5.27] | +5.15 (n=129) | +5.29 (n=83) | 4.1513 / 4.2458 |
+| DPRNN 3-src (lr 5e-4 restart) | 10, `epoch_009_loss_4.2910.pt` | +4.92 [+4.69, +5.16] | +5.16 | +4.99 | 4.3358 / 4.2910 |
+| Conv-TasNet 3-src | 9, `epoch_008_loss_4.5104.pt` | +4.62 [+4.40, +4.86] | +4.74 | +4.88 | 4.6233 / 4.5677 (ep 9: 4.5104) |
+| STFT-BLSTM 4-src | 9, `epoch_008_loss_7.4714.pt` | +4.44 [+4.25, +4.62] | +4.56 (n=113) | +4.59 (n=68) | 7.4563 / 7.5149 (ep 9: 7.4714) |
+| DPRNN 4-src (lr 1e-3, flagged, screen: no winner) | 7, `epoch_006_loss_8.4403.pt` | +3.41 [+3.26, +3.55] | +3.24 | +3.43 | 8.6142 / 8.5603 (ep 7: 8.4403) |
+| Conv-TasNet 4-src (flagged, 3-LR screen: no effect) | 10, `epoch_009_loss_8.3755.pt` | +3.47 [+3.32, +3.61] | +3.43 | +3.41 | 8.4730 / 8.3755 |
+
+Flag history (all in the paper protocol notes): STFT-BLSTM 3-src flagged at epoch 2, cleared; Conv-TasNet 3-src flagged at epochs 2 and 4, passed as slow (final +4.62); DPRNN 3-src stuck at +3.05 at lr 1e-3 for four epochs, screen chose 5e-4 (borderline +0.51 dB by the rule, monotone in LR), restarted, flagged again at epoch 4 by the gap (0.70 dB) but rising, ended +4.92; DPRNN 4-src flagged at epoch 4 (gap 1.31, rise +0.07) with the screen already showing no winner, ended +3.41 (flat); Conv-TasNet 4-src flat at +3.4 to +3.5 from epoch 4 to 10.
+
+**Table 3. Paired differences, A minus B, all bin [95% CI] (adjacent / co-channel)**
+
+2-source, seeds 0 / 1 / 2 (nominal pairing: same seed number, independent initialisation):
+- STFT minus DPRNN: +0.37 / +0.31 / +0.42, mean +0.37, range +0.31 to +0.42. Adjacent +0.35 to +0.56 and co-channel +0.46 to +0.54 in seeds 1 and 2; lower limits down to +0.02 (adjacent, seed 1).
+- DPRNN minus Conv-TasNet: +0.15 / +0.20 / +0.37, mean +0.24, range +0.15 to +0.37 (adjacent lower limit +0.01 at seed 0).
+- STFT minus Conv-TasNet: +0.52 / +0.51 / +0.79, mean +0.61, range +0.51 to +0.79.
+- Sign positive in all three seed pairs and all three bins for every pair, so the order STFT-BLSTM > DPRNN > Conv-TasNet L16 may be stated under the common recipe (caveats as you set them: nominal pairing, parameter counts 7.36M / 1.11M / 2.52M, per-epoch cost, no "clearly").
+
+3-source (seed 0 only; one pair, so no order statement under your rule):
+- STFT minus DPRNN +0.10 [-0.02, +0.21] (adjacent -0.01 [-0.42, +0.43], co +0.30 [+0.09, +0.53]): not distinguishable in the all bin.
+- DPRNN minus Conv-TasNet +0.30 [+0.21, +0.38] (adjacent +0.43 [+0.12, +0.75], co +0.11 [-0.08, +0.27]).
+- STFT minus Conv-TasNet +0.39 [+0.28, +0.51] (the earlier -0.39 was Conv-TasNet minus STFT).
+
+4-source (seed 0 only):
+- STFT minus DPRNN +1.03 [+0.92, +1.16] (adjacent +1.32, co +1.17); STFT minus Conv-TasNet +0.98 [+0.86, +1.09] (adjacent +1.13, co +1.19).
+- DPRNN minus Conv-TasNet -0.06 [-0.12, +0.01] (adjacent -0.19 [-0.39, -0.01], co +0.02 [-0.13, +0.16]): the two time-domain models are indistinguishable at 4 sources, both flat.
+- The gap between STFT-BLSTM and the two time-domain models grows with source count (0.37 and 0.61 at 2 sources, 0.1 and 0.4 at 3, about 1.0 at 4) only in the sense of these single-seed cells; I do not claim a trend from three points.
+
+**Cost table inputs (raw epoch time in seconds; min / median / max over the 10 epochs; concurrency was two to three heavy jobs plus scoring and screens for almost every epoch, exact per-epoch counts are in my earlier tick entries and can be rebuilt from the checkpoint timestamps if you want them tabulated):**
+STFT-BLSTM (CPU): 2-src seed 1 502 / 513 / 538, seed 2 533 / 539 / 566; 3-src 522 / 533 / 603; 4-src 284 / 291 / 292. DPRNN (MPS): 2-src seed 1 672 / 715 / 903, seed 2 712 / 896 / 1062; 3-src (restart) 626 / 761 / 794 (last epochs with no other heavy job at 626 to 633); 4-src 378 / 420 / 436. Conv-TasNet L16 (MPS): 2-src seed 1 1484 / 1547 / 2110, seed 2 1424 / 1638 / 6873 (epoch 2 contains the two SIGSTOP pauses, about 1.4 h wall clock); 3-src 1134 / 1384 / 1511; 4-src 609 / 693 / 779. DPRNN 3-source restart cost: four stuck epochs at lr 1e-3 (about 55 min) plus the screen.
+
+**What is still open on my side, nothing started:** (1) your validation review; (2) after your go: the single frozen test pass, crop-seed passes, ICA/NMF once, then the paper `\TBD` cells and the ICC scripts you described (no test-split evaluation is run until you say so); (3) optional: clean single-job epoch timings now that nothing else runs, only if you want a measured baseline (about 1 h for all families, one at a time). Guards: free memory 92%, swap back down, ollama unloaded, disk 350 GB. No new reviewer commits.

@@ -1,5 +1,5 @@
 """
-Comprehensive unit tests for channel models per tasks.md Phase 1.2.
+Comprehensive unit tests for channel models per notes/tasks.md Phase 1.2.
 
 Tests:
 - All TDL models (TDL-A/B/C/D/E)

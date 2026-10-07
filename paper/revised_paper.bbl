@@ -42,16 +42,28 @@ M.~Kolb{\ae}k, D.~Yu, Z.-H. Tan, and J.~Jensen, ``Multitalker speech separation
   Transactions on Audio, Speech, and Language Processing}, vol.~25, no.~10,
   pp.~1901--1913, 2017.
 
+\bibitem{lee2023neural}
+G.~C.~F. Lee, A.~Weiss, A.~Lancho, Y.~Polyanskiy, and G.~W. Wornell, ``On
+  neural architectures for deep learning-based source separation of co-channel
+  {OFDM} signals,'' 2023.
+\newblock arXiv:2303.06438.
+
+\bibitem{hinderer2025radar}
+S.~Hinderer, ``Blind source separation of radar signals in time domain using
+  deep learning,'' in {\em 2022 23rd International Radar Symposium (IRS)},
+  2022.
+\newblock arXiv:2509.15603.
+
+\bibitem{lifar2026rf}
+E.~Lifar, S.~Savkin, R.~Madhukara, T.~Jayashankar, Y.~Polyanskiy, and G.~W.
+  Wornell, ``The radio-frequency transformer for signal separation,'' 2026.
+\newblock arXiv:2603.09201.
+
 \bibitem{chang2025csrd}
 S.~Chang, R.~Sun, J.~He, S.~Huang, K.~Yu, and Z.~Feng, ``{CSRD2025}: A
   large-scale synthetic radio dataset for spectrum sensing in wireless
   communications,'' 2025.
 \newblock arXiv:2508.19552.
-
-\bibitem{hinderer2025radar}
-S.~Hinderer, ``Blind source separation of radar signals in time domain using
-  deep learning,'' 2025.
-\newblock arXiv:2509.15603.
 
 \bibitem{oshea2016radio}
 T.~J. O'Shea and N.~West, ``Radio machine learning dataset generation with
@@ -104,6 +116,17 @@ R.~Mennes, J.~Struye, C.~Donato, M.~Camelo, I.~Jabandzi{\'c}, S.~Giannoulis,
   I.~Moerman, and S.~Latr{\'e}, ``Collaborative flow control in the {DARPA}
   spectrum collaboration challenge,'' {\em IEEE Transactions on Network and
   Service Management}, vol.~17, no.~4, pp.~2024--2038, 2020.
+
+\bibitem{boegner2022wideband}
+L.~Boegner, G.~Vanhoy, P.~Vallance, M.~Gulati, D.~Feitzinger, B.~Comar, and
+  R.~D. Miller, ``Large scale radio frequency wideband signal detection \&
+  recognition,'' 2022.
+\newblock arXiv:2211.10335.
+
+\bibitem{zou2026rfgpt}
+H.~Zou, Y.~Tian, B.~Wang, L.~Bariah, S.~Lasaulce, C.~Huang, and M.~Debbah,
+  ``{RF-GPT}: Teaching {AI} to see the wireless world,'' 2026.
+\newblock arXiv:2602.14833.
 
 \bibitem{3gpp45004}
 {3GPP}, ``{3GPP TS 45.004}: Digital cellular telecommunications system ({Phase
@@ -160,23 +183,5 @@ C.~Rapp, ``Effects of {HPA}-nonlinearity on a 4-{DPSK}/{OFDM}-signal for a
 J.~Le~Roux, S.~Wisdom, H.~Erdogan, and J.~R. Hershey, ``{SDR} -- half-baked or
   well done?,'' in {\em Proceedings of the IEEE International Conference on
   Acoustics, Speech and Signal Processing (ICASSP)}, pp.~626--630, 2019.
-
-\bibitem{hadani2017otfs}
-R.~Hadani, S.~Rakib, M.~Tsatsanis, A.~Monk, A.~J. Goldsmith, A.~F. Molisch, and
-  R.~Calderbank, ``Orthogonal time frequency space modulation,'' in {\em
-  Proceedings of the IEEE Wireless Communications and Networking Conference
-  (WCNC)}, pp.~1--6, 2017.
-
-\bibitem{abdoli2015fofdm}
-J.~Abdoli, M.~Jia, and J.~Ma, ``Filtered {OFDM}: A new waveform for future
-  wireless systems,'' in {\em Proceedings of the IEEE International Workshop on
-  Signal Processing Advances in Wireless Communications (SPAWC)}, pp.~66--70,
-  2015.
-
-\bibitem{jaeckel2014quadriga}
-S.~Jaeckel, L.~Raschkowski, K.~Borner, and L.~Thiele, ``{QuaDRiGa}: A 3-{D}
-  multi-cell channel model with time evolution for enabling virtual field
-  trials,'' {\em IEEE Transactions on Antennas and Propagation}, vol.~62,
-  no.~6, pp.~3242--3256, 2014.
 
 \end{thebibliography}

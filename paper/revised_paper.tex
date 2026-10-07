@@ -32,7 +32,8 @@ Engineering. (\textit{Manuscript submitted 2026.})}%
 % ============================================================
 Cellular standards from 2G to 5G share spectrum, and receivers see several at
 once. Source separation could recover the waveforms, but to our knowledge no
-public dataset existed for training data-driven methods on this task. We present
+public dataset provides per-source references for multi-standard cellular
+mixtures. We present
 RFSS (RF Signal Source Separation),
 100,000 multi-source samples built from the project's own implementations of the
 four 3GPP physical-layer specifications (GSM, UMTS, LTE, 5G NR), with
@@ -84,9 +85,11 @@ baseline is trained on a corpus. Deep models separate speech with a mask
 estimated over long temporal
 context, and they are trained with permutation-invariant
 losses~\cite{luo2019conv,luo2020dual,kolbaek2017multitalker}. Learned RF
-separation is already active: a large synthetic radio corpus for spectrum
-sensing~\cite{chang2025csrd}, and a time-domain separator that recovers two
-unknown radar and communication waveforms~\cite{hinderer2025radar}. Training a
+separation is already active: neural separators for co-channel OFDM
+mixtures~\cite{lee2023neural}, a time-domain separator that recovers two
+unknown radar and communication waveforms~\cite{hinderer2025radar}, a
+transformer separator evaluated on the RF Challenge~\cite{lifar2026rf}, and a
+large synthetic radio corpus for spectrum sensing~\cite{chang2025csrd}. Training a
 separator on multi-standard mixtures still needs per-source references together
 with realistic propagation and hardware effects.
 
@@ -95,8 +98,9 @@ single-signal samples over synthetic modulation types and over-the-air
 recordings, with no mixtures and no per-source ground
 truth~\cite{oshea2016radio,oshea2016convolutional,oshea2018over}. Deep models
 classify the signals of individual standards on a single channel or across
-distributed sensors~\cite{rajendran2018deep}, and GNU Radio generates
-waveforms but supplies no mixing or ground-truth labeling~\cite{blossom2004gnu}.
+distributed sensors~\cite{rajendran2018deep}, and GNU Radio is a toolkit for
+building waveform generators that ships no multi-standard mixture
+corpus~\cite{blossom2004gnu}.
 In audio, WSJ0-2mix, WHAM! and MUSDB18 pair every mixture with its source
 signals, which is what made permutation-invariant training
 practical~\cite{hershey2016deep,wichern2019wham,rafii2017musdb18}. No public RF
@@ -155,7 +159,7 @@ Dataset & Domain & Signals & Mix. & Per-source refs & Src. & Size \\
 \midrule
 RadioML~\cite{oshea2016radio,oshea2016convolutional,oshea2018over} & RF & 11 or 24 modulations & no & no & 1 & 2,555,904 frames of 1,024 \\
 RF Challenge~\cite{lancho2024rfchallenge} & RF & 2 desired, 4 interferers & 8 types & interferer only & 2 & 40,960 samples \\
-GNU Radio~\cite{blossom2004gnu} & RF & user-defined & no & no & user & -- \\
+GNU Radio~\cite{blossom2004gnu} & RF & user-defined & user-built & user-built & user-built & -- \\
 WSJ0-2mix~\cite{hershey2016deep,luo2019conv} & Audio & speech & 20,000 train & yes & 2 & 30 h train, 10 h val. \\
 WHAM!~\cite{wichern2019wham} & Audio & speech, noise & as WSJ0-2mix & yes & 2 & 17 GB noise set \\
 MUSDB18~\cite{rafii2017musdb18} & Music & 4 stems & 150 tracks & yes & 4 & about 10 h, 44.1 kHz \\
@@ -172,8 +176,10 @@ reconstruct~\cite{oshea2016radio,oshea2016convolutional,oshea2018over}. The
 DARPA Spectrum Collaboration Challenge addressed cooperative spectrum sharing
 among radios, which allocates resources rather than recovering waveforms, and
 it released no per-source separation labels~\cite{mennes2020sc2}. GNU Radio
-generates waveforms but provides no mixing, ground-truth labeling or
-conformance check~\cite{blossom2004gnu}.
+is a toolkit for building waveform generators, not a mixture corpus with
+per-source references~\cite{blossom2004gnu}. WidebandSig53 has several
+overlapping signals per recording from 53 classes, but its labels are classes
+and time-frequency boxes, not waveforms~\cite{boegner2022wideband}.
 
 Audio separation research rests on benchmarks that do store the individual
 sources. WSJ0-2mix pairs two speakers with per-source signals and motivated
@@ -183,11 +189,15 @@ stems per track~\cite{rafii2017musdb18}. RFSS copies that structure for RF
 signals: every mixture carries its per-source waveforms, so the same per-source
 structure lets these architectures be trained with their original
 loss~\cite{luo2019conv,luo2020dual}. Learned RF separation is now an active
-line: CSRD2025 is the largest synthetic radio dataset for spectrum sensing,
-with over 25 million frames and 100 modulation types~\cite{chang2025csrd}, and
-Hinderer recovers two unknown radar and communication waveforms with a
-deep audio-style separator in the time domain~\cite{hinderer2025radar}. Neither
-releases a public corpus of cellular mixtures with per-source references.
+line. Audio-oriented architectures can fail on co-channel OFDM mixtures unless
+they are adapted to the OFDM structure~\cite{lee2023neural}, and a
+time-domain separator~\cite{hinderer2025radar} and a transformer evaluated on
+the RF Challenge~\cite{lifar2026rf} address other RF mixtures. Two large
+synthetic corpora exist, but neither is for separation: CSRD2025 (over 25
+million frames, 100 modulation types) targets spectrum
+sensing~\cite{chang2025csrd}, and RF-GPT trains a language model on
+spectrograms with 2 to 5 overlapping signals~\cite{zou2026rfgpt}. None
+releases cellular mixtures with per-source waveform references.
 
 The closest RF work is the RF Challenge, a competition at ICASSP~2024 on
 interference rejection~\cite{lancho2024rfchallenge}. Each of its mixtures holds
@@ -201,9 +211,9 @@ problem instead: every source is an unknown waveform from one of four cellular
 standards (with the GSM timing departure of Section~\ref{sec:construction}), the
 source count varies from 2 to 4, and the separator resolves the permutation.
 
-To our knowledge, no earlier public dataset addresses blind separation of 2 to 4
-simultaneous 3GPP-standard sources at this scale, and no labeled training corpus
-existed. Section~\ref{sec:benchmark} reports what three transferred deep models
+To our knowledge, no public dataset addresses blind separation of 2 to 4
+simultaneous 3GPP-standard sources at this scale with per-source waveform
+references. Section~\ref{sec:benchmark} reports what three transferred deep models
 reach on it.
 
 % ============================================================
@@ -639,9 +649,8 @@ estimates. The gain is the absolute score minus the input score, where the input
 score is the mean over the sources of SI-SINR(mixture, source). The mixture contains
 every source, so the input score is finite ($-4.4$, $-9.3$ and $-12.0$~dB on average over the
 2-, 3- and 4-source test samples). The gain is the main figure because the input level
-depends on source count, mixing mode and SNR. For context, well-performing speech
-separation systems reach about 15~dB SI-SNR improvement on
-WSJ0-2mix~\cite{luo2019conv}.
+depends on source count, mixing mode and SNR. For context, Conv-TasNet reaches about
+15~dB SI-SNR improvement on WSJ0-2mix~\cite{luo2019conv}.
 
 \subsection{Reference Methods}
 
@@ -848,12 +857,14 @@ release, and the generation and evaluation code is at
 
 \subsection{Relation to Earlier arXiv Versions}
 
-This paper supersedes arXiv:2508.12106 and arXiv:2604.00398 by the same group. The first reported separation results
-(26.7~dB on 52,847 samples) that could not be reproduced from the released data and code; the
-results here replace them. The second reported a benchmark whose dataset description contained errors: the common
-sampling rate, the signal duration, the channel and Doppler ranges, the SNR range, the share of mixing modes and the GSM
-peak-to-average power ratio. Sections~\ref{sec:construction} and~\ref{sec:characterization} give the corrected description. The
-corrected data are released as v1.1; the files of the earlier release remain available as v1.0.
+This paper supersedes arXiv:2508.12106 and arXiv:2604.00398 by the same group.
+The first reported separation results (26.7~dB on 52,847 samples) that could not
+be reproduced from the released data and code; the results here replace them.
+The second described the dataset with errors (common sampling rate, signal
+duration, channel and Doppler ranges, SNR range, mixing-mode shares and GSM
+peak-to-average power ratio), which Sections~\ref{sec:construction}
+and~\ref{sec:characterization} correct. Release v1.1 holds the same HDF5 files as
+v1.0, with the corrected documentation, the checkpoints and the licences.
 
 \subsection{HDF5 Access Example}
 
@@ -939,13 +950,9 @@ complex waveform with no spatial structure, so the metadata's MIMO field is
 recorded but unused. A $2\times2$ or $4\times4$ extension with spatial correlation
 per 3GPP TDL would allow spatial separation methods.
 
-\textbf{Waveform coverage and future directions.} The dataset covers GSM, UMTS,
-LTE and 5G~NR; NB-IoT, LTE-M, sidelink (D2D) and ISAC waveforms are absent.
-Extensions under consideration are 6G candidate waveforms
-(OTFS~\cite{hadani2017otfs}, filtered OFDM~\cite{abdoli2015fofdm}), a
-geometry-based channel model~\cite{jaeckel2014quadriga}, higher source counts and
-wider bandwidths, and modulation-classification labels for joint separation and
-classification.
+\textbf{Waveform coverage.} The dataset covers GSM, UMTS, LTE and 5G~NR;
+NB-IoT, LTE-M, sidelink and ISAC waveforms are absent, and so are source counts
+above four and bandwidths above 100~MHz.
 
 % ============================================================
 \section{Conclusion}

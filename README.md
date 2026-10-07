@@ -32,7 +32,7 @@ uv sync            # or: pip install -e .
 hf download Chrishao/rfss --repo-type dataset --include "data/*" --local-dir .
 ```
 
-The full multi-source file is about 103 GiB; `data/rfss_single.h5` (1.3 GiB) is a small file for quick tests.
+The full multi-source file is 102.5 GiB; `data/rfss_single.h5` (1.3 GiB) is a small file for quick tests.
 
 ## Generate data yourself
 
@@ -81,7 +81,7 @@ uv run pytest
 
 ```bibtex
 @article{chen2026rfss,
-  title   = {{RFSS}: A Multi-Standard {RF} Signal Source Separation Dataset with 3GPP-Standardized Channel and Hardware Impairments},
+  title   = {{RFSS}: A Multi-Standard {RF} Signal Source Separation Dataset with {3GPP} {TDL} Channels and Hardware Impairments},
   author  = {Chen, Hao and Jin, Rui and Tan, Dayuan},
   journal = {arXiv preprint arXiv:2508.12106},
   year    = {2026}

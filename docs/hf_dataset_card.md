@@ -29,8 +29,8 @@ Code: https://github.com/chenhao1umbc/dataset_RFSS
 
 | File | Samples | Size | Content |
 |---|---|---|---|
-| `data/rfss_dataset.h5` | 100,000 | about 103 GiB | 2-, 3- and 4-source mixtures |
-| `data/rfss_single.h5` | 4,000 | about 1.3 GiB | single-source reference samples |
+| `data/rfss_dataset.h5` | 100,000 | 102.5 GiB | 2-, 3- and 4-source mixtures |
+| `data/rfss_single.h5` | 4,000 | 1.3 GiB | single-source reference samples |
 | `checkpoints/` | 15 files | about 0.8 GB | trained models of the paper (see Benchmark) |
 
 ## HDF5 layout (both files)
@@ -69,7 +69,7 @@ Updated 2026-10-03 after the Builder's forward-model check (`check/verify_refere
    (GSM 2.166 MHz, UMTS 7.68 MHz, LTE 1.92-30.72 MHz, 5G NR 15.36-122.88 MHz) for about 1 ms.
    All sources of one sample are resampled to a common mixture rate equal to the highest source rate in that sample.
    `signal_lengths` therefore ranges from 1,890 to 122,880.
-2. **Native length is not exactly 1 ms for every standard.** GSM sources hold 1,890 samples (nominal 2,166). 5G NR sources are slightly shorter than
+2. **Native length is not exactly 1 ms for every standard.** GSM sources hold 1,890 samples (nominal 2,166; see item 8). 5G NR sources are slightly shorter than
    nominal (for example 122,696, 122,640, 61,348 and 30,660 samples; nominal 122,880, 61,440 and 30,720). LTE and UMTS are exact.
    Find a source's true length as the index of its last non-zero sample plus one. Do not assume `round(sample_rate * 0.001)`.
 3. **What `source_signals` holds.** Each stored source is the waveform **after** its TDL channel and hardware impairments
@@ -86,6 +86,12 @@ Updated 2026-10-03 after the Builder's forward-model check (`check/verify_refere
    SI-SINR is scale invariant.
 7. **MIMO field is vestigial.** `metadata.mimo_config` reports `1x1`, `2x2` or `4x4`, but no MIMO processing is applied in the generator. All mixtures are single-stream (SISO).
    Ignore this field.
+8. **Departures from the 3GPP specifications.** (a) GSM: the generator truncates the samples per symbol to an integer
+   (`int(2.166 MHz / 270.833 ksym/s) = 7`), so the released GSM sources run at 309.4 ksym/s, 14.3% above the 270.833 ksym/s of TS 45.004,
+   and a record of 270 symbols lasts 1,890 samples = 0.873 ms. (b) 5G NR: the cyclic prefix is a flat 7% of the FFT (143 samples at the 2048-point FFT)
+   instead of the TS 38.211 values (176 on the first symbol of each slot, 144 on the others). (c) UMTS: every source is a single user
+   (spreading factor 16, OVSF code 0, scrambling code 0). (d) Not every source is impaired, see the generation summary below.
+   The LTE cyclic prefix follows the TS 36.211 normal-CP lengths.
 
 ## Metadata schema
 
@@ -101,8 +107,9 @@ and `sources`: a list with, per source, `standard`, `signal_params` (bandwidth, 
 - Mixing mode: about 40% co-channel, 60% adjacent-channel. In adjacent-channel mode source k of N is shifted by (k - floor(N/2)) x 2 MHz for every standard and no adjacent-channel filtering is modelled, so most mixtures still contain overlapping bands (97% of the two-source adjacent-channel test samples). For the 1.8% of adjacent-channel samples whose mixture rate is below 4 MHz (GSM and narrow LTE sources only) the shift exceeds the Nyquist frequency and the shifted source wraps around in frequency; the aligned references apply the same wrap, so the labels stay exact.
 - Channels: 3GPP TDL-A to TDL-E (TR 38.901), weighted selection, Jakes fading with Doppler up to 700 Hz.
 - Noise: AWGN, SNR from -10 to 40 dB (observed mean about 12 dB).
-- Hardware impairments per source: CFO, SFO, I/Q imbalance, DC offset, phase noise, PA nonlinearity (Rapp model);
-  about 20% of sources clean, 30% one impairment, 50% several.
+- Hardware impairments per source: CFO, SFO, I/Q imbalance, DC offset, phase noise, PA nonlinearity (Rapp model).
+  CFO and SFO derive from one oscillator error. Of the 265,044 sources, 52,828 (19.9%) are clean, 79,314 (29.9%) receive a single impairment type
+  and 132,902 (50.1%) receive all six stages. The TDL channel is applied to every source.
 - Standards share in the scanned subset: 5G NR 0.38, LTE 0.37, GSM 0.12, UMTS 0.12.
 
 ## Splits
@@ -152,7 +159,7 @@ Data: CC BY-NC 4.0, free for everyone to use and share with attribution, not for
 
 ```bibtex
 @article{chen2026rfss,
-  title   = {{RFSS}: A Multi-Standard {RF} Signal Source Separation Dataset with 3GPP-Standardized Channel and Hardware Impairments},
+  title   = {{RFSS}: A Multi-Standard {RF} Signal Source Separation Dataset with {3GPP} {TDL} Channels and Hardware Impairments},
   author  = {Chen, Hao and Jin, Rui and Tan, Dayuan},
   journal = {arXiv preprint arXiv:2508.12106},
   year    = {2026}

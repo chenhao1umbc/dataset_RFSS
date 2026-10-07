@@ -9,7 +9,7 @@ Release "v1.1" means: same data files, corrected documentation, a reference-buil
 Tag the current Hugging Face revision as `v1.0` so the history is clear.
 
 ## Definitions
-- **Stored source (`source_signals[i, k]`)**: waveform of source k after TDL channel and the five hardware impairments, at its native rate,
+- **Stored source (`source_signals[i, k]`)**: waveform of source k after TDL channel and the hardware impairments, at its native rate,
   zero-padded. Before resampling, frequency shift, power scaling and AWGN. Its true length is the index of the last non-zero sample plus one.
 - **Aligned reference**: `normalize_power( freq_shift( pad( resample( stored source ) ) ), power_ratios_db[k] )`; `freq_shift` only in adjacent-channel mode.
   This is exactly the additive term of source k in the noiseless mixture.
@@ -31,4 +31,4 @@ Tag the current Hugging Face revision as `v1.0` so the history is clear.
 
 ## Open points for the user
 - Confirm "v1.1 = same files + corrections" is what you meant by "corrections".
-- Confirm that no regeneration of the 103 GB data is wanted (not needed as far as the evidence shows).
+- Confirm that no regeneration of the 110 GB data is wanted (not needed as far as the evidence shows).

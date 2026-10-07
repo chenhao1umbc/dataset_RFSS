@@ -323,7 +323,7 @@ def main():
         pooled = np.concatenate([papr_values(signal, fs)[0] for signal in signals])
         window = window_samples(fs)
         levels, ccdf_values = ccdf(pooled)
-        ax_a.semilogy(levels, ccdf_values, color=color, linestyle=linestyle, linewidth=0.8,
+        ax_a.semilogy(levels, ccdf_values, color=color, linestyle=linestyle, linewidth=1.6,
                       label=name)
         summary = {
             "rows": len(signals),
@@ -361,7 +361,7 @@ def main():
         signals, fs, indices = data[name]
         color, linestyle = STYLE[name]
         freq_mhz, db, count, n_fft = psd_average(signals, fs)
-        ax_b.plot(freq_mhz, db, color=color, linestyle=linestyle, linewidth=0.8)
+        ax_b.plot(freq_mhz, db, color=color, linestyle=linestyle, linewidth=1.6)
         psd_summary[name] = {"segments": int(count), "nfft": int(n_fft),
                              "bin_khz": fs / n_fft / 1e3, "rows": len(signals),
                              "min_db": float(db.min()),
@@ -398,7 +398,7 @@ def main():
         signals, fs, indices = data[name]
         color, linestyle = STYLE[name]
         centres, cdf_values = envelope_cdf(signals, CDF_EDGES)
-        ax_c.plot(centres, cdf_values, color=color, linestyle=linestyle, linewidth=0.8)
+        ax_c.plot(centres, cdf_values, color=color, linestyle=linestyle, linewidth=1.6)
         pooled = np.concatenate([np.abs(signal) / np.sqrt(np.mean(np.abs(signal) ** 2))
                                  for signal in signals])
         cdf_summary[name] = {"rows": len(signals), "p50": float(np.percentile(pooled, 50)),
@@ -426,7 +426,7 @@ def main():
               f"max={bw_summary[name]['max_mhz']:6.2f} MHz")
 
     rayleigh = 1.0 - np.exp(-CDF_EDGES[1:] ** 2)
-    ax_c.plot(CDF_EDGES[1:], rayleigh, color="0.45", linestyle=(0, (2.0, 1.4)), linewidth=0.7,
+    ax_c.plot(CDF_EDGES[1:], rayleigh, color="0.45", linestyle=(0, (2.0, 1.4)), linewidth=1.2,
               label="Rayleigh")
     ax_c.set_xlabel("Amplitude / RMS")
     ax_c.set_ylabel("CDF")
@@ -439,8 +439,8 @@ def main():
               fontsize=FS_ANNOT, color="#1a1a1a")
 
     handles = [Line2D([], [], color=STYLE[name][0], linestyle=STYLE[name][1],
-                       linewidth=0.8, label=name) for name in STANDARDS]
-    handles.append(Line2D([], [], color="0.45", linestyle=(0, (2.0, 1.4)), linewidth=0.7,
+                       linewidth=1.6, label=name) for name in STANDARDS]
+    handles.append(Line2D([], [], color="0.45", linestyle=(0, (2.0, 1.4)), linewidth=1.2,
                           label="Rayleigh"))
     fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.0),
                ncol=5, fontsize=FS_ANNOT, handlelength=1.8, handletextpad=0.4,

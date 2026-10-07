@@ -1,0 +1,11 @@
+\begin{tabular}{llllr}
+\toprule
+Model & Src. & Flagged at & Screen outcome & Final gain \\
+\midrule
+STFT-BLSTM & 3 & 2 & cleared at epoch 2 & +5.02 \\
+Conv-TasNet & 3 & 2, 4 & slow, not stuck (screen: none) & +4.62 \\
+Conv-TasNet & 4 & 4 & three rates, no change & +3.47 \\
+DPRNN & 3 & 2, 4 & restarted at $5\times10^{-4}$ & +4.92 \\
+DPRNN & 4 & 4 & three rates, no winner & +3.41 \\
+\bottomrule
+\end{tabular}

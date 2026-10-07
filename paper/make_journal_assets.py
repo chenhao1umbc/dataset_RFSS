@@ -142,6 +142,30 @@ def cost_table(runs: list) -> str:
     return "\n".join(lines) + "\n"
 
 
+def flagged_table(sweep: dict) -> str:
+    """Flagged-cell record for the appendix: every 3- or 4-source cell the rule
+    marked, its screen outcome, and the final validation gain (all-samples bin)."""
+    rows = [
+        ("STFT-BLSTM", 3, "2", "cleared at epoch 2",
+         "stft_final_stft_blstm_3src_seed0_ep10"),
+        ("Conv-TasNet", 3, "2, 4", "slow, not stuck (screen: none)",
+         "l16_final_conv_tasnet_3src_seed0_ep9"),
+        ("Conv-TasNet", 4, "4", "three rates, no change",
+         "l16_final_conv_tasnet_4src_seed0_ep10"),
+        ("DPRNN", 3, "2, 4", "restarted at $5\\times10^{-4}$",
+         "dprnn_final_dprnn_3src_seed0_ep10"),
+        ("DPRNN", 4, "4", "three rates, no winner",
+         "dprnn_final_dprnn_4src_seed0_ep7"),
+    ]
+    lines = [r"\begin{tabular}{llllr}", r"\toprule",
+             r"Model & Src. & Flagged at & Screen outcome & Final gain \\", r"\midrule"]
+    for model, n, epochs, outcome, key in rows:
+        final = signed(float(sweep[key]["val"]["all"]["gain_over_input_db"]))
+        lines.append(f"{model} & {n} & {epochs} & {outcome} & {final} \\\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines) + "\n"
+
+
 def main():
     passes = {**load_pass("eval_all_src2_crop0_frozen_results.json"), **load_pass("eval_all_src34_crop0_frozen_results.json")}
     numbers = {"git_commit_2src": passes[2]["commit"], "git_commit_34src": passes[3]["commit"]}
@@ -171,6 +195,7 @@ def main():
     (OUT / "tables" / "table_cost.tex").write_text(cost_table(runs))
     sweep = json.loads((ROOT / "check" / "encoder_sweep_results.json").read_text())
     (OUT / "tables" / "table_lr.tex").write_text(lr_table(sweep))
+    (OUT / "tables" / "table_flagged.tex").write_text(flagged_table(sweep))
     (OUT / "journal_numbers.json").write_text(json.dumps(numbers, indent=1))
 
 

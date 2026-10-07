@@ -1,150 +1,152 @@
 \relax 
-\citation{3gpp38901}
-\citation{luo2019conv}
-\citation{luo2020dual}
-\citation{leroux2019sdr}
-\citation{cabric2004implementation,mitola1999cognitive}
 \citation{andrews2014what}
-\citation{haykin2005cognitive,goldsmith2009breaking,axell2012sensing}
-\citation{oshea2017introduction,west2017deep,oshea2018over}
-\citation{oshea2016radio,oshea2016convolutional}
-\citation{rajendran2018deep,blossom2004gnu}
-\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
-\citation{3gpp25102}
-\citation{oshea2016radio,oshea2016convolutional,oshea2018over}
-\citation{mennes2020sc2}
-\citation{rajendran2018deep}
-\citation{blossom2004gnu}
-\citation{hershey2016deep}
-\citation{kolbaek2017multitalker}
-\citation{wichern2019wham}
-\citation{rafii2017musdb18}
-\citation{leroux2019sdr}
-\citation{leroux2019sdr}
-\citation{luo2019conv}
-\citation{luo2020dual}
-\citation{subakan2021sepformer}
+\citation{axell2012sensing,goldsmith2009breaking}
 \citation{hyvarinen2000ica}
 \citation{fevotte2011nmf}
+\citation{luo2019conv,luo2020dual,kolbaek2017multitalker}
+\citation{chang2025csrd}
+\citation{hinderer2025radar}
+\citation{oshea2016radio,oshea2016convolutional,oshea2018over}
+\citation{rajendran2018deep}
+\citation{blossom2004gnu}
+\citation{hershey2016deep,wichern2019wham,rafii2017musdb18}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
+\citation{oshea2016radio,oshea2016convolutional,oshea2018over}
 \citation{lancho2024rfchallenge}
-\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{2}{}\protected@file@percent }
-\newlabel{sec:related}{{II}{2}{}{section.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}RF Datasets for Signal Intelligence}{2}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Audio Source Separation Datasets}{2}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}RF Source Separation Prior Work}{2}{}\protected@file@percent }
+\citation{blossom2004gnu}
+\citation{hershey2016deep,luo2019conv}
+\citation{wichern2019wham}
+\citation{rafii2017musdb18}
+\citation{oshea2016radio,oshea2016convolutional,oshea2018over}
+\citation{mennes2020sc2}
+\citation{blossom2004gnu}
+\citation{hershey2016deep,kolbaek2017multitalker}
+\citation{wichern2019wham}
+\citation{rafii2017musdb18}
+\citation{luo2019conv,luo2020dual}
+\citation{chang2025csrd}
+\citation{hinderer2025radar}
+\citation{lancho2024rfchallenge}
 \citation{3gpp45004}
 \citation{3gpp25211}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{2}{}\protected@file@percent }
+\newlabel{sec:related}{{II}{2}{}{section.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Dataset Construction}{2}{}\protected@file@percent }
+\newlabel{sec:construction}{{III}{2}{}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Signal Generation}{2}{}\protected@file@percent }
+\newlabel{eq:gsm}{{1}{2}{}{equation.1}{}}
 \citation{3gpp25213}
 \citation{3gpp36211}
 \citation{3gpp38211}
-\citation{3gpp38901}
-\citation{jakes1994microwave}
-\citation{3gpp38104,3gpp38101,3gpp36101,3gpp25102}
-\@writefile{toc}{\contentsline {section}{\numberline {III}Dataset Construction}{3}{}\protected@file@percent }
-\newlabel{sec:construction}{{III}{3}{}{section.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Signal Generation}{3}{}\protected@file@percent }
-\newlabel{eq:gsm}{{1}{3}{}{equation.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Public datasets used for separation-style training, compared with RFSS. Cells come from the cited papers and from this paper; a dash means the cited paper does not report the quantity. ``Per-source references'' means the dataset stores the individual source waveforms of each mixture. The WHAM! size is the archive size from its distribution page, and the 2,555,904-frame count is the RadioML 2018.01A release figure, which the cited corpus papers do not state.}}{3}{}\protected@file@percent }
+\newlabel{tab:related}{{I}{3}{}{table.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces RFSS construction pipeline. Each of the $K$ sources ($K = 2, 3$ or $4$, drawn with replacement) passes through signal generation, a 3GPP TDL channel and the hardware impairments; the mixer combines them co-channel or with adjacent-channel offsets in multiples of 2~MHz, noise is added at the sample SNR, and the mixture, per-source references and metadata are written to HDF5. References and metadata leave the impairment outputs before mixing.}}{3}{}\protected@file@percent }
+\newlabel{fig:pipeline}{{1}{3}{}{figure.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Implementation versus specification. ``Specification'' is the value in the cited 3GPP document, ``implemented'' the value the generator produces. The consequence column states what the departure changes in the released data.}}{3}{}\protected@file@percent }
+\newlabel{tab:spec}{{II}{3}{}{table.2}{}}
 \newlabel{eq:umts}{{2}{3}{}{equation.2}{}}
 \newlabel{eq:lte}{{3}{3}{}{equation.3}{}}
-\newlabel{eq:nr}{{4}{3}{}{equation.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Channel Modeling}{3}{}\protected@file@percent }
-\newlabel{eq:mixture}{{5}{3}{}{equation.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Hardware Impairments}{3}{}\protected@file@percent }
-\citation{3gpp25102}
+\citation{3gpp38901}
+\citation{jakes1994microwave}
+\citation{3gpp38104,3gpp36104,3gpp25104}
 \citation{rapp1991effects}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces RFSS dataset construction pipeline. Each sample passes through independent per-source signal generation, 3GPP TDL channel modeling, hardware impairment injection, and two-mode mixing before ground-truth targets and the mixture observation are written to HDF5.}}{4}{}\protected@file@percent }
-\newlabel{fig:pipeline}{{1}{4}{}{figure.1}{}}
+\newlabel{eq:nr}{{4}{4}{}{equation.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Channel Modeling}{4}{}\protected@file@percent }
+\newlabel{eq:mixture}{{5}{4}{}{equation.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Hardware Impairments}{4}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Impairment modes over the 265,044 released sources. The mode is drawn per source with weights 0.20, 0.30 and 0.50. A stage is active when its parameter is off the disabled default.}}{4}{}\protected@file@percent }
+\newlabel{tab:impairment}{{III}{4}{}{table.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Mixing Scenarios}{4}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Dataset Characterization}{4}{}\protected@file@percent }
-\newlabel{sec:characterization}{{IV}{4}{}{section.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Composition}{4}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Signal Properties}{4}{}\protected@file@percent }
 \citation{leroux2019sdr}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces RFSS dataset composition statistics. Left: source-count distribution across 100,000 samples. Center: mixing-mode frequency (co-channel vs.\ adjacent-channel). Right: standard-combination frequency for multi-source samples.}}{5}{}\protected@file@percent }
-\newlabel{fig:dataset_stats}{{2}{5}{}{figure.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Dataset Characterization}{5}{}\protected@file@percent }
+\newlabel{sec:characterization}{{IV}{5}{}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Composition}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Signal Properties}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}HDF5 Format and Metadata}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {V}Benchmark Experiments}{5}{}\protected@file@percent }
 \newlabel{sec:benchmark}{{V}{5}{}{section.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Evaluation Metric}{5}{}\protected@file@percent }
 \newlabel{sec:metrics}{{\mbox  {V-A}}{5}{}{subsection.5.1}{}}
-\newlabel{eq:sisinr}{{6}{5}{}{equation.6}{}}
-\citation{hershey2016deep,luo2019conv}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Short-time Fourier transform spectrograms of single-source samples for all four cellular standards. Each panel shows time on the horizontal axis and frequency on the vertical axis, with power in dB encoded as color. The distinct spectral structures motivate the separability of multi-standard mixtures.}}{6}{}\protected@file@percent }
+\citation{luo2019conv}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces RFSS dataset composition over the 100,000 samples. (a) Sample count by source count and mixing mode, counts printed. (b) Mixture SNR distribution in 2~dB bins. (c) Standard combination for the 49,899 two-source samples, upper triangle including the diagonal. The pairs are unordered, so the same-standard pairs (GSM 772, UMTS 763, LTE 7,185, 5G~NR 6,942; 15,662 of 49,899) appear on the diagonal.}}{6}{}\protected@file@percent }
+\newlabel{fig:dataset_stats}{{2}{6}{}{figure.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Short-time Fourier transform spectrograms of the four cellular standards, each panel on its standard's own native frequency span ($\pm f_s/2$: GSM $\pm 1.083$, UMTS $\pm 3.84$, LTE $\pm 7.68$, 5G~NR $\pm 30.72$~MHz), with its own frequency ticks; shared time axis (0 to 1~ms) and one colour scale and bar. Signals are released single-source samples from \texttt  {rfss\_single.h5} (channel and impairments, before mixing and AWGN) at each native rate: GSM 0, UMTS 1000, LTE 2005 (10~MHz), 5G~NR 3003 ($\mu \!=\!1$, 50~MHz). Each label is the measured 99\,\% bandwidth of that one record, not the row median.}}{6}{}\protected@file@percent }
 \newlabel{fig:spectrograms}{{3}{6}{}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Classical Baselines}{6}{}\protected@file@percent }
+\newlabel{eq:sisinr}{{6}{6}{}{equation.6}{}}
 \citation{luo2019conv}
 \citation{luo2020dual}
-\citation{kolbaek2017multitalker}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Signal quality characterization for the four cellular standards. Left: empirical PAPR distributions. Center: power spectral density estimates. Right: amplitude (envelope) probability density functions.}}{7}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Signal quality of the four cellular standards, from the same released samples as Fig.~\ref {fig:spectrograms} (channel and impairments, no AWGN) at each native rate. (a) PAPR CCDF pooled over 500 GSM, 334 UMTS, 321 LTE and 219 5G~NR rows, over 0.5~ms windows with 50\,\% overlap ($1000$, $1002$, $963$ and $438$ windows). (b) Peak-normalised power spectral density, Welch-averaged over the same rows. (c) Envelope CDF on the RMS-normalised amplitude axis with the Rayleigh reference $1 - \exp (-a^2)$.}}{7}{}\protected@file@percent }
 \newlabel{fig:signal_quality}{{4}{7}{}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Reference Methods}{7}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Deep Learning Methods}{7}{}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Overall PI-SI-SINR (dB) on the test split ($N\!=\!150$ for baselines, $N\!=\!300$ for DL, seed\,42). Higher values indicate better separation. Bold: best per row.}}{7}{}\protected@file@percent }
-\newlabel{tab:main}{{I}{7}{}{table.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Results}{7}{}\protected@file@percent }
 \citation{kolbaek2017multitalker}
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Co-channel PI-SI-SINR (dB). $N_{\rm  co}$ gives the number of co-channel test samples for the deep-learning evaluation ($N\!=\!300$ per source count); classical baselines were evaluated on an independent random draw ($N\!=\!150$ per source count, yielding 49, 47, and 65 co-channel samples for 2-, 3-, and 4-source configurations respectively). Bold: best per row.}}{8}{}\protected@file@percent }
-\newlabel{tab:co}{{II}{8}{}{table.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Co-channel PI-SI-SINR (dB) stratified by mixture SNR, 3-source. $N$ denotes co-channel samples per bin. Higher is better.}}{8}{}\protected@file@percent }
-\newlabel{tab:snr}{{III}{8}{}{table.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}SNR Sensitivity Analysis}{8}{}\protected@file@percent }
-\newlabel{sec:snr}{{\mbox  {V-E}}{8}{}{subsection.5.5}{}}
-\newlabel{sec:adjfloor}{{\mbox  {V-E}1}{8}{}{subsubsection.5.5.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-E}1}Adjacent-channel Evaluation Floor}{8}{}\protected@file@percent }
-\citation{hadani2017otfs}
-\citation{abdoli2015fofdm}
-\citation{jaeckel2014quadriga}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Benchmark results. Left: overall PI-SI-SINR (dB) for all five methods across 2-, 3-, and 4-source configurations. Right: co-channel PI-SI-SINR for all five methods across 2-, 3-, and 4-source configurations.}}{9}{}\protected@file@percent }
-\newlabel{fig:benchmark}{{5}{9}{}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Evaluation Protocol}{8}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Gain over the input mixture (dB, PI-SI-SINR) on the test split, by source count (random 7,680-sample windows, crop seed 0). Deep models at 2 sources: mean over three seeds (range of the seeds); deep models at 3 and 4 sources: one seed, 95\% bootstrap interval; all other rows: 95\% bootstrap interval over test samples. The input level is $-4.4$ / $-9.3$ / $-12.0$~dB.}}{8}{}\protected@file@percent }
+\newlabel{tab:main}{{IV}{8}{}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Results}{8}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Two-source gain over the input (dB) by mixing mode on the test split. $N$ is the number of test samples in each column.}}{9}{}\protected@file@percent }
+\newlabel{tab:modes}{{V}{9}{}{table.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Training cost per epoch (minimum / median / maximum over the epochs of the final runs; two-source: seeds 1 and 2, otherwise seed 0) and the number of other final training runs at the same time. The maximum of the 2-source Conv-TasNet includes two manual pauses of one run. Scoring jobs, screens and the seed-0 pilots are not counted. STFT-BLSTM ran on the CPU, the others on the GPU of an Apple M4 Pro with 48~GB memory.}}{9}{}\protected@file@percent }
+\newlabel{tab:cost}{{VI}{9}{}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-F}}SNR Sensitivity Analysis}{9}{}\protected@file@percent }
+\newlabel{sec:snr}{{\mbox  {V-F}}{9}{}{subsection.5.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Two-source gain over the input (dB) by mixture SNR on the test split.}}{9}{}\protected@file@percent }
+\newlabel{tab:snr}{{VII}{9}{}{table.7}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Data Access and Format}{9}{}\protected@file@percent }
 \newlabel{sec:access}{{VI}{9}{}{section.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Public Release}{9}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}HDF5 Access Example}{9}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Evaluation Code}{9}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VII}Limitations and Future Work}{9}{}\protected@file@percent }
-\newlabel{sec:limitations}{{VII}{9}{}{section.7}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{9}{}\protected@file@percent }
-\newlabel{sec:conclusion}{{VIII}{9}{}{section.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Relation to Earlier arXiv Versions}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}HDF5 Access Example}{9}{}\protected@file@percent }
+\citation{hadani2017otfs}
+\citation{abdoli2015fofdm}
+\citation{jaeckel2014quadriga}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-D}}Evaluation Code}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Limitations and Future Work}{10}{}\protected@file@percent }
+\newlabel{sec:limitations}{{VII}{10}{}{section.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{10}{}\protected@file@percent }
+\newlabel{sec:conclusion}{{VIII}{10}{}{section.8}{}}
+\@writefile{toc}{\contentsline {section}{Appendix}{10}{}\protected@file@percent }
+\newlabel{app:training}{{A}{10}{}{section.Appendix.A}{}}
 \bibstyle{ieeetr}
 \bibdata{revised_paper}
-\bibcite{3gpp38901}{1}
-\bibcite{luo2019conv}{2}
-\bibcite{luo2020dual}{3}
-\bibcite{leroux2019sdr}{4}
-\bibcite{cabric2004implementation}{5}
-\bibcite{mitola1999cognitive}{6}
-\bibcite{andrews2014what}{7}
-\bibcite{haykin2005cognitive}{8}
-\bibcite{goldsmith2009breaking}{9}
-\bibcite{axell2012sensing}{10}
-\bibcite{oshea2017introduction}{11}
-\bibcite{west2017deep}{12}
+\bibcite{andrews2014what}{1}
+\bibcite{axell2012sensing}{2}
+\bibcite{goldsmith2009breaking}{3}
+\bibcite{hyvarinen2000ica}{4}
+\bibcite{fevotte2011nmf}{5}
+\bibcite{luo2019conv}{6}
+\bibcite{luo2020dual}{7}
+\bibcite{kolbaek2017multitalker}{8}
+\bibcite{chang2025csrd}{9}
+\bibcite{hinderer2025radar}{10}
+\bibcite{oshea2016radio}{11}
+\bibcite{oshea2016convolutional}{12}
 \bibcite{oshea2018over}{13}
-\bibcite{oshea2016radio}{14}
-\bibcite{oshea2016convolutional}{15}
-\bibcite{rajendran2018deep}{16}
-\bibcite{blossom2004gnu}{17}
-\bibcite{3gpp25102}{18}
-\bibcite{mennes2020sc2}{19}
-\bibcite{hershey2016deep}{20}
-\bibcite{kolbaek2017multitalker}{21}
-\bibcite{wichern2019wham}{22}
-\bibcite{rafii2017musdb18}{23}
-\bibcite{subakan2021sepformer}{24}
-\bibcite{hyvarinen2000ica}{25}
-\bibcite{fevotte2011nmf}{26}
-\bibcite{lancho2024rfchallenge}{27}
-\bibcite{3gpp45004}{28}
-\bibcite{3gpp25211}{29}
-\bibcite{3gpp25213}{30}
-\bibcite{3gpp36211}{31}
-\bibcite{3gpp38211}{32}
-\bibcite{jakes1994microwave}{33}
-\bibcite{3gpp38104}{34}
-\bibcite{3gpp38101}{35}
-\@writefile{toc}{\contentsline {section}{References}{10}{}\protected@file@percent }
-\bibcite{3gpp36101}{36}
-\bibcite{rapp1991effects}{37}
-\bibcite{hadani2017otfs}{38}
-\bibcite{abdoli2015fofdm}{39}
-\bibcite{jaeckel2014quadriga}{40}
+\bibcite{rajendran2018deep}{14}
+\bibcite{blossom2004gnu}{15}
+\bibcite{hershey2016deep}{16}
+\bibcite{wichern2019wham}{17}
+\bibcite{rafii2017musdb18}{18}
+\bibcite{lancho2024rfchallenge}{19}
+\bibcite{mennes2020sc2}{20}
+\bibcite{3gpp45004}{21}
+\bibcite{3gpp25211}{22}
+\bibcite{3gpp25213}{23}
+\bibcite{3gpp36211}{24}
+\bibcite{3gpp38211}{25}
+\bibcite{3gpp38901}{26}
+\bibcite{jakes1994microwave}{27}
+\bibcite{3gpp38104}{28}
+\bibcite{3gpp36104}{29}
+\bibcite{3gpp25104}{30}
+\bibcite{rapp1991effects}{31}
+\bibcite{leroux2019sdr}{32}
+\bibcite{hadani2017otfs}{33}
+\bibcite{abdoli2015fofdm}{34}
+\bibcite{jaeckel2014quadriga}{35}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Learning-rate screening on the validation split (800 fixed crops, 2-source): the adjacent-channel, SNR${>}20$~dB gain (dB) at the screening epoch and ``escape'', the first epoch above 4~dB. The chosen rate is in bold; gains are the lowest over the seeds at the second epoch (``--'': none).}}{11}{}\protected@file@percent }
+\newlabel{tab:lr}{{VIII}{11}{}{table.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Flagged-cell record: every 3- or 4-source cell the rule marked, its screen outcome and its final validation gain (all-samples bin, dB).}}{11}{}\protected@file@percent }
+\newlabel{tab:flagged}{{IX}{11}{}{table.9}{}}
+\@writefile{toc}{\contentsline {section}{References}{11}{}\protected@file@percent }
 \gdef \@abspage@last{11}

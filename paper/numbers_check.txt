@@ -1,0 +1,152 @@
+number | value in revised_paper.tex | source file | value recomputed from that file | status
+
+2-source conv family mean | +5.61 | check/eval_all_src2_crop0_frozen_results.json | +5.61 | MATCH
+2-source dprnn family mean | +5.85 | check/eval_all_src2_crop0_frozen_results.json | +5.85 | MATCH
+2-source stft family mean | +6.14 | check/eval_all_src2_crop0_frozen_results.json | +6.14 | MATCH
+2-source ICA | $-$13.60 | check/eval_all_src2_crop0_frozen_results.json | -13.60 | MATCH
+2-source NMF | $-$1.24 | check/eval_all_src2_crop0_frozen_results.json | -1.24 | MATCH
+2-source IRM oracle | +8.04 | check/eval_all_src2_crop0_frozen_results.json | +8.04 | MATCH
+3-source conv (single seed) | +4.77 | check/eval_all_src34_crop0_frozen_results.json | +4.77 | MATCH
+3-source dprnn (single seed) | +5.03 | check/eval_all_src34_crop0_frozen_results.json | +5.03 | MATCH
+3-source stft (single seed) | +5.14 | check/eval_all_src34_crop0_frozen_results.json | +5.14 | MATCH
+3-source IRM oracle | +9.61 | check/eval_all_src34_crop0_frozen_results.json | +9.61 | MATCH
+4-source conv (single seed) | +3.54 | check/eval_all_src34_crop0_frozen_results.json | +3.54 | MATCH
+4-source dprnn (single seed) | +3.44 | check/eval_all_src34_crop0_frozen_results.json | +3.44 | MATCH
+4-source stft (single seed) | +4.52 | check/eval_all_src34_crop0_frozen_results.json | +4.52 | MATCH
+4-source IRM oracle | +10.35 | check/eval_all_src34_crop0_frozen_results.json | +10.35 | MATCH
+2-source co-channel STFT | +6.13 | check/eval_all_src2_crop0_frozen_results.json | +6.13 | MATCH
+2-source adjacent STFT | +6.14 | check/eval_all_src2_crop0_frozen_results.json | +6.14 | MATCH
+2-source adjacent SNR>20 STFT | +6.94 | check/eval_all_src2_crop0_frozen_results.json | +6.94 | MATCH
+2-source adjacent SNR>20 DPRNN | +6.58 | check/eval_all_src2_crop0_frozen_results.json | +6.58 | MATCH
+2-source adjacent SNR>20 Conv-TasNet | +6.21 | check/eval_all_src2_crop0_frozen_results.json | +6.21 | MATCH
+2-source adjacent SNR>20 IRM oracle | +10.86 | check/eval_all_src2_crop0_frozen_results.json | +10.86 | MATCH
+input level 2-source | $-$4.4 | check/eval_all_src2_crop0_frozen_results.json | -4.38 | MATCH
+input level 3-source | $-$9.3 | check/eval_all_src34_crop0_frozen_results.json | -9.32 | MATCH
+input level 4-source | $-$12.0 | check/eval_all_src34_crop0_frozen_results.json | -12.01 | MATCH
+test samples 2-source | 7,526 | check/eval_all_src2_crop0_frozen_results.json | 7526 | MATCH
+test samples 3-source | 5,324 | check/eval_all_src34_crop0_frozen_results.json | 5324 | MATCH
+test samples 4-source | 2,150 | check/eval_all_src34_crop0_frozen_results.json | 2150 | MATCH
+2-source STFT gain $-10$--$10$~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +5.43 | value only, no printed number (no literal token in the tex)
+2-source IRM oracle gain $-10$--$10$~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +5.69 | value only, no printed number (no literal token in the tex)
+2-source STFT gain 10--20~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +6.37 | value only, no printed number (no literal token in the tex)
+2-source IRM oracle gain 10--20~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +8.92 | value only, no printed number (no literal token in the tex)
+2-source STFT gain 20--30~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +6.75 | value only, no printed number (no literal token in the tex)
+2-source IRM oracle gain 20--30~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +10.27 | value only, no printed number (no literal token in the tex)
+2-source STFT gain ${>}30$~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +7.66 | value only, no printed number (no literal token in the tex)
+2-source IRM oracle gain ${>}30$~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +11.71 | value only, no printed number (no literal token in the tex)
+2-source STFT minus DPRNN, mean over the three matched pairs | +0.29 | check/eval_all_src2_crop0_frozen_results.json | +0.29 | MATCH
+2-source DPRNN minus Conv-TasNet, mean over the three matched pairs | +0.24 | check/eval_all_src2_crop0_frozen_results.json | +0.24 | MATCH
+2-source STFT-BLSTM seed range | 0.03 dB | check/eval_all_src2_crop0_frozen_results.json | 0.03 | MATCH
+2-source DPRNN seed range | 0.15 dB | check/eval_all_src2_crop0_frozen_results.json | 0.15 | MATCH (no literal token in the tex)
+2-source Conv-TasNet seed range | 0.29 dB | check/eval_all_src2_crop0_frozen_results.json | 0.29 | MATCH
+Conv-TasNet-L256 10^-3 first two epochs, adjacent SNR>20 | see text | check/encoder_sweep_results.json | +1.05 / +1.32 | value only, no printed number (no literal token in the tex)
+DPRNN 10^-3 first two epochs, adjacent SNR>20 | see text | check/encoder_sweep_results.json | +5.05 / +5.56 | value only, no printed number (no literal token in the tex)
+STFT-BLSTM 10^-3 first two epochs, adjacent SNR>20 | see text | check/encoder_sweep_results.json | +4.31 / +5.10 | value only, no printed number (no literal token in the tex)
+Conv-TasNet 3x10^-4 first epoch, all samples | see text | check/encoder_sweep_results.json | +4.26 | value only, no printed number (no literal token in the tex)
+STFT-BLSTM 3x10^-4 first epoch, all samples | see text | check/encoder_sweep_results.json | +4.37 | value only, no printed number (no literal token in the tex)
+learning-rate table Conv-TasNet 1e-4 | +4.47 | check/encoder_sweep_results.json | +4.47 | MATCH
+learning-rate table Conv-TasNet 3e-4 | +4.84 | check/encoder_sweep_results.json | +4.84 | MATCH
+learning-rate table Conv-TasNet 1e-3 | +2.40 | check/encoder_sweep_results.json | +2.40 | MATCH
+learning-rate table DPRNN 1e-3 | +5.09 | check/encoder_sweep_results.json | +5.09 | MATCH
+learning-rate table STFT-BLSTM 3e-4 | +5.53 | check/encoder_sweep_results.json | +5.53 | MATCH
+Conv-TasNet-L256 pilot (10 epochs, seed 0) | +4.51 | check/encoder_sweep_results.json | +4.51 | MATCH
+CNN-LSTM transposed-decoder pilot (10 epochs, seed 0) | +4.47 | check/encoder_sweep_results.json | +4.47 | MATCH
+second 10 epochs of the probe add, all samples | 0.26 | check/encoder_sweep_results.json | +0.26 | MATCH
+20-epoch probe gain over the 10-epoch pilot, all samples | 0.20 | check/encoder_sweep_results.json | +0.20 | MATCH
+probe 20-epoch run gain over the 10-epoch probe checkpoint, all samples | 0.26 | check/encoder_sweep_results.json | +0.26 | MATCH
+CNN-LSTM 1x1 + interpolation ceiling over 300 crops | 1.98 | check/diagnose_training_results.json | +1.98 | MATCH
+Conv-TasNet 10^-3 plateau, adjacent SNR>20, epochs 1 and 2 | 2.4 | check/encoder_sweep_results.json | +2.38 / +2.40 | MATCH
+Conv-TasNet 10^-3 plateau, all samples, epochs 1 and 2 | $+2.88$ and $+2.89$ | check/encoder_sweep_results.json | +2.88 / +2.89 | MATCH
+Conv-TasNet 3x10^-4 first epoch, adjacent SNR>20 | 4.11 | check/encoder_sweep_results.json | +4.11 | MATCH
+Conv-TasNet 3x10^-4 first epoch, all samples | 4.26 | check/encoder_sweep_results.json | +4.26 | MATCH
+DPRNN 3-source screen 5e-4 minus 1e-3, epoch 2, all samples | 0.51 dB | check/encoder_sweep_results.json | +0.51 | MATCH
+DPRNN 4-source screen best rate over 1e-3 | +0.20 dB | check/encoder_sweep_results.json | +0.20 | MATCH (no literal token in the tex)
+Conv-TasNet 4-source cell, epoch 4 | +3.44 | check/encoder_sweep_results.json | +3.44 | MATCH
+Conv-TasNet 4-source cell, epoch 10 | +3.47 | check/encoder_sweep_results.json | +3.47 | MATCH
+Conv-TasNet 3-source cell, epoch 2 | +3.63 | check/encoder_sweep_results.json | +3.63 | MATCH
+Conv-TasNet 3-source cell, epoch 4 | +4.11 | check/encoder_sweep_results.json | +4.11 | MATCH
+Conv-TasNet 3-source cell, epoch 10 | +4.62 | check/encoder_sweep_results.json | +4.62 | MATCH
+DPRNN 3-source restart, epoch 4 | +4.34 | check/encoder_sweep_results.json | +4.34 | MATCH (no literal token in the tex)
+DPRNN 3-source restart, epoch 10 | +4.92 | check/encoder_sweep_results.json | +4.92 | MATCH
+DPRNN 4-source cell, epoch 4 | +3.38 | check/encoder_sweep_results.json | +3.38 | MATCH (no literal token in the tex)
+DPRNN 4-source cell, epoch 7 (last) | +3.41 | check/encoder_sweep_results.json | +3.41 | MATCH
+STFT-BLSTM 3-source cell, epoch 2 (cleared) | +4.04 | check/encoder_sweep_results.json | +4.04 | MATCH (no literal token in the tex)
+flagged table STFT-BLSTM 3-source final (validation, all) | +5.02 | check/encoder_sweep_results.json | +5.02 | MATCH
+flagged table Conv-TasNet 4-source final (validation, all) | +3.47 | check/encoder_sweep_results.json | +3.47 | MATCH
+flagged table DPRNN 3-source final (validation, all) | +4.92 | check/encoder_sweep_results.json | +4.92 | MATCH
+flagged table DPRNN 4-source final (validation, all) | +3.41 | check/encoder_sweep_results.json | +3.41 | MATCH
+epoch steps 2-source (34,912 samples, batch 8) | 4,364 | check/eval_all_src2_crop0_frozen_results.json | 4364 | MATCH
+epoch steps 3-source (24,547 samples, batch 8) | 3,069 | check/eval_all_src34_crop0_frozen_results.json | 3069 | MATCH
+epoch steps 4-source (10,541 samples, batch 8) | 1,318 | check/eval_all_src34_crop0_frozen_results.json | 1318 | MATCH
+parameters conv_tasnet_2src_seed1 | 2.52 | check/epoch_times.json | 2.52 | MATCH
+parameters dprnn_2src_seed1 | 1.11 | check/epoch_times.json | 1.11 | MATCH
+parameters stft_blstm_2src_seed1 | 7.36 | check/epoch_times.json | 7.36 | MATCH
+Conv-TasNet-L256 parameters | 2.77 | check/encoder_sweep_results.json | 2.77 | MATCH
+CNN-LSTM parameters | 4.30 | check/encoder_sweep_results.json | 4.30 | MATCH
+2-source test samples | 7,526 | paper/journal_numbers.json | 7526 | MATCH
+co-channel test samples | 3,035 | check/eval_all_src2_crop0_frozen_results.json | 3035 | MATCH
+adjacent-channel test samples | 4,491 | check/eval_all_src2_crop0_frozen_results.json | 4491 | MATCH
+adjacent SNR>20 test samples | 1,105 | check/eval_all_src2_crop0_frozen_results.json | 1105 | MATCH
+corpus samples | 100,000 | paper/../data/rfss_dataset.h5 metadata | 100000 | MATCH
+two-source samples | 49,899 | data/rfss_dataset.h5 metadata scan | 49899 | MATCH
+three-source samples | 35,158 | data/rfss_dataset.h5 metadata scan | 35158 | MATCH (no literal token in the tex)
+four-source samples | 14,943 | data/rfss_dataset.h5 metadata scan | 14943 | MATCH (no literal token in the tex)
+two-source mixed pairs | six of the ten unordered pairs | combinatorics with replacement | 6 of C(4,2) + 4 = 10 pairs | value only, no printed number (no literal token in the tex)
+two-source same-standard samples | 15,662 | data/rfss_dataset.h5 metadata | 15662 | MATCH
+source-count shares | 49.9 / 35.2 / 14.9 pc | data/rfss_dataset.h5 metadata | 49.9 / 35.2 / 14.9 | MATCH (no literal token in the tex)
+source-count fractions (Section III, line ~462) | 0.499, 0.352 and 0.149 | data/rfss_dataset.h5 metadata | 0.499 / 0.352 / 0.149 | MATCH
+impaired sources | 265,044 | data/rfss_dataset.h5 metadata | 265044, recomputed in the 2b pass over all 100,000 samples | MATCH
+clean sources | 52,828 | data/rfss_dataset.h5 metadata | 52828 | MATCH
+multi-source file size | 102.5~GiB | data/rfss_dataset.h5 | 102.5 GiB = 110,092,208,432 bytes | MATCH
+single-source file size | 1.3~GiB | data/rfss_single.h5 | 1.32 GiB = 1,418,582,895 bytes | MATCH
+GSM symbol rate (ksym/s) | 309.4 | src/utils_gsm.py:50 | 309.43 = 2166000 / int(2166000/270833) | MATCH
+GSM record length (samples) | 1,890 | data/rfss_single.h5 signal_lengths | 1890 = 270 * 7 | MATCH
+GSM ideal 99pc bandwidth (MHz) | 0.247 | ideal GMSK BT=0.3 at 270.833 ksym/s, own synthesis | 0.2467 at oversampling 8, 0.2461 at 64 | MATCH
+NR prefix at the 2048-point FFT (samples) | 143 | src/utils_5g.py:79 | 143 = int(2048 * 0.07) | MATCH
+NR specified prefix, first symbol (samples) | 176 | 3GPP TS 38.211 | 176, specification value | MATCH
+NR slot length, specified (samples) | 30,720 | TS 38.211 arithmetic | 30720 = 176 + 13*144 + 14*2048 | MATCH
+NR slot length, implemented (samples) | 30,674 | src/utils_5g.py:79 | 30674 = 14*(2048+143) | MATCH
+NR 50 MHz record (samples) | 61,348 | data/rfss_single.h5 signal_lengths | 61348 = 2 x 30674 | MATCH
+NR 50 MHz record, 1 ms needs (samples) | 61,440 | 61.44 MHz x 1 ms | 61440 = 61.44e6 x 1e-3 | MATCH
+UMTS 99pc bandwidth (MHz) | 4.13 | data/rfss_single.h5, 334 rows | 4.13, median of the 99 percent band, paper/gen_fig_signal_quality.py | MATCH
+GSM 99pc bandwidth (released rows, MHz) | 0.26 | data/rfss_single.h5, 500 rows | 0.26, median of the 99 percent band, paper/gen_fig_signal_quality.py | MATCH
+LTE 99pc bandwidth (MHz) | 8.91 | data/rfss_single.h5, 321 rows | 8.91, median of the 99 percent band, paper/gen_fig_signal_quality.py | MATCH
+NR 99pc bandwidth (MHz) | 47.16 | data/rfss_single.h5, 219 rows | 47.16, median of the 99 percent band, paper/gen_fig_signal_quality.py | MATCH
+
+rows: 112, numeric MISMATCH: 0, rows with no printed number: 14
+
+EVERY ROW SORTED BY KIND (reviewer 12:57:59, item 4): (a) 4 quoted from a cited paper or specification, (b) 14 table or equation pointers, (c) 8 of this paper's own numbers the script could not match to a literal token (listed below; each is either present in a generated table or is a rounded form of the recomputed value).
+
+(a) values quoted from cited papers or specifications: 4 rows
+  [a] GSM ideal 99pc bandwidth (MHz) | 0.247 | ideal GMSK BT=0.3 at 270.833 ksym/s, own synthesis | 0.2467 at oversampling 8, 0.2461 at 64 | MATCH
+  [a] NR specified prefix, first symbol (samples) | 176 | 3GPP TS 38.211 | 176, specification value | MATCH
+  [a] NR slot length, specified (samples) | 30,720 | TS 38.211 arithmetic | 30720 = 176 + 13*144 + 14*2048 | MATCH
+  [a] NR 50 MHz record, 1 ms needs (samples) | 61,440 | 61.44 MHz x 1 ms | 61440 = 61.44e6 x 1e-3 | MATCH
+
+(b) table or equation pointers: 14 rows
+  [b] 2-source STFT gain $-10$--$10$~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +5.43 | value only, no printed number (no literal token in the tex)
+  [b] 2-source IRM oracle gain $-10$--$10$~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +5.69 | value only, no printed number (no literal token in the tex)
+  [b] 2-source STFT gain 10--20~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +6.37 | value only, no printed number (no literal token in the tex)
+  [b] 2-source IRM oracle gain 10--20~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +8.92 | value only, no printed number (no literal token in the tex)
+  [b] 2-source STFT gain 20--30~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +6.75 | value only, no printed number (no literal token in the tex)
+  [b] 2-source IRM oracle gain 20--30~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +10.27 | value only, no printed number (no literal token in the tex)
+  [b] 2-source STFT gain ${>}30$~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +7.66 | value only, no printed number (no literal token in the tex)
+  [b] 2-source IRM oracle gain ${>}30$~dB | see table_snr.tex | check/eval_all_src2_crop0_frozen_results.json | +11.71 | value only, no printed number (no literal token in the tex)
+  [b] Conv-TasNet-L256 10^-3 first two epochs, adjacent SNR>20 | see text | check/encoder_sweep_results.json | +1.05 / +1.32 | value only, no printed number (no literal token in the tex)
+  [b] DPRNN 10^-3 first two epochs, adjacent SNR>20 | see text | check/encoder_sweep_results.json | +5.05 / +5.56 | value only, no printed number (no literal token in the tex)
+  [b] STFT-BLSTM 10^-3 first two epochs, adjacent SNR>20 | see text | check/encoder_sweep_results.json | +4.31 / +5.10 | value only, no printed number (no literal token in the tex)
+  [b] Conv-TasNet 3x10^-4 first epoch, all samples | see text | check/encoder_sweep_results.json | +4.26 | value only, no printed number (no literal token in the tex)
+  [b] STFT-BLSTM 3x10^-4 first epoch, all samples | see text | check/encoder_sweep_results.json | +4.37 | value only, no printed number (no literal token in the tex)
+  [b] two-source mixed pairs | six of the ten unordered pairs | combinatorics with replacement | 6 of C(4,2) + 4 = 10 pairs | value only, no printed number (no literal token in the tex)
+
+(c) this paper's own numbers the script could not match: 8 rows
+  [c] 2-source DPRNN seed range | 0.15 dB | check/eval_all_src2_crop0_frozen_results.json | 0.15 | MATCH (no literal token in the tex)
+  [c] DPRNN 4-source screen best rate over 1e-3 | +0.20 dB | check/encoder_sweep_results.json | +0.20 | MATCH (no literal token in the tex)
+  [c] DPRNN 3-source restart, epoch 4 | +4.34 | check/encoder_sweep_results.json | +4.34 | MATCH (no literal token in the tex)
+  [c] DPRNN 4-source cell, epoch 4 | +3.38 | check/encoder_sweep_results.json | +3.38 | MATCH (no literal token in the tex)
+  [c] STFT-BLSTM 3-source cell, epoch 2 (cleared) | +4.04 | check/encoder_sweep_results.json | +4.04 | MATCH (no literal token in the tex)
+  [c] three-source samples | 35,158 | data/rfss_dataset.h5 metadata scan | 35158 | MATCH (no literal token in the tex)
+  [c] four-source samples | 14,943 | data/rfss_dataset.h5 metadata scan | 14943 | MATCH (no literal token in the tex)
+  [c] source-count shares | 49.9 / 35.2 / 14.9 pc | data/rfss_dataset.h5 metadata | 49.9 / 35.2 / 14.9 | MATCH (no literal token in the tex)
+
+A printed value that carries a table reference rather than a number ('see table_snr.tex') is located in paper/tables/.

@@ -64,7 +64,6 @@ bash train_all.sh all 10
 
 # Paper tables and numbers from the committed result files
 uv run python paper/make_journal_assets.py
-uv run python paper/icc/make_icc_assets.py
 ```
 
 Every number in the papers maps to a JSON file in `check/`.

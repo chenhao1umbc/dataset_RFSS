@@ -13,7 +13,7 @@ and a corrected paper that replaces the unsupported 2025 arXiv paper.
 |---|---|
 | arXiv 2508.12106 (Aug 2025, 1 citation) | Results unsupported (26.7 dB, 52,847 samples). Repo's own results say ICA/NMF fail. |
 | arXiv 2604.00398 (Apr 2026) | Honest benchmark, but several dataset descriptions are wrong (see section 2, item P). |
-| `paper/revised_paper.tex` on `dev` | Complete draft (11 pages) with the corrected description, final results and the correction note. Not on arXiv. A 4-page ICC paper is in `paper/icc/`. |
+| `paper/revised_paper.tex` on `dev` | Complete draft (11 pages) with the corrected description, final results and the correction note. Not on arXiv. |
 | HF `Chrishao/rfss` | Public. Tag `v1.0` = the original two HDF5 files; `v1.1` (main) = same bytes (SHA-256 checked) plus dataset card, CC BY-NC 4.0 licence and 15 checkpoints. Both papers link it. |
 | GitHub `main` | Fast-forwarded to `dev` on 2026-10-05 (same commit). Licences: code PolyForm Noncommercial 1.0.0 (`LICENSE`), data CC BY-NC 4.0 (`LICENSE-DATA`). |
 
@@ -106,7 +106,7 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 3. **Release scope: corrected release (v1.1), not v1.0 as is.** Data fixes from workstream A land before the paper goes to arXiv.
    Note: v1.0 is already public on Hugging Face (32 downloads at last check). Plan: tag the current files as `v1.0`,
    put corrected files on `main`, and say so on the card. Do not silently overwrite v1.0.
-4. **Authors (revised by the user, 2026-10-05): journal paper Hao Chen, Rui Jin and Dayuan Tan; ICC paper Hao Chen and Dayuan Tan only.** arXiv v2 list not decided (F1).
+4. **Authors (revised by the user, 2026-10-05): journal paper Hao Chen, Rui Jin and Dayuan Tan.** arXiv v2 list not decided (F1).
 
 ## 4. Order of work
 1. Now, in parallel: A1-A3 (Builder), C1 and D2/D3 drafts (Reviewer), B1 (Builder).
@@ -119,10 +119,10 @@ choice, Doppler up to 700 Hz, SNR -10 to 40 dB, 40/60 co/adjacent, GSM PAPR abou
 - Every paper number reproduces from a committed command.
 - arXiv has one paper (2508.12106 v2); 2604.00398 is withdrawn with a pointer.
 
-## Decision (user, 2026-10-05, supersedes the earlier "Rui Jin removed everywhere"): Rui Jin is an author of the IEEE journal paper (Hao Chen, Rui Jin, Dayuan Tan) and is not an author of the ICC paper (Hao Chen, Dayuan Tan). The arXiv v2 list is not decided. Dayuan Tan has agreed to the arXiv plan. Submission systems may ask for consent separately; handle at submission time.
+## Decision (user, 2026-10-05, supersedes the earlier "Rui Jin removed everywhere"): Rui Jin is an author of the IEEE journal paper (Hao Chen, Rui Jin, Dayuan Tan). The arXiv v2 list is not decided. Dayuan Tan has agreed to the arXiv plan. Submission systems may ask for consent separately; handle at submission time.
 
 ## Finding (2026-10-05, from Opus review): adjacent-channel offsets are NOT standard-specific
-`src/utils_dataset.py:343-346` shifts sources by multiples of 2 MHz for every standard (offsets {-2,0} MHz for 2 sources, {-2,0,2} for 3, {-4,-2,0,2} for 4). The ICC and journal drafts, and possibly dataset docs, said "standard-specific offsets" / "do not overlap". Papers corrected (ICC, journal) with a TBD for the share of adjacent mixtures whose source bands overlap. TODO (Builder): compute that share from metadata; audit README/HF card/dataset docs/`paper/mixing_scenarios.md` (an early design note that describes channel-bandwidth-based offsets and ACIR that the code does not implement) and fix every claim; decide whether the v1.1 release notes mention it (they should).
+`src/utils_dataset.py:343-346` shifts sources by multiples of 2 MHz for every standard (offsets {-2,0} MHz for 2 sources, {-2,0,2} for 3, {-4,-2,0,2} for 4). The journal draft, and possibly dataset docs, said "standard-specific offsets" / "do not overlap". Paper corrected (journal) with a TBD for the share of adjacent mixtures whose source bands overlap. TODO (Builder): compute that share from metadata; audit README/HF card/dataset docs/`paper/mixing_scenarios.md` (an early design note that describes channel-bandwidth-based offsets and ACIR that the code does not implement) and fix every claim; decide whether the v1.1 release notes mention it (they should).
 
 ## Release status (2026-10-05, user instructed: licence non-commercial, HF v1.1, merge main, arXiv)
 - Done: HF v1.0 tag and v1.1 commit; `LICENSE`, `LICENSE-DATA`, README, `docs/hf_dataset_card.md` (the card on HF); `main` = `dev`; freeze tag `val-frozen-2026-10-05` pushed; fresh-clone check passed (asset scripts reproduce the committed tables and numbers byte for byte; journal paper compiles from a clean copy once the four figure PDFs are tracked, now committed).
